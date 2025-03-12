@@ -1,6 +1,6 @@
 <?php
 
-namespace Laravel\CashierChargebee;
+namespace Chargebee\Cashier;
 
 use ChargeBee\ChargeBee\Models\HostedPage;
 use Illuminate\Contracts\Support\Arrayable;
@@ -42,7 +42,7 @@ class Checkout implements Arrayable, Jsonable, JsonSerializable, Responsable
     /**
      * Begin a new guest checkout session.
      *
-     * @return \Laravel\CashierChargebee\CheckoutBuilder
+     * @return \Chargebee\Cashier\CheckoutBuilder
      */
     public static function guest()
     {
@@ -54,7 +54,7 @@ class Checkout implements Arrayable, Jsonable, JsonSerializable, Responsable
      *
      * @param  \Illuminate\Database\Eloquent\Model  $owner
      * @param  object|null  $parentInstance
-     * @return \Laravel\CashierChargebee\CheckoutBuilder
+     * @return \Chargebee\Cashier\CheckoutBuilder
      */
     public static function customer($owner, $parentInstance = null): CheckoutBuilder
     {
@@ -67,7 +67,7 @@ class Checkout implements Arrayable, Jsonable, JsonSerializable, Responsable
      * @param  \Illuminate\Database\Eloquent\Model|null  $owner
      * @param  array  $sessionOptions
      * @param  array  $customerOptions
-     * @return \Laravel\CashierChargebee\Checkout
+     * @return \Chargebee\Cashier\Checkout
      */
     public static function create($owner, array $sessionOptions = [], array $customerOptions = []): Checkout
     {

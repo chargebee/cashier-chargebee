@@ -1,11 +1,11 @@
 <?php
 
-namespace Laravel\CashierChargebee\Invoices;
+namespace Chargebee\Cashier\Invoices;
 
+use Chargebee\Cashier\Contracts\InvoiceRenderer;
+use Chargebee\Cashier\Invoice;
 use Dompdf\Dompdf;
 use Dompdf\Options;
-use Laravel\CashierChargebee\Contracts\InvoiceRenderer;
-use Laravel\CashierChargebee\Invoice;
 
 class DompdfInvoiceRenderer implements InvoiceRenderer
 {

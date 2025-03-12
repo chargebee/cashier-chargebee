@@ -1,10 +1,10 @@
 <?php
 
-namespace Laravel\CashierChargebee\Tests\Feature;
+namespace Chargebee\Cashier\Tests\Feature;
 
+use Chargebee\Cashier\Cashier;
+use Chargebee\Cashier\Tests\Fixtures\UserSoftDeletable;
 use ChargeBee\ChargeBee\Environment;
-use Laravel\CashierChargebee\Cashier;
-use Laravel\CashierChargebee\Tests\Fixtures\UserSoftDeletable;
 
 class CashierTest extends FeatureTestCase
 {

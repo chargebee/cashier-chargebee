@@ -1,10 +1,10 @@
 <?php
 
-namespace Laravel\CashierChargebee\Tests\Fixtures;
+namespace Chargebee\Cashier\Tests\Fixtures;
 
+use Chargebee\Cashier\Billable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
-use Laravel\CashierChargebee\Billable;
 
 class UserSoftDeletable extends User
 {

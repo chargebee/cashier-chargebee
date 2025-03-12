@@ -1,13 +1,13 @@
 <?php
 
-namespace Laravel\CashierChargebee;
+namespace Chargebee\Cashier;
 
-use Laravel\CashierChargebee\Concerns\HandlesTaxes;
-use Laravel\CashierChargebee\Concerns\ManagesCustomer;
-use Laravel\CashierChargebee\Concerns\ManagesInvoices;
-use Laravel\CashierChargebee\Concerns\ManagesPaymentMethods;
-use Laravel\CashierChargebee\Concerns\ManagesSubscriptions;
-use Laravel\CashierChargebee\Concerns\PerformsCharges;
+use Chargebee\Cashier\Concerns\HandlesTaxes;
+use Chargebee\Cashier\Concerns\ManagesCustomer;
+use Chargebee\Cashier\Concerns\ManagesInvoices;
+use Chargebee\Cashier\Concerns\ManagesPaymentMethods;
+use Chargebee\Cashier\Concerns\ManagesSubscriptions;
+use Chargebee\Cashier\Concerns\PerformsCharges;
 
 trait Billable
 {

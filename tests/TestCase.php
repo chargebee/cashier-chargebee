@@ -1,12 +1,12 @@
 <?php
 
-namespace Laravel\CashierChargebee\Tests;
+namespace Chargebee\Cashier\Tests;
 
+use Chargebee\Cashier\Cashier;
+use Chargebee\Cashier\Tests\Fixtures\User;
 use Illuminate\Contracts\Config\Repository;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
-use Laravel\CashierChargebee\Cashier;
-use Laravel\CashierChargebee\Tests\Fixtures\User;
 use Orchestra\Testbench\Concerns\WithWorkbench;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 

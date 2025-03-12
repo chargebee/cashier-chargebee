@@ -1,11 +1,11 @@
 <?php
 
-namespace Laravel\CashierChargebee\Tests\Unit;
+namespace Chargebee\Cashier\Tests\Unit;
 
-use Laravel\CashierChargebee\Cashier;
-use Laravel\CashierChargebee\Subscription;
-use Laravel\CashierChargebee\SubscriptionItem;
-use Laravel\CashierChargebee\Tests\TestCase;
+use Chargebee\Cashier\Cashier;
+use Chargebee\Cashier\Subscription;
+use Chargebee\Cashier\SubscriptionItem;
+use Chargebee\Cashier\Tests\TestCase;
 use Money\Currencies\ISOCurrencies;
 use Money\Currency;
 use Money\Formatter\IntlMoneyFormatter;

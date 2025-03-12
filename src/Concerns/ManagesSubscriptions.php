@@ -1,13 +1,13 @@
 <?php
 
-namespace Laravel\CashierChargebee\Concerns;
+namespace Chargebee\Cashier\Concerns;
 
 use Carbon\Carbon;
+use Chargebee\Cashier\Cashier;
+use Chargebee\Cashier\Subscription;
+use Chargebee\Cashier\SubscriptionBuilder;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Laravel\CashierChargebee\Cashier;
-use Laravel\CashierChargebee\Subscription;
-use Laravel\CashierChargebee\SubscriptionBuilder;
 
 trait ManagesSubscriptions
 {

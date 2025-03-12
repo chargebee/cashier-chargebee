@@ -1,9 +1,9 @@
 <?php
 
-namespace Laravel\CashierChargebee;
+namespace Chargebee\Cashier;
 
+use Chargebee\Cashier\Exceptions\InvalidCustomerBalanceTransaction;
 use ChargeBee\ChargeBee\Models\PromotionalCredit;
-use Laravel\CashierChargebee\Exceptions\InvalidCustomerBalanceTransaction;
 
 class CustomerBalanceTransaction
 {
@@ -28,7 +28,7 @@ class CustomerBalanceTransaction
      * @param  \ChargeBee\ChargeBee\Models\PromotionalCredit  $transaction
      * @return void
      *
-     * @throws \Laravel\CashierChargebee\Exceptions\InvalidCustomerBalanceTransaction
+     * @throws \Chargebee\Cashier\Exceptions\InvalidCustomerBalanceTransaction
      */
     public function __construct($owner, PromotionalCredit $transaction)
     {

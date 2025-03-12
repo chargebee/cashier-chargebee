@@ -1,11 +1,11 @@
 <?php
 
-namespace Laravel\CashierChargebee\Database\Factories;
+namespace Chargebee\Cashier\Database\Factories;
 
+use Chargebee\Cashier\Subscription;
+use Chargebee\Cashier\SubscriptionItem;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
-use Laravel\CashierChargebee\Subscription;
-use Laravel\CashierChargebee\SubscriptionItem;
 
 class SubscriptionItemFactory extends Factory
 {

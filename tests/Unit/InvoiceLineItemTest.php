@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Laravel\CashierChargebee\Tests\Unit;
+namespace Chargebee\Cashier\Tests\Unit;
 
+use Chargebee\Cashier\Invoice;
+use Chargebee\Cashier\InvoiceLineItem;
+use Chargebee\Cashier\Tests\Fixtures\User;
 use ChargeBee\ChargeBee\Models\Invoice as ChargeBeeInvoice;
 use ChargeBee\ChargeBee\Models\InvoiceLineItem as ChargeBeeInvoiceLineItem;
-use Laravel\CashierChargebee\Invoice;
-use Laravel\CashierChargebee\InvoiceLineItem;
-use Laravel\CashierChargebee\Tests\Fixtures\User;
 use PHPUnit\Framework\TestCase;
 
 class InvoiceLineItemTest extends TestCase

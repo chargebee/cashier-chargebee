@@ -1,6 +1,6 @@
 <?php
 
-namespace Laravel\CashierChargebee\Exceptions;
+namespace Chargebee\Cashier\Exceptions;
 
 use Exception;
 
