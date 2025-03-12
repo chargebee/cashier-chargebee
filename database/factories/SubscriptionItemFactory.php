@@ -2,10 +2,10 @@
 
 namespace Chargebee\CashierChargebee\Database\Factories;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Str;
 use Chargebee\CashierChargebee\Subscription;
 use Chargebee\CashierChargebee\SubscriptionItem;
+use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
 
 class SubscriptionItemFactory extends Factory
 {

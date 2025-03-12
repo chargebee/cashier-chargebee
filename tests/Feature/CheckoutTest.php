@@ -2,9 +2,9 @@
 
 namespace Chargebee\CashierChargebee\Tests\Feature;
 
-use ChargeBee\ChargeBee\Models\Coupon;
 use Chargebee\CashierChargebee\Checkout;
 use Chargebee\CashierChargebee\Session;
+use ChargeBee\ChargeBee\Models\Coupon;
 
 class CheckoutTest extends FeatureTestCase
 {

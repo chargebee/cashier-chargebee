@@ -2,8 +2,8 @@
 
 namespace Chargebee\CashierChargebee;
 
-use ChargeBee\ChargeBee\Models\PromotionalCredit;
 use Chargebee\CashierChargebee\Exceptions\InvalidCustomerBalanceTransaction;
+use ChargeBee\ChargeBee\Models\PromotionalCredit;
 
 class CustomerBalanceTransaction
 {

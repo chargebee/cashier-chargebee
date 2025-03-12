@@ -2,6 +2,11 @@
 
 namespace Chargebee\CashierChargebee\Concerns;
 
+use Chargebee\CashierChargebee\Estimate;
+use Chargebee\CashierChargebee\Exceptions\InvalidInvoice;
+use Chargebee\CashierChargebee\Invoice;
+use Chargebee\CashierChargebee\InvoiceBuilder;
+use Chargebee\CashierChargebee\Paginator;
 use ChargeBee\ChargeBee\Exceptions\InvalidRequestException;
 use ChargeBee\ChargeBee\Models\Estimate as ChargeBeeEstimate;
 use ChargeBee\ChargeBee\Models\Invoice as ChargeBeeInvoice;
@@ -10,11 +15,6 @@ use Illuminate\Pagination\CursorPaginator;
 use Illuminate\Pagination\Paginator as IlluminatePaginator;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
-use Chargebee\CashierChargebee\Estimate;
-use Chargebee\CashierChargebee\Exceptions\InvalidInvoice;
-use Chargebee\CashierChargebee\Invoice;
-use Chargebee\CashierChargebee\InvoiceBuilder;
-use Chargebee\CashierChargebee\Paginator;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 

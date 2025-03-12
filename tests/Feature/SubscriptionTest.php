@@ -3,6 +3,11 @@
 namespace Chargebee\CashierChargebee\Tests\Feature;
 
 use Carbon\Carbon;
+use Chargebee\CashierChargebee\Estimate;
+use Chargebee\CashierChargebee\Exceptions\SubscriptionUpdateFailure;
+use Chargebee\CashierChargebee\Subscription;
+use Chargebee\CashierChargebee\SubscriptionBuilder;
+use Chargebee\CashierChargebee\Transaction;
 use ChargeBee\ChargeBee\Exceptions\InvalidRequestException;
 use ChargeBee\ChargeBee\Models\Coupon;
 use ChargeBee\ChargeBee\Models\Invoice;
@@ -17,11 +22,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
-use Chargebee\CashierChargebee\Estimate;
-use Chargebee\CashierChargebee\Exceptions\SubscriptionUpdateFailure;
-use Chargebee\CashierChargebee\Subscription;
-use Chargebee\CashierChargebee\SubscriptionBuilder;
-use Chargebee\CashierChargebee\Transaction;
 
 class SubscriptionTest extends FeatureTestCase
 {

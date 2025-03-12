@@ -2,14 +2,14 @@
 
 namespace Chargebee\CashierChargebee\Concerns;
 
+use Chargebee\CashierChargebee\Exceptions\CustomerNotFound;
+use Chargebee\CashierChargebee\Exceptions\InvalidPaymentMethod;
+use Chargebee\CashierChargebee\PaymentMethod;
 use ChargeBee\ChargeBee\Exceptions\InvalidRequestException;
 use ChargeBee\ChargeBee\Models\Customer;
 use ChargeBee\ChargeBee\Models\PaymentIntent;
 use ChargeBee\ChargeBee\Models\PaymentSource;
 use Illuminate\Support\Collection;
-use Chargebee\CashierChargebee\Exceptions\CustomerNotFound;
-use Chargebee\CashierChargebee\Exceptions\InvalidPaymentMethod;
-use Chargebee\CashierChargebee\PaymentMethod;
 
 trait ManagesPaymentMethods
 {

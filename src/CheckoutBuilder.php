@@ -2,9 +2,9 @@
 
 namespace Chargebee\CashierChargebee;
 
-use Illuminate\Support\Collection;
 use Chargebee\CashierChargebee\Concerns\AllowsCoupons;
 use Chargebee\CashierChargebee\Concerns\HandlesTaxes;
+use Illuminate\Support\Collection;
 
 class CheckoutBuilder
 {

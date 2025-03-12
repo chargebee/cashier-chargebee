@@ -2,10 +2,10 @@
 
 namespace Chargebee\CashierChargebee\Http\Controllers;
 
+use Chargebee\CashierChargebee\Events\WebhookReceived;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Log;
-use Chargebee\CashierChargebee\Events\WebhookReceived;
 use Symfony\Component\HttpFoundation\Response;
 
 class WebhookController extends Controller

@@ -2,11 +2,11 @@
 
 namespace Chargebee\CashierChargebee\Tests;
 
+use Chargebee\CashierChargebee\Cashier;
+use Chargebee\CashierChargebee\Tests\Fixtures\User;
 use Illuminate\Contracts\Config\Repository;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
-use Chargebee\CashierChargebee\Cashier;
-use Chargebee\CashierChargebee\Tests\Fixtures\User;
 use Orchestra\Testbench\Concerns\WithWorkbench;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 

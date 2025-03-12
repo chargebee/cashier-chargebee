@@ -2,8 +2,8 @@
 
 namespace Chargebee\CashierChargebee\Exceptions;
 
-use Exception;
 use Chargebee\CashierChargebee\Subscription;
+use Exception;
 
 final class SubscriptionUpdateFailure extends Exception
 {

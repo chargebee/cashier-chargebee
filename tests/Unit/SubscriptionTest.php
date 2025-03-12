@@ -3,12 +3,12 @@
 namespace Chargebee\CashierChargebee\Tests\Unit;
 
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
-use InvalidArgumentException;
 use Chargebee\CashierChargebee\Subscription;
 use Chargebee\CashierChargebee\SubscriptionItem;
 use Chargebee\CashierChargebee\Tests\Feature\FeatureTestCase;
 use Chargebee\CashierChargebee\Tests\Fixtures\User;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use InvalidArgumentException;
 
 class SubscriptionTest extends FeatureTestCase
 {

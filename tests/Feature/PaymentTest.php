@@ -2,9 +2,9 @@
 
 namespace Chargebee\CashierChargebee\Tests\Feature;
 
-use ChargeBee\ChargeBee\Models\PaymentIntent;
 use Chargebee\CashierChargebee\Exceptions\PaymentNotFound;
 use Chargebee\CashierChargebee\Payment;
+use ChargeBee\ChargeBee\Models\PaymentIntent;
 
 class PaymentTest extends FeatureTestCase
 {

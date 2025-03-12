@@ -2,12 +2,12 @@
 
 namespace Chargebee\CashierChargebee\Tests\Feature;
 
+use Chargebee\CashierChargebee\Cashier;
+use Chargebee\CashierChargebee\Tests\Fixtures\User;
 use ChargeBee\ChargeBee\Models\PromotionalCredit;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
-use Chargebee\CashierChargebee\Cashier;
-use Chargebee\CashierChargebee\Tests\Fixtures\User;
 
 class CustomerTest extends FeatureTestCase
 {

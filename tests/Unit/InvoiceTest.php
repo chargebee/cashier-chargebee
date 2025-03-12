@@ -4,13 +4,13 @@ namespace Chargebee\CashierChargebee\Tests\Unit;
 
 use Carbon\Carbon;
 use Carbon\CarbonTimeZone;
-use ChargeBee\ChargeBee\Models\Discount as ChargeBeeDiscount;
-use ChargeBee\ChargeBee\Models\Invoice as ChargeBeeInvoice;
-use ChargeBee\ChargeBee\Models\InvoiceLineItemTax;
 use Chargebee\CashierChargebee\Discount;
 use Chargebee\CashierChargebee\Invoice;
 use Chargebee\CashierChargebee\Tests\Fixtures\User;
 use Chargebee\CashierChargebee\Tests\TestCase;
+use ChargeBee\ChargeBee\Models\Discount as ChargeBeeDiscount;
+use ChargeBee\ChargeBee\Models\Invoice as ChargeBeeInvoice;
+use ChargeBee\ChargeBee\Models\InvoiceLineItemTax;
 use Mockery as m;
 
 class InvoiceTest extends TestCase

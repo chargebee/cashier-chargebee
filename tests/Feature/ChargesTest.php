@@ -2,9 +2,9 @@
 
 namespace Chargebee\CashierChargebee\Tests\Feature;
 
-use ChargeBee\ChargeBee\Models\PaymentSource;
 use Chargebee\CashierChargebee\Payment;
 use Chargebee\CashierChargebee\Tests\Fixtures\User;
+use ChargeBee\ChargeBee\Models\PaymentSource;
 
 class ChargesTest extends FeatureTestCase
 {

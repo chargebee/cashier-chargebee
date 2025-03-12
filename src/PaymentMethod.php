@@ -2,9 +2,9 @@
 
 namespace Chargebee\CashierChargebee;
 
+use Chargebee\CashierChargebee\Exceptions\InvalidPaymentMethod;
 use ChargeBee\ChargeBee\Models\PaymentSource;
 use Illuminate\Database\Eloquent\Model;
-use Chargebee\CashierChargebee\Exceptions\InvalidPaymentMethod;
 use LogicException;
 
 class PaymentMethod
