@@ -2,12 +2,12 @@
 
 namespace Chargebee\CashierChargebee;
 
+use Chargebee\CashierChargebee\Exceptions\InvalidEstimate;
 use ChargeBee\ChargeBee\Models\InvoiceEstimate as ChargeBeeEstimate;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Database\Eloquent\Model;
 use JsonSerializable;
-use Chargebee\CashierChargebee\Exceptions\InvalidEstimate;
 
 class Estimate implements Arrayable, Jsonable, JsonSerializable
 {

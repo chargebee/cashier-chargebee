@@ -2,10 +2,10 @@
 
 namespace Chargebee\CashierChargebee\Invoices;
 
-use Dompdf\Dompdf;
-use Dompdf\Options;
 use Chargebee\CashierChargebee\Contracts\InvoiceRenderer;
 use Chargebee\CashierChargebee\Invoice;
+use Dompdf\Dompdf;
+use Dompdf\Options;
 
 class DompdfInvoiceRenderer implements InvoiceRenderer
 {

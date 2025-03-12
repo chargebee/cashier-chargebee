@@ -2,13 +2,13 @@
 
 namespace Chargebee\CashierChargebee\Concerns;
 
+use Chargebee\CashierChargebee\Checkout;
+use Chargebee\CashierChargebee\Exceptions\PaymentNotFound;
+use Chargebee\CashierChargebee\Payment;
 use ChargeBee\ChargeBee\Exceptions\InvalidRequestException;
 use ChargeBee\ChargeBee\Models\Invoice as ChargeBeeInvoice;
 use ChargeBee\ChargeBee\Models\PaymentIntent;
 use Illuminate\Support\Arr;
-use Chargebee\CashierChargebee\Checkout;
-use Chargebee\CashierChargebee\Exceptions\PaymentNotFound;
-use Chargebee\CashierChargebee\Payment;
 
 trait PerformsCharges
 {

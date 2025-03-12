@@ -2,9 +2,9 @@
 
 namespace Chargebee\CashierChargebee\Tests\Fixtures;
 
+use Chargebee\CashierChargebee\Billable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
-use Chargebee\CashierChargebee\Billable;
 
 class UserSoftDeletable extends User
 {

@@ -4,6 +4,9 @@ namespace Chargebee\CashierChargebee;
 
 use Carbon\Carbon;
 use Carbon\CarbonInterface;
+use Chargebee\CashierChargebee\Concerns\AllowsCoupons;
+use Chargebee\CashierChargebee\Concerns\HandlesTaxes;
+use Chargebee\CashierChargebee\Concerns\Prorates;
 use ChargeBee\ChargeBee\Models\Customer;
 use ChargeBee\ChargeBee\Models\ItemPrice;
 use ChargeBee\ChargeBee\Models\PaymentSource;
@@ -13,9 +16,6 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Traits\Conditionable;
 use InvalidArgumentException;
-use Chargebee\CashierChargebee\Concerns\AllowsCoupons;
-use Chargebee\CashierChargebee\Concerns\HandlesTaxes;
-use Chargebee\CashierChargebee\Concerns\Prorates;
 
 class SubscriptionBuilder
 {

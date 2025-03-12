@@ -2,11 +2,11 @@
 
 namespace Chargebee\CashierChargebee\Database\Factories;
 
+use Chargebee\CashierChargebee\Cashier;
+use Chargebee\CashierChargebee\Subscription;
 use ChargeBee\ChargeBee\Models\ItemPrice;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
-use Chargebee\CashierChargebee\Cashier;
-use Chargebee\CashierChargebee\Subscription;
 
 class SubscriptionFactory extends Factory
 {

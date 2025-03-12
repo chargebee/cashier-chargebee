@@ -2,9 +2,9 @@
 
 namespace Chargebee\CashierChargebee\Tests\Feature;
 
-use ChargeBee\ChargeBee\Environment;
 use Chargebee\CashierChargebee\Cashier;
 use Chargebee\CashierChargebee\Tests\Fixtures\UserSoftDeletable;
+use ChargeBee\ChargeBee\Environment;
 
 class CashierTest extends FeatureTestCase
 {

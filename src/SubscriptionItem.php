@@ -2,6 +2,8 @@
 
 namespace Chargebee\CashierChargebee;
 
+use Chargebee\CashierChargebee\Concerns\Prorates;
+use Chargebee\CashierChargebee\Database\Factories\SubscriptionItemFactory;
 use ChargeBee\ChargeBee\Models\ItemPrice;
 use ChargeBee\ChargeBee\Models\SubscriptionSubscriptionItem;
 use ChargeBee\ChargeBee\Models\Usage;
@@ -12,8 +14,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Collection;
-use Chargebee\CashierChargebee\Concerns\Prorates;
-use Chargebee\CashierChargebee\Database\Factories\SubscriptionItemFactory;
 
 class SubscriptionItem extends Model
 {

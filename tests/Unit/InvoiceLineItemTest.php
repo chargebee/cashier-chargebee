@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Chargebee\CashierChargebee\Tests\Unit;
 
-use ChargeBee\ChargeBee\Models\Invoice as ChargeBeeInvoice;
-use ChargeBee\ChargeBee\Models\InvoiceLineItem as ChargeBeeInvoiceLineItem;
 use Chargebee\CashierChargebee\Invoice;
 use Chargebee\CashierChargebee\InvoiceLineItem;
 use Chargebee\CashierChargebee\Tests\Fixtures\User;
+use ChargeBee\ChargeBee\Models\Invoice as ChargeBeeInvoice;
+use ChargeBee\ChargeBee\Models\InvoiceLineItem as ChargeBeeInvoiceLineItem;
 use PHPUnit\Framework\TestCase;
 
 class InvoiceLineItemTest extends TestCase

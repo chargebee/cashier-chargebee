@@ -3,6 +3,8 @@
 namespace Chargebee\CashierChargebee;
 
 use Carbon\Carbon;
+use Chargebee\CashierChargebee\Contracts\InvoiceRenderer;
+use Chargebee\CashierChargebee\Exceptions\InvalidInvoice;
 use ChargeBee\ChargeBee\Models\Invoice as ChargeBeeInvoice;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
@@ -12,8 +14,6 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Str;
 use JsonSerializable;
-use Chargebee\CashierChargebee\Contracts\InvoiceRenderer;
-use Chargebee\CashierChargebee\Exceptions\InvalidInvoice;
 use Symfony\Component\HttpFoundation\Response;
 
 class Invoice implements Arrayable, Jsonable, JsonSerializable

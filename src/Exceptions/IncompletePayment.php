@@ -2,8 +2,8 @@
 
 namespace Chargebee\CashierChargebee\Exceptions;
 
-use Exception;
 use Chargebee\CashierChargebee\Payment;
+use Exception;
 use Throwable;
 
 final class IncompletePayment extends Exception

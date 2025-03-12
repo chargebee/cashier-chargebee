@@ -2,12 +2,12 @@
 
 namespace Chargebee\CashierChargebee;
 
+use Chargebee\CashierChargebee\Exceptions\IncompletePayment;
 use ChargeBee\ChargeBee\Models\PaymentIntent;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Database\Eloquent\Model;
 use JsonSerializable;
-use Chargebee\CashierChargebee\Exceptions\IncompletePayment;
 
 class Payment implements Arrayable, Jsonable, JsonSerializable
 {

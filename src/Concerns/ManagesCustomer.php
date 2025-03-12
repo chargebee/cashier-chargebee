@@ -2,6 +2,10 @@
 
 namespace Chargebee\CashierChargebee\Concerns;
 
+use Chargebee\CashierChargebee\Cashier;
+use Chargebee\CashierChargebee\CustomerBalanceTransaction;
+use Chargebee\CashierChargebee\Exceptions\CustomerAlreadyCreated;
+use Chargebee\CashierChargebee\Exceptions\CustomerNotFound;
 use ChargeBee\ChargeBee\Exceptions\InvalidRequestException;
 use ChargeBee\ChargeBee\Models\Customer;
 use ChargeBee\ChargeBee\Models\PortalSession;
@@ -9,10 +13,6 @@ use ChargeBee\ChargeBee\Models\PromotionalCredit;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Schema;
-use Chargebee\CashierChargebee\Cashier;
-use Chargebee\CashierChargebee\CustomerBalanceTransaction;
-use Chargebee\CashierChargebee\Exceptions\CustomerAlreadyCreated;
-use Chargebee\CashierChargebee\Exceptions\CustomerNotFound;
 
 trait ManagesCustomer
 {

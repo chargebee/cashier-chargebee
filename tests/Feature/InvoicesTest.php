@@ -2,13 +2,13 @@
 
 namespace Chargebee\CashierChargebee\Tests\Feature;
 
-use ChargeBee\ChargeBee\Models\Coupon;
-use ChargeBee\ChargeBee\Models\Customer;
-use ChargeBee\ChargeBee\Models\PaymentSource;
 use Chargebee\CashierChargebee\Exceptions\CustomerNotFound;
 use Chargebee\CashierChargebee\Exceptions\InvalidInvoice;
 use Chargebee\CashierChargebee\Invoice;
 use Chargebee\CashierChargebee\Tests\Fixtures\User;
+use ChargeBee\ChargeBee\Models\Coupon;
+use ChargeBee\ChargeBee\Models\Customer;
+use ChargeBee\ChargeBee\Models\PaymentSource;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 

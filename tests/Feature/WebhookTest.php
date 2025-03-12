@@ -2,13 +2,13 @@
 
 namespace Chargebee\CashierChargebee\Tests\Feature;
 
+use Chargebee\CashierChargebee\Events\WebhookReceived;
+use Chargebee\CashierChargebee\Subscription;
+use Chargebee\CashierChargebee\Tests\Fixtures\User;
 use ChargeBee\ChargeBee\Models\PaymentSource;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Log;
-use Chargebee\CashierChargebee\Events\WebhookReceived;
-use Chargebee\CashierChargebee\Subscription;
-use Chargebee\CashierChargebee\Tests\Fixtures\User;
 use Symfony\Component\HttpFoundation\Response;
 
 /**

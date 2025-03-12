@@ -4,6 +4,10 @@ namespace Chargebee\CashierChargebee;
 
 use Carbon\Carbon;
 use Carbon\CarbonInterface;
+use Chargebee\CashierChargebee\Concerns\AllowsCoupons;
+use Chargebee\CashierChargebee\Concerns\Prorates;
+use Chargebee\CashierChargebee\Database\Factories\SubscriptionFactory;
+use Chargebee\CashierChargebee\Exceptions\SubscriptionUpdateFailure;
 use ChargeBee\ChargeBee\Models\Estimate as ChargeBeeEstimate;
 use ChargeBee\ChargeBee\Models\ItemPrice;
 use ChargeBee\ChargeBee\Models\Subscription as ChargebeeSubscription;
@@ -18,10 +22,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
 use InvalidArgumentException;
-use Chargebee\CashierChargebee\Concerns\AllowsCoupons;
-use Chargebee\CashierChargebee\Concerns\Prorates;
-use Chargebee\CashierChargebee\Database\Factories\SubscriptionFactory;
-use Chargebee\CashierChargebee\Exceptions\SubscriptionUpdateFailure;
 use LogicException;
 
 class Subscription extends Model

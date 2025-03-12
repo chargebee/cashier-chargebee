@@ -3,11 +3,11 @@
 namespace Chargebee\CashierChargebee\Concerns;
 
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Chargebee\CashierChargebee\Cashier;
 use Chargebee\CashierChargebee\Subscription;
 use Chargebee\CashierChargebee\SubscriptionBuilder;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 trait ManagesSubscriptions
 {

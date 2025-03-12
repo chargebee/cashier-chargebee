@@ -3,10 +3,10 @@
 namespace Chargebee\CashierChargebee\Tests\Unit;
 
 use Carbon\Carbon;
-use Exception;
 use Chargebee\CashierChargebee\SubscriptionBuilder;
 use Chargebee\CashierChargebee\Tests\Fixtures\User;
 use Chargebee\CashierChargebee\Tests\TestCase;
+use Exception;
 
 class SubscriptionBuilderTest extends TestCase
 {
