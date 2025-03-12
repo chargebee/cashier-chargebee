@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Chargebee\CashierChargebee\Tests\Unit;
+namespace Chargebee\Cashier\Tests\Unit;
 
-use Chargebee\CashierChargebee\Invoice;
-use Chargebee\CashierChargebee\InvoiceLineItem;
-use Chargebee\CashierChargebee\Tests\Fixtures\User;
+use Chargebee\Cashier\Invoice;
+use Chargebee\Cashier\InvoiceLineItem;
+use Chargebee\Cashier\Tests\Fixtures\User;
 use ChargeBee\ChargeBee\Models\Invoice as ChargeBeeInvoice;
 use ChargeBee\ChargeBee\Models\InvoiceLineItem as ChargeBeeInvoiceLineItem;
 use PHPUnit\Framework\TestCase;

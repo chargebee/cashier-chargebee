@@ -1,8 +1,8 @@
 <?php
 
-namespace Chargebee\CashierChargebee\Exceptions;
+namespace Chargebee\Cashier\Exceptions;
 
-use Chargebee\CashierChargebee\Subscription;
+use Chargebee\Cashier\Subscription;
 use Exception;
 
 final class SubscriptionUpdateFailure extends Exception

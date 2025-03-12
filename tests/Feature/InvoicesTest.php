@@ -1,11 +1,11 @@
 <?php
 
-namespace Chargebee\CashierChargebee\Tests\Feature;
+namespace Chargebee\Cashier\Tests\Feature;
 
-use Chargebee\CashierChargebee\Exceptions\CustomerNotFound;
-use Chargebee\CashierChargebee\Exceptions\InvalidInvoice;
-use Chargebee\CashierChargebee\Invoice;
-use Chargebee\CashierChargebee\Tests\Fixtures\User;
+use Chargebee\Cashier\Exceptions\CustomerNotFound;
+use Chargebee\Cashier\Exceptions\InvalidInvoice;
+use Chargebee\Cashier\Invoice;
+use Chargebee\Cashier\Tests\Fixtures\User;
 use ChargeBee\ChargeBee\Models\Coupon;
 use ChargeBee\ChargeBee\Models\Customer;
 use ChargeBee\ChargeBee\Models\PaymentSource;

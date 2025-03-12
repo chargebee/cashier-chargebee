@@ -1,5 +1,5 @@
 providers:
-  - Chargebee\CashierChargebee\CashierServiceProvider
+  - Chargebee\Cashier\CashierServiceProvider
 
 migrations:
   - database/migrations

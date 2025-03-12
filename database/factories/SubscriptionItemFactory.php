@@ -1,9 +1,9 @@
 <?php
 
-namespace Chargebee\CashierChargebee\Database\Factories;
+namespace Chargebee\Cashier\Database\Factories;
 
-use Chargebee\CashierChargebee\Subscription;
-use Chargebee\CashierChargebee\SubscriptionItem;
+use Chargebee\Cashier\Subscription;
+use Chargebee\Cashier\SubscriptionItem;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 

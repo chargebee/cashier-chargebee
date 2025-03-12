@@ -1,9 +1,9 @@
 <?php
 
-namespace Chargebee\CashierChargebee\Tests\Feature;
+namespace Chargebee\Cashier\Tests\Feature;
 
-use Chargebee\CashierChargebee\Cashier;
-use Chargebee\CashierChargebee\Tests\Fixtures\UserSoftDeletable;
+use Chargebee\Cashier\Cashier;
+use Chargebee\Cashier\Tests\Fixtures\UserSoftDeletable;
 use ChargeBee\ChargeBee\Environment;
 
 class CashierTest extends FeatureTestCase

@@ -1,8 +1,8 @@
 <?php
 
-namespace Chargebee\CashierChargebee;
+namespace Chargebee\Cashier;
 
-use Chargebee\CashierChargebee\Exceptions\InvalidEstimate;
+use Chargebee\Cashier\Exceptions\InvalidEstimate;
 use ChargeBee\ChargeBee\Models\InvoiceEstimate as ChargeBeeEstimate;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
@@ -32,7 +32,7 @@ class Estimate implements Arrayable, Jsonable, JsonSerializable
      * @param  \ChargeBee\ChargeBee\Models\InvoiceEstimate  $estimate
      * @return void
      *
-     * @throws \Chargebee\CashierChargebee\Exceptions\InvalidInvoice
+     * @throws \Chargebee\Cashier\Exceptions\InvalidInvoice
      */
     public function __construct($owner, ChargeBeeEstimate $estimate)
     {

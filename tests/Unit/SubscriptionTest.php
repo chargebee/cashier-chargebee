@@ -1,12 +1,12 @@
 <?php
 
-namespace Chargebee\CashierChargebee\Tests\Unit;
+namespace Chargebee\Cashier\Tests\Unit;
 
 use Carbon\Carbon;
-use Chargebee\CashierChargebee\Subscription;
-use Chargebee\CashierChargebee\SubscriptionItem;
-use Chargebee\CashierChargebee\Tests\Feature\FeatureTestCase;
-use Chargebee\CashierChargebee\Tests\Fixtures\User;
+use Chargebee\Cashier\Subscription;
+use Chargebee\Cashier\SubscriptionItem;
+use Chargebee\Cashier\Tests\Feature\FeatureTestCase;
+use Chargebee\Cashier\Tests\Fixtures\User;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use InvalidArgumentException;
 

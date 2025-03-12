@@ -1,9 +1,9 @@
 <?php
 
-namespace Chargebee\CashierChargebee\Tests;
+namespace Chargebee\Cashier\Tests;
 
-use Chargebee\CashierChargebee\Cashier;
-use Chargebee\CashierChargebee\Tests\Fixtures\User;
+use Chargebee\Cashier\Cashier;
+use Chargebee\Cashier\Tests\Fixtures\User;
 use Illuminate\Contracts\Config\Repository;
 use Illuminate\Support\Str;
 use InvalidArgumentException;

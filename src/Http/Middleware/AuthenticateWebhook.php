@@ -1,6 +1,6 @@
 <?php
 
-namespace Chargebee\CashierChargebee\Http\Middleware;
+namespace Chargebee\Cashier\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Chargebee\CashierChargebee;
+namespace Chargebee\Cashier;
 
 use ArrayAccess;
 use Countable;

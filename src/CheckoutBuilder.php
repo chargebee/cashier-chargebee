@@ -1,9 +1,9 @@
 <?php
 
-namespace Chargebee\CashierChargebee;
+namespace Chargebee\Cashier;
 
-use Chargebee\CashierChargebee\Concerns\AllowsCoupons;
-use Chargebee\CashierChargebee\Concerns\HandlesTaxes;
+use Chargebee\Cashier\Concerns\AllowsCoupons;
+use Chargebee\Cashier\Concerns\HandlesTaxes;
 use Illuminate\Support\Collection;
 
 class CheckoutBuilder
@@ -45,7 +45,7 @@ class CheckoutBuilder
      *
      * @param  \Illuminate\Database\Eloquent\Model|null  $owner
      * @param  object|null  $instance
-     * @return \Chargebee\CashierChargebee\CheckoutBuilder
+     * @return \Chargebee\Cashier\CheckoutBuilder
      */
     public static function make($owner = null, $instance = null): CheckoutBuilder
     {
@@ -58,7 +58,7 @@ class CheckoutBuilder
      * @param  array|string  $items
      * @param  array  $sessionOptions
      * @param  array  $customerOptions
-     * @return \Chargebee\CashierChargebee\Checkout
+     * @return \Chargebee\Cashier\Checkout
      */
     public function create($items, array $sessionOptions = [], array $customerOptions = []): Checkout
     {

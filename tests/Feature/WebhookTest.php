@@ -1,10 +1,10 @@
 <?php
 
-namespace Chargebee\CashierChargebee\Tests\Feature;
+namespace Chargebee\Cashier\Tests\Feature;
 
-use Chargebee\CashierChargebee\Events\WebhookReceived;
-use Chargebee\CashierChargebee\Subscription;
-use Chargebee\CashierChargebee\Tests\Fixtures\User;
+use Chargebee\Cashier\Events\WebhookReceived;
+use Chargebee\Cashier\Subscription;
+use Chargebee\Cashier\Tests\Fixtures\User;
 use ChargeBee\ChargeBee\Models\PaymentSource;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Event;

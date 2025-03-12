@@ -1,10 +1,10 @@
 <?php
 
-namespace Chargebee\CashierChargebee\Tests\Feature;
+namespace Chargebee\Cashier\Tests\Feature;
 
-use Chargebee\CashierChargebee\Cashier;
-use Chargebee\CashierChargebee\Tests\Fixtures\User;
-use Chargebee\CashierChargebee\Tests\TestCase;
+use Chargebee\Cashier\Cashier;
+use Chargebee\Cashier\Tests\Fixtures\User;
+use Chargebee\Cashier\Tests\TestCase;
 use ChargeBee\ChargeBee\Models\Item;
 use ChargeBee\ChargeBee\Models\ItemFamily;
 use ChargeBee\ChargeBee\Models\ItemPrice;

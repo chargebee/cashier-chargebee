@@ -1,8 +1,8 @@
 <?php
 
-namespace Chargebee\CashierChargebee\Concerns;
+namespace Chargebee\Cashier\Concerns;
 
-use Chargebee\CashierChargebee\Cashier;
+use Chargebee\Cashier\Cashier;
 
 trait HandlesTaxes
 {

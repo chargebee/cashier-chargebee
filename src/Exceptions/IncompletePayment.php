@@ -1,8 +1,8 @@
 <?php
 
-namespace Chargebee\CashierChargebee\Exceptions;
+namespace Chargebee\Cashier\Exceptions;
 
-use Chargebee\CashierChargebee\Payment;
+use Chargebee\Cashier\Payment;
 use Exception;
 use Throwable;
 

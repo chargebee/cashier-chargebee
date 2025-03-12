@@ -1,9 +1,9 @@
 <?php
 
-namespace Chargebee\CashierChargebee\Invoices;
+namespace Chargebee\Cashier\Invoices;
 
-use Chargebee\CashierChargebee\Contracts\InvoiceRenderer;
-use Chargebee\CashierChargebee\Invoice;
+use Chargebee\Cashier\Contracts\InvoiceRenderer;
+use Chargebee\Cashier\Invoice;
 use Dompdf\Dompdf;
 use Dompdf\Options;
 

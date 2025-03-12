@@ -1,9 +1,9 @@
 <?php
 
-namespace Chargebee\CashierChargebee\Tests\Feature;
+namespace Chargebee\Cashier\Tests\Feature;
 
-use Chargebee\CashierChargebee\Checkout;
-use Chargebee\CashierChargebee\Session;
+use Chargebee\Cashier\Checkout;
+use Chargebee\Cashier\Session;
 use ChargeBee\ChargeBee\Models\Coupon;
 
 class CheckoutTest extends FeatureTestCase

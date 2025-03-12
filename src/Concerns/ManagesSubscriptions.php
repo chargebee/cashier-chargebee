@@ -1,11 +1,11 @@
 <?php
 
-namespace Chargebee\CashierChargebee\Concerns;
+namespace Chargebee\Cashier\Concerns;
 
 use Carbon\Carbon;
-use Chargebee\CashierChargebee\Cashier;
-use Chargebee\CashierChargebee\Subscription;
-use Chargebee\CashierChargebee\SubscriptionBuilder;
+use Chargebee\Cashier\Cashier;
+use Chargebee\Cashier\Subscription;
+use Chargebee\Cashier\SubscriptionBuilder;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 

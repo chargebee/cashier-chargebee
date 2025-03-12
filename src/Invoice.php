@@ -1,10 +1,10 @@
 <?php
 
-namespace Chargebee\CashierChargebee;
+namespace Chargebee\Cashier;
 
 use Carbon\Carbon;
-use Chargebee\CashierChargebee\Contracts\InvoiceRenderer;
-use Chargebee\CashierChargebee\Exceptions\InvalidInvoice;
+use Chargebee\Cashier\Contracts\InvoiceRenderer;
+use Chargebee\Cashier\Exceptions\InvalidInvoice;
 use ChargeBee\ChargeBee\Models\Invoice as ChargeBeeInvoice;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
@@ -52,7 +52,7 @@ class Invoice implements Arrayable, Jsonable, JsonSerializable
      * @param  array  $refreshData
      * @return void
      *
-     * @throws \Chargebee\CashierChargebee\Exceptions\InvalidInvoice
+     * @throws \Chargebee\Cashier\Exceptions\InvalidInvoice
      */
     public function __construct($owner, ChargeBeeInvoice $invoice, $nextOffset = null)
     {
@@ -162,7 +162,7 @@ class Invoice implements Arrayable, Jsonable, JsonSerializable
     /**
      * Get all of the discount objects from the Chargebee invoice.
      *
-     * @return \Chargebee\CashierChargebee\Discount[]
+     * @return \Chargebee\Cashier\Discount[]
      */
     public function discounts(): array
     {
@@ -174,7 +174,7 @@ class Invoice implements Arrayable, Jsonable, JsonSerializable
     /**
      * Calculate the amount for a given discount.
      *
-     * @param  \Chargebee\CashierChargebee\Discount  $discount
+     * @param  \Chargebee\Cashier\Discount  $discount
      * @return string|null
      */
     public function discountFor(Discount $discount): string|null
@@ -189,7 +189,7 @@ class Invoice implements Arrayable, Jsonable, JsonSerializable
     /**
      * Calculate the raw amount for a given discount.
      *
-     * @param  \Chargebee\CashierChargebee\Discount  $discount
+     * @param  \Chargebee\Cashier\Discount  $discount
      * @return int|null
      */
     public function rawDiscountFor(Discount $discount): mixed
@@ -254,7 +254,7 @@ class Invoice implements Arrayable, Jsonable, JsonSerializable
     /**
      * Get the taxes applied to the invoice.
      *
-     * @return \Chargebee\CashierChargebee\Tax[]
+     * @return \Chargebee\Cashier\Tax[]
      */
     public function taxes(): array
     {
@@ -312,7 +312,7 @@ class Invoice implements Arrayable, Jsonable, JsonSerializable
     /**
      * Get all of the "invoice item" line items.
      *
-     * @return \Chargebee\CashierChargebee\InvoiceLineItem[]
+     * @return \Chargebee\Cashier\InvoiceLineItem[]
      */
     public function invoiceItems(): array
     {
@@ -324,7 +324,7 @@ class Invoice implements Arrayable, Jsonable, JsonSerializable
     /**
      * Get all of the "subscription" line items.
      *
-     * @return \Chargebee\CashierChargebee\InvoiceLineItem[]
+     * @return \Chargebee\Cashier\InvoiceLineItem[]
      */
     public function subscriptions(): array
     {
@@ -336,7 +336,7 @@ class Invoice implements Arrayable, Jsonable, JsonSerializable
     /**
      * Get all of the invoice items.
      *
-     * @return \Chargebee\CashierChargebee\InvoiceLineItem[]
+     * @return \Chargebee\Cashier\InvoiceLineItem[]
      */
     public function invoiceLineItems(): array
     {

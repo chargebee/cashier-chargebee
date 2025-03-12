@@ -1,10 +1,10 @@
 <?php
 
-namespace Chargebee\CashierChargebee\Concerns;
+namespace Chargebee\Cashier\Concerns;
 
-use Chargebee\CashierChargebee\Checkout;
-use Chargebee\CashierChargebee\Exceptions\PaymentNotFound;
-use Chargebee\CashierChargebee\Payment;
+use Chargebee\Cashier\Checkout;
+use Chargebee\Cashier\Exceptions\PaymentNotFound;
+use Chargebee\Cashier\Payment;
 use ChargeBee\ChargeBee\Exceptions\InvalidRequestException;
 use ChargeBee\ChargeBee\Models\Invoice as ChargeBeeInvoice;
 use ChargeBee\ChargeBee\Models\PaymentIntent;
@@ -81,7 +81,7 @@ trait PerformsCharges
      * @param  array|string  $items
      * @param  array  $sessionOptions
      * @param  array  $customerOptions
-     * @return \Chargebee\CashierChargebee\Checkout
+     * @return \Chargebee\Cashier\Checkout
      */
     public function checkout($items, array $sessionOptions = [], array $customerOptions = [])
     {
@@ -96,7 +96,7 @@ trait PerformsCharges
      * @param  array  $sessionOptions
      * @param  array  $customerOptions
      * @param  array  $productData
-     * @return \Chargebee\CashierChargebee\Checkout
+     * @return \Chargebee\Cashier\Checkout
      */
     public function checkoutCharge($amount, $name, array $sessionOptions = [], array $customerOptions = [], array $productData = [])
     {

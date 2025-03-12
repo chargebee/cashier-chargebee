@@ -1,8 +1,8 @@
 <?php
 
-namespace Chargebee\CashierChargebee\Tests\Unit;
+namespace Chargebee\Cashier\Tests\Unit;
 
-use Chargebee\CashierChargebee\Tests\TestCase;
+use Chargebee\Cashier\Tests\TestCase;
 
 class ExampleTest extends TestCase
 {

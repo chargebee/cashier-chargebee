@@ -1,11 +1,11 @@
 <?php
 
-namespace Chargebee\CashierChargebee\Concerns;
+namespace Chargebee\Cashier\Concerns;
 
-use Chargebee\CashierChargebee\Cashier;
-use Chargebee\CashierChargebee\CustomerBalanceTransaction;
-use Chargebee\CashierChargebee\Exceptions\CustomerAlreadyCreated;
-use Chargebee\CashierChargebee\Exceptions\CustomerNotFound;
+use Chargebee\Cashier\Cashier;
+use Chargebee\Cashier\CustomerBalanceTransaction;
+use Chargebee\Cashier\Exceptions\CustomerAlreadyCreated;
+use Chargebee\Cashier\Exceptions\CustomerNotFound;
 use ChargeBee\ChargeBee\Exceptions\InvalidRequestException;
 use ChargeBee\ChargeBee\Models\Customer;
 use ChargeBee\ChargeBee\Models\PortalSession;
@@ -35,7 +35,7 @@ trait ManagesCustomer
     /**
      * Determine if the customer has a Chargebee customer ID and throw an exception if not.
      *
-     * @throws \Chargebee\CashierChargebee\Exceptions\CustomerNotFound
+     * @throws \Chargebee\Cashier\Exceptions\CustomerNotFound
      */
     protected function assertCustomerExists()
     {
@@ -47,7 +47,7 @@ trait ManagesCustomer
     /**
      * Create a Chargebee customer for the given model.
      *
-     * @throws \Chargebee\CashierChargebee\Exceptions\CustomerAlreadyCreated
+     * @throws \Chargebee\Cashier\Exceptions\CustomerAlreadyCreated
      */
     public function createAsChargebeeCustomer(array $options = []): Customer
     {

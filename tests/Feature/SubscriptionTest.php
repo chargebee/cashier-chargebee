@@ -1,13 +1,13 @@
 <?php
 
-namespace Chargebee\CashierChargebee\Tests\Feature;
+namespace Chargebee\Cashier\Tests\Feature;
 
 use Carbon\Carbon;
-use Chargebee\CashierChargebee\Estimate;
-use Chargebee\CashierChargebee\Exceptions\SubscriptionUpdateFailure;
-use Chargebee\CashierChargebee\Subscription;
-use Chargebee\CashierChargebee\SubscriptionBuilder;
-use Chargebee\CashierChargebee\Transaction;
+use Chargebee\Cashier\Estimate;
+use Chargebee\Cashier\Exceptions\SubscriptionUpdateFailure;
+use Chargebee\Cashier\Subscription;
+use Chargebee\Cashier\SubscriptionBuilder;
+use Chargebee\Cashier\Transaction;
 use ChargeBee\ChargeBee\Exceptions\InvalidRequestException;
 use ChargeBee\ChargeBee\Models\Coupon;
 use ChargeBee\ChargeBee\Models\Invoice;

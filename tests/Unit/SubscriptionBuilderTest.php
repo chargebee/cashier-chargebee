@@ -1,11 +1,11 @@
 <?php
 
-namespace Chargebee\CashierChargebee\Tests\Unit;
+namespace Chargebee\Cashier\Tests\Unit;
 
 use Carbon\Carbon;
-use Chargebee\CashierChargebee\SubscriptionBuilder;
-use Chargebee\CashierChargebee\Tests\Fixtures\User;
-use Chargebee\CashierChargebee\Tests\TestCase;
+use Chargebee\Cashier\SubscriptionBuilder;
+use Chargebee\Cashier\Tests\Fixtures\User;
+use Chargebee\Cashier\Tests\TestCase;
 use Exception;
 
 class SubscriptionBuilderTest extends TestCase

@@ -1,8 +1,8 @@
 <?php
 
-namespace Chargebee\CashierChargebee\Http\Controllers;
+namespace Chargebee\Cashier\Http\Controllers;
 
-use Chargebee\CashierChargebee\Events\WebhookReceived;
+use Chargebee\Cashier\Events\WebhookReceived;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Log;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Chargebee\CashierChargebee\Concerns;
+namespace Chargebee\Cashier\Concerns;
 
 trait AllowsCoupons
 {

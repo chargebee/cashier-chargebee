@@ -1,6 +1,6 @@
 <?php
 
-use Chargebee\CashierChargebee\Invoices\DompdfInvoiceRenderer;
+use Chargebee\Cashier\Invoices\DompdfInvoiceRenderer;
 
 return [
 
@@ -33,7 +33,7 @@ return [
         'password' => env('CASHIER_WEBHOOK_PASSWORD'),
     ],
 
-    'webhook_listener' => \Chargebee\CashierChargebee\Listeners\HandleWebhookReceived::class,
+    'webhook_listener' => \Chargebee\Cashier\Listeners\HandleWebhookReceived::class,
 
     /*
     |--------------------------------------------------------------------------

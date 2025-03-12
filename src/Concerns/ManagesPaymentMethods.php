@@ -1,10 +1,10 @@
 <?php
 
-namespace Chargebee\CashierChargebee\Concerns;
+namespace Chargebee\Cashier\Concerns;
 
-use Chargebee\CashierChargebee\Exceptions\CustomerNotFound;
-use Chargebee\CashierChargebee\Exceptions\InvalidPaymentMethod;
-use Chargebee\CashierChargebee\PaymentMethod;
+use Chargebee\Cashier\Exceptions\CustomerNotFound;
+use Chargebee\Cashier\Exceptions\InvalidPaymentMethod;
+use Chargebee\Cashier\PaymentMethod;
 use ChargeBee\ChargeBee\Exceptions\InvalidRequestException;
 use ChargeBee\ChargeBee\Models\Customer;
 use ChargeBee\ChargeBee\Models\PaymentIntent;

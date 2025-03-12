@@ -1,13 +1,13 @@
 <?php
 
-namespace Chargebee\CashierChargebee\Tests\Unit;
+namespace Chargebee\Cashier\Tests\Unit;
 
 use Carbon\Carbon;
 use Carbon\CarbonTimeZone;
-use Chargebee\CashierChargebee\Discount;
-use Chargebee\CashierChargebee\Invoice;
-use Chargebee\CashierChargebee\Tests\Fixtures\User;
-use Chargebee\CashierChargebee\Tests\TestCase;
+use Chargebee\Cashier\Discount;
+use Chargebee\Cashier\Invoice;
+use Chargebee\Cashier\Tests\Fixtures\User;
+use Chargebee\Cashier\Tests\TestCase;
 use ChargeBee\ChargeBee\Models\Discount as ChargeBeeDiscount;
 use ChargeBee\ChargeBee\Models\Invoice as ChargeBeeInvoice;
 use ChargeBee\ChargeBee\Models\InvoiceLineItemTax;

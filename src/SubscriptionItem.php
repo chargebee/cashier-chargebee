@@ -1,9 +1,9 @@
 <?php
 
-namespace Chargebee\CashierChargebee;
+namespace Chargebee\Cashier;
 
-use Chargebee\CashierChargebee\Concerns\Prorates;
-use Chargebee\CashierChargebee\Database\Factories\SubscriptionItemFactory;
+use Chargebee\Cashier\Concerns\Prorates;
+use Chargebee\Cashier\Database\Factories\SubscriptionItemFactory;
 use ChargeBee\ChargeBee\Models\ItemPrice;
 use ChargeBee\ChargeBee\Models\SubscriptionSubscriptionItem;
 use ChargeBee\ChargeBee\Models\Usage;

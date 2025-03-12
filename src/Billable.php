@@ -1,13 +1,13 @@
 <?php
 
-namespace Chargebee\CashierChargebee;
+namespace Chargebee\Cashier;
 
-use Chargebee\CashierChargebee\Concerns\HandlesTaxes;
-use Chargebee\CashierChargebee\Concerns\ManagesCustomer;
-use Chargebee\CashierChargebee\Concerns\ManagesInvoices;
-use Chargebee\CashierChargebee\Concerns\ManagesPaymentMethods;
-use Chargebee\CashierChargebee\Concerns\ManagesSubscriptions;
-use Chargebee\CashierChargebee\Concerns\PerformsCharges;
+use Chargebee\Cashier\Concerns\HandlesTaxes;
+use Chargebee\Cashier\Concerns\ManagesCustomer;
+use Chargebee\Cashier\Concerns\ManagesInvoices;
+use Chargebee\Cashier\Concerns\ManagesPaymentMethods;
+use Chargebee\Cashier\Concerns\ManagesSubscriptions;
+use Chargebee\Cashier\Concerns\PerformsCharges;
 
 trait Billable
 {

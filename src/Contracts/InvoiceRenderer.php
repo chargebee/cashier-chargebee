@@ -1,15 +1,15 @@
 <?php
 
-namespace Chargebee\CashierChargebee\Contracts;
+namespace Chargebee\Cashier\Contracts;
 
-use Chargebee\CashierChargebee\Invoice;
+use Chargebee\Cashier\Invoice;
 
 interface InvoiceRenderer
 {
     /**
      * Render the invoice as a PDF and return the raw bytes.
      *
-     * @param  \Chargebee\CashierChargebee\Invoice  $invoice
+     * @param  \Chargebee\Cashier\Invoice  $invoice
      * @param  array  $data
      * @param  array  $options
      * @return string

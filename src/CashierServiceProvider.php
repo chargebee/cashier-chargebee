@@ -1,11 +1,11 @@
 <?php
 
-namespace Chargebee\CashierChargebee;
+namespace Chargebee\Cashier;
 
-use Chargebee\CashierChargebee\Contracts\InvoiceRenderer;
-use Chargebee\CashierChargebee\Events\WebhookReceived;
-use Chargebee\CashierChargebee\Invoices\DompdfInvoiceRenderer;
-use Chargebee\CashierChargebee\Listeners\HandleWebhookReceived;
+use Chargebee\Cashier\Contracts\InvoiceRenderer;
+use Chargebee\Cashier\Events\WebhookReceived;
+use Chargebee\Cashier\Invoices\DompdfInvoiceRenderer;
+use Chargebee\Cashier\Listeners\HandleWebhookReceived;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
@@ -68,7 +68,7 @@ class CashierServiceProvider extends ServiceProvider
         if (Cashier::$registersRoutes) {
             Route::group([
                 'prefix' => config('cashier.path'),
-                'namespace' => 'Chargebee\CashierChargebee\Http\Controllers',
+                'namespace' => 'Chargebee\Cashier\Http\Controllers',
                 'as' => 'chargebee.',
             ], function () {
                 $this->loadRoutesFrom(__DIR__.'/../routes/web.php');

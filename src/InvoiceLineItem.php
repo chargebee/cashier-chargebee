@@ -1,6 +1,6 @@
 <?php
 
-namespace Chargebee\CashierChargebee;
+namespace Chargebee\Cashier;
 
 use Carbon\Carbon;
 use ChargeBee\ChargeBee\Models\InvoiceLineItem as ChargeBeeInvoiceLineItem;
@@ -13,7 +13,7 @@ class InvoiceLineItem implements Arrayable, Jsonable, JsonSerializable
     /**
      * The Cashier Invoice instance.
      *
-     * @var \Chargebee\CashierChargebee\Invoice
+     * @var \Chargebee\Cashier\Invoice
      */
     protected $invoice;
 
@@ -27,7 +27,7 @@ class InvoiceLineItem implements Arrayable, Jsonable, JsonSerializable
     /**
      * Create a new invoice line item instance.
      *
-     * @param  \Chargebee\CashierChargebee\Invoice  $invoice
+     * @param  \Chargebee\Cashier\Invoice  $invoice
      * @param  \ChargeBee\ChargeBee\Models\InvoiceLineItem  $item
      * @return void
      */
@@ -187,7 +187,7 @@ class InvoiceLineItem implements Arrayable, Jsonable, JsonSerializable
     /**
      * Get the Chargebee model instance.
      *
-     * @return \Chargebee\CashierChargebee\Invoice
+     * @return \Chargebee\Cashier\Invoice
      */
     public function invoice(): Invoice
     {

@@ -1,9 +1,9 @@
 <?php
 
-namespace Chargebee\CashierChargebee\Tests\Feature;
+namespace Chargebee\Cashier\Tests\Feature;
 
-use Chargebee\CashierChargebee\Exceptions\PaymentNotFound;
-use Chargebee\CashierChargebee\Payment;
+use Chargebee\Cashier\Exceptions\PaymentNotFound;
+use Chargebee\Cashier\Payment;
 use ChargeBee\ChargeBee\Models\PaymentIntent;
 
 class PaymentTest extends FeatureTestCase

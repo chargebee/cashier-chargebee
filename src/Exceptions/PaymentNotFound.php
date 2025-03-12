@@ -1,6 +1,6 @@
 <?php
 
-namespace Chargebee\CashierChargebee\Exceptions;
+namespace Chargebee\Cashier\Exceptions;
 
 use Exception;
 

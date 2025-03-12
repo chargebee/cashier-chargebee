@@ -1,8 +1,8 @@
 <?php
 
-namespace Chargebee\CashierChargebee\Tests\Fixtures;
+namespace Chargebee\Cashier\Tests\Fixtures;
 
-use Chargebee\CashierChargebee\Billable;
+use Chargebee\Cashier\Billable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
 

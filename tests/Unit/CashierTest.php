@@ -1,11 +1,11 @@
 <?php
 
-namespace Chargebee\CashierChargebee\Tests\Unit;
+namespace Chargebee\Cashier\Tests\Unit;
 
-use Chargebee\CashierChargebee\Cashier;
-use Chargebee\CashierChargebee\Subscription;
-use Chargebee\CashierChargebee\SubscriptionItem;
-use Chargebee\CashierChargebee\Tests\TestCase;
+use Chargebee\Cashier\Cashier;
+use Chargebee\Cashier\Subscription;
+use Chargebee\Cashier\SubscriptionItem;
+use Chargebee\Cashier\Tests\TestCase;
 use Money\Currencies\ISOCurrencies;
 use Money\Currency;
 use Money\Formatter\IntlMoneyFormatter;
