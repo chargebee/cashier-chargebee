@@ -75,7 +75,7 @@
 First, install the Cashier package for Chargebee using the Composer package manager:
 
 ```shell
-composer require chargebee/cashier-chargebee
+composer require chargebee/cashier
 ```
 
 After installing the package, publish Cashier's migrations using the `vendor:publish` Artisan command:
