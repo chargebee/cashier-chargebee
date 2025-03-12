@@ -1,6 +1,6 @@
 <?php
 
-namespace Laravel\CashierChargebee\Events;
+namespace Chargebee\CashierChargebee\Events;
 
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;

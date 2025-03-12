@@ -1,14 +1,14 @@
 <?php
 
-namespace Laravel\CashierChargebee\Tests\Unit;
+namespace Chargebee\CashierChargebee\Tests\Unit;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use InvalidArgumentException;
-use Laravel\CashierChargebee\Subscription;
-use Laravel\CashierChargebee\SubscriptionItem;
-use Laravel\CashierChargebee\Tests\Feature\FeatureTestCase;
-use Laravel\CashierChargebee\Tests\Fixtures\User;
+use Chargebee\CashierChargebee\Subscription;
+use Chargebee\CashierChargebee\SubscriptionItem;
+use Chargebee\CashierChargebee\Tests\Feature\FeatureTestCase;
+use Chargebee\CashierChargebee\Tests\Fixtures\User;
 
 class SubscriptionTest extends FeatureTestCase
 {

@@ -1,11 +1,11 @@
 <?php
 
-namespace Laravel\CashierChargebee\Tests\Unit;
+namespace Chargebee\CashierChargebee\Tests\Unit;
 
-use Laravel\CashierChargebee\Exceptions\CustomerAlreadyCreated;
-use Laravel\CashierChargebee\Exceptions\CustomerNotFound;
-use Laravel\CashierChargebee\Tests\Fixtures\User;
-use Laravel\CashierChargebee\Tests\TestCase;
+use Chargebee\CashierChargebee\Exceptions\CustomerAlreadyCreated;
+use Chargebee\CashierChargebee\Exceptions\CustomerNotFound;
+use Chargebee\CashierChargebee\Tests\Fixtures\User;
+use Chargebee\CashierChargebee\Tests\TestCase;
 
 class CustomerTest extends TestCase
 {

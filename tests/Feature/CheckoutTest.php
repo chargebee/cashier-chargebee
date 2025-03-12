@@ -1,10 +1,10 @@
 <?php
 
-namespace Laravel\CashierChargebee\Tests\Feature;
+namespace Chargebee\CashierChargebee\Tests\Feature;
 
 use ChargeBee\ChargeBee\Models\Coupon;
-use Laravel\CashierChargebee\Checkout;
-use Laravel\CashierChargebee\Session;
+use Chargebee\CashierChargebee\Checkout;
+use Chargebee\CashierChargebee\Session;
 
 class CheckoutTest extends FeatureTestCase
 {

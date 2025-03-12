@@ -1,8 +1,8 @@
 <?php
 
-namespace Laravel\CashierChargebee\Tests\Feature;
+namespace Chargebee\CashierChargebee\Tests\Feature;
 
-use Laravel\CashierChargebee\Tests\TestCase;
+use Chargebee\CashierChargebee\Tests\TestCase;
 
 class ExampleTest extends TestCase
 {

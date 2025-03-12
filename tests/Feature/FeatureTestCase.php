@@ -1,14 +1,14 @@
 <?php
 
-namespace Laravel\CashierChargebee\Tests\Feature;
+namespace Chargebee\CashierChargebee\Tests\Feature;
 
 use ChargeBee\ChargeBee\Models\Item;
 use ChargeBee\ChargeBee\Models\ItemFamily;
 use ChargeBee\ChargeBee\Models\ItemPrice;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Laravel\CashierChargebee\Cashier;
-use Laravel\CashierChargebee\Tests\Fixtures\User;
-use Laravel\CashierChargebee\Tests\TestCase;
+use Chargebee\CashierChargebee\Cashier;
+use Chargebee\CashierChargebee\Tests\Fixtures\User;
+use Chargebee\CashierChargebee\Tests\TestCase;
 use Orchestra\Testbench\Concerns\WithLaravelMigrations;
 
 abstract class FeatureTestCase extends TestCase

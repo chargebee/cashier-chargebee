@@ -1,6 +1,6 @@
 <?php
 
-namespace Laravel\CashierChargebee;
+namespace Chargebee\CashierChargebee;
 
 use ChargeBee\ChargeBee\Environment;
 use ChargeBee\ChargeBee\Models\Customer;

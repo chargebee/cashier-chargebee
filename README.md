@@ -75,7 +75,7 @@
 First, install the Cashier package for Chargebee using the Composer package manager:
 
 ```shell
-composer require laravel/cashier-chargebee
+composer require chargebee/cashier-chargebee
 ```
 
 After installing the package, publish Cashier's migrations using the `vendor:publish` Artisan command:
@@ -107,7 +107,7 @@ php artisan vendor:publish --tag="cashier-config"
 Before using Cashier, add the `Billable` trait to your billable model definition. Typically, this will be the `App\Models\User` model. This trait provides various methods to allow you to perform common billing tasks, such as creating subscriptions, applying coupons, and updating payment method information:
 
 ```php
-use Laravel\CashierChargebee\Billable;
+use Chargebee\CashierChargebee\Billable;
 
 class User extends Authenticatable
 {
@@ -119,7 +119,7 @@ Cashier assumes your billable model will be the `App\Models\User` class that shi
 
 ```php
 use App\Models\Cashier\User;
-use Laravel\CashierChargebee\Cashier;
+use Chargebee\CashierChargebee\Cashier;
 
 /**
  * Bootstrap any application services.
@@ -177,7 +177,7 @@ CASHIER_CURRENCY_LOCALE=nl_BE
 You are free to extend the models used internally by Cashier by defining your own model and extending the corresponding Cashier model:
 
 ```php
-use Laravel\CashierChargebee\Subscription as CashierSubscription;
+use Chargebee\CashierChargebee\Subscription as CashierSubscription;
 
 class Subscription extends CashierSubscription
 {
@@ -185,7 +185,7 @@ class Subscription extends CashierSubscription
 }
 ```
 
-After defining your model, you may instruct Cashier to use your custom model via the `Laravel\CashierChargebee\Cashier` class. Typically, you should inform Cashier about your custom models in the `boot` method of your application's `App\Providers\AppServiceProvider` class:
+After defining your model, you may instruct Cashier to use your custom model via the `Chargebee\CashierChargebee\Cashier` class. Typically, you should inform Cashier about your custom models in the `boot` method of your application's `App\Providers\AppServiceProvider` class:
 
 ```php
 use App\Models\Cashier\Subscription;
@@ -210,7 +210,7 @@ public function boot(): void
 You can retrieve a customer by their Chargebee ID using the `Cashier::findBillable` method. This method will return an instance of the billable model:
 
 ```php
-use Laravel\CashierChargebee\Cashier;
+use Chargebee\CashierChargebee\Cashier;
 
 $user = Cashier::findBillable($chargebeeId);
 ```
@@ -529,7 +529,7 @@ The `subscription_renewed` event occurs when a subscription is successfully rene
 If you need to modify the default behavior for these webhook events, or handle additional Chargebee events, you can provide your own listener. The listener class is configurable via the `cashier` configuration file:
 
 ```init
-'webhook_listener' => \Laravel\CashierChargebee\Listeners\HandleWebhookReceived::class,
+'webhook_listener' => \Chargebee\CashierChargebee\Listeners\HandleWebhookReceived::class,
 ```
 <a name="checkout"></a>
 ## Checkout
@@ -651,7 +651,7 @@ You can also specify success and cancellation URLs:
 Using the `Checkout::guest` method, you may initiate checkout sessions for guests of your application that do not have an "account":
 
     use Illuminate\Http\Request;
-    use Laravel\CashierChargebee\Checkout;
+    use Chargebee\CashierChargebee\Checkout;
 
     Route::get('/product-checkout', function (Request $request) {
         return Checkout::guest()->create('price_tshirt', [
@@ -660,10 +660,10 @@ Using the `Checkout::guest` method, you may initiate checkout sessions for guest
         ]);
     });
 
-Similarly to when creating checkout sessions for existing users, you may utilize additional methods available on the `Laravel\Cashier\CheckoutBuilder` instance to customize the guest checkout session:
+Similarly to when creating checkout sessions for existing users, you may utilize additional methods available on the `Chargebee\CashierChargebee\CheckoutBuilder` instance to customize the guest checkout session:
 
     use Illuminate\Http\Request;
-    use Laravel\CashierChargebee\Checkout;
+    use Chargebee\CashierChargebee\Checkout;
 
     Route::get('/product-checkout', function (Request $request) {
         return Checkout::guest()
@@ -1994,7 +1994,7 @@ $payment = $user->pay(5000, [
 
 For more details on the available options, refer to the [Chargebee Payment Intent API documentation](https://apidocs.chargebee.com/docs/api/payment_intents#create_a_payment_intent).
 
-The resulting payment intent is wrapped in a `Laravel\CashierChargebee\Payment` instance. It provides methods for retrieving related customer information and interacting with the Chargebee payment object.
+The resulting payment intent is wrapped in a `Chargebee\CashierChargebee\Payment` instance. It provides methods for retrieving related customer information and interacting with the Chargebee payment object.
 
 The `customer` method fetches the associated Billable model if one exists:
 
@@ -2072,7 +2072,7 @@ You can use the `validate` method to check if additional user action, such as 3D
 try {
     $payment->validate();
     // Proceed with payment handling
-} catch (\Laravel\CashierChargebee\Exceptions\IncompletePayment $exception) {
+} catch (\Chargebee\CashierChargebee\Exceptions\IncompletePayment $exception) {
     // Handle cases where additional action is required (e.g., 3D Secure)
 }
 ```
@@ -2089,7 +2089,7 @@ To find a payment intent, call the `findPayment` method with the payment ID:
 $payment = $user->findPayment('id_123456789');
 ```
 
-If the payment intent exists, it is returned as a `Laravel\CashierChargebee\Payment` instance. If the payment intent is not found, a `PaymentNotFound` exception is thrown.
+If the payment intent exists, it is returned as a `Chargebee\CashierChargebee\Payment` instance. If the payment intent is not found, a `PaymentNotFound` exception is thrown.
 
 <a name="charge-with-invoice"></a>
 ### Charge With Invoice
@@ -2125,7 +2125,7 @@ Alternatively, you may use the `tabFor` method to make a "one-off" charge agains
 <a name="retrieving-invoices"></a>
 ### Retrieving Invoices
 
-You may easily retrieve an array of a billable model's invoices using the `invoices` method. The `invoices` method returns a collection of `Laravel\Cashier\Invoice` instances:
+You may easily retrieve an array of a billable model's invoices using the `invoices` method. The `invoices` method returns a collection of `Chargebee\CashierChargebee\Invoice` instances:
 
     $invoices = $user->invoices();
 
@@ -2211,11 +2211,11 @@ The `downloadInvoice` method also allows for a custom filename via its third arg
 <a name="custom-invoice-render"></a>
 #### Custom Invoice Renderer
 
-Cashier also makes it possible to use a custom invoice renderer. By default, Cashier uses the `DompdfInvoiceRenderer` implementation, which utilizes the [dompdf](https://github.com/dompdf/dompdf) PHP library to generate Cashier's invoices. However, you may use any renderer you wish by implementing the `Laravel\Cashier\Contracts\InvoiceRenderer` interface. For example, you may wish to render an invoice PDF using an API call to a third-party PDF rendering service:
+Cashier also makes it possible to use a custom invoice renderer. By default, Cashier uses the `DompdfInvoiceRenderer` implementation, which utilizes the [dompdf](https://github.com/dompdf/dompdf) PHP library to generate Cashier's invoices. However, you may use any renderer you wish by implementing the `Chargebee\CashierChargebee\Contracts\InvoiceRenderer` interface. For example, you may wish to render an invoice PDF using an API call to a third-party PDF rendering service:
 
     use Illuminate\Support\Facades\Http;
-    use Laravel\Cashier\Contracts\InvoiceRenderer;
-    use Laravel\Cashier\Invoice;
+    use Chargebee\CashierChargebee\Contracts\InvoiceRenderer;
+    use Chargebee\CashierChargebee\Invoice;
 
     class ApiInvoiceRenderer implements InvoiceRenderer
     {

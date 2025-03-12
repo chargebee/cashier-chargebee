@@ -1,13 +1,13 @@
 <?php
 
-namespace Laravel\CashierChargebee\Listeners;
+namespace Chargebee\CashierChargebee\Listeners;
 
 use Carbon\Carbon;
 use ChargeBee\ChargeBee\Models\ItemPrice;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
-use Laravel\CashierChargebee\Cashier;
-use Laravel\CashierChargebee\Events\WebhookReceived;
+use Chargebee\CashierChargebee\Cashier;
+use Chargebee\CashierChargebee\Events\WebhookReceived;
 
 class HandleWebhookReceived
 {

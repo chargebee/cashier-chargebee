@@ -1,6 +1,6 @@
 <?php
 
-namespace Laravel\CashierChargebee;
+namespace Chargebee\CashierChargebee;
 
 use ChargeBee\ChargeBee\Models\Invoice as ChargeBeeInvoice;
 use Illuminate\Support\Arr;
@@ -10,7 +10,7 @@ class InvoiceBuilder
     /**
      * The model that is subscribing.
      *
-     * @var \Laravel\CashierChargebee\Billable|\Illuminate\Database\Eloquent\Model
+     * @var \Chargebee\CashierChargebee\Billable|\Illuminate\Database\Eloquent\Model
      */
     protected $owner;
 
@@ -37,7 +37,7 @@ class InvoiceBuilder
      * @param  string  $description
      * @param  int  $amount
      * @param  array  $tabOptions
-     * @return \Laravel\CashierChargebee\InvoiceBuilder
+     * @return \Chargebee\CashierChargebee\InvoiceBuilder
      */
     public function tabFor($description, $amount, array $tabOptions = []): static
     {
@@ -55,7 +55,7 @@ class InvoiceBuilder
      * @param  string  $price
      * @param  int  $quantity
      * @param  array  $tabOptions
-     * @return \Laravel\CashierChargebee\InvoiceBuilder
+     * @return \Chargebee\CashierChargebee\InvoiceBuilder
      */
     public function tabPrice($price, $quantity = 1, array $tabOptions = []): static
     {
@@ -71,7 +71,7 @@ class InvoiceBuilder
      * Invoice the customer outside of the regular billing cycle.
      *
      * @param  array  $options
-     * @return \Laravel\CashierChargebee\Invoice
+     * @return \Chargebee\CashierChargebee\Invoice
      */
     public function invoice(?array $options = []): Invoice
     {

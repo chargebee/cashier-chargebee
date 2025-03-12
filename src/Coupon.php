@@ -1,6 +1,6 @@
 <?php
 
-namespace Laravel\CashierChargebee;
+namespace Chargebee\CashierChargebee;
 
 use ChargeBee\ChargeBee\Models\Coupon as ChargeBeeCoupon;
 use Illuminate\Contracts\Support\Arrayable;

@@ -1,13 +1,13 @@
 <?php
 
-namespace Laravel\CashierChargebee;
+namespace Chargebee\CashierChargebee;
 
 use ChargeBee\ChargeBee\Models\PaymentIntent;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Database\Eloquent\Model;
 use JsonSerializable;
-use Laravel\CashierChargebee\Exceptions\IncompletePayment;
+use Chargebee\CashierChargebee\Exceptions\IncompletePayment;
 
 class Payment implements Arrayable, Jsonable, JsonSerializable
 {
@@ -112,7 +112,7 @@ class Payment implements Arrayable, Jsonable, JsonSerializable
     /**
      * Validate if the payment intent was successful and throw an exception if not.
      *
-     * @throws \Laravel\CashierChargebee\Exceptions\IncompletePayment
+     * @throws \Chargebee\CashierChargebee\Exceptions\IncompletePayment
      */
     public function validate(): void
     {

@@ -1,9 +1,9 @@
 <?php
 
-namespace Laravel\CashierChargebee\Exceptions;
+namespace Chargebee\CashierChargebee\Exceptions;
 
 use Exception;
-use Laravel\CashierChargebee\Subscription;
+use Chargebee\CashierChargebee\Subscription;
 
 final class SubscriptionUpdateFailure extends Exception
 {

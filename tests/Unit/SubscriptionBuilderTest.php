@@ -1,12 +1,12 @@
 <?php
 
-namespace Laravel\CashierChargebee\Tests\Unit;
+namespace Chargebee\CashierChargebee\Tests\Unit;
 
 use Carbon\Carbon;
 use Exception;
-use Laravel\CashierChargebee\SubscriptionBuilder;
-use Laravel\CashierChargebee\Tests\Fixtures\User;
-use Laravel\CashierChargebee\Tests\TestCase;
+use Chargebee\CashierChargebee\SubscriptionBuilder;
+use Chargebee\CashierChargebee\Tests\Fixtures\User;
+use Chargebee\CashierChargebee\Tests\TestCase;
 
 class SubscriptionBuilderTest extends TestCase
 {

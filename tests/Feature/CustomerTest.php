@@ -1,13 +1,13 @@
 <?php
 
-namespace Laravel\CashierChargebee\Tests\Feature;
+namespace Chargebee\CashierChargebee\Tests\Feature;
 
 use ChargeBee\ChargeBee\Models\PromotionalCredit;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
-use Laravel\CashierChargebee\Cashier;
-use Laravel\CashierChargebee\Tests\Fixtures\User;
+use Chargebee\CashierChargebee\Cashier;
+use Chargebee\CashierChargebee\Tests\Fixtures\User;
 
 class CustomerTest extends FeatureTestCase
 {

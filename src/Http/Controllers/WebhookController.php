@@ -1,11 +1,11 @@
 <?php
 
-namespace Laravel\CashierChargebee\Http\Controllers;
+namespace Chargebee\CashierChargebee\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Log;
-use Laravel\CashierChargebee\Events\WebhookReceived;
+use Chargebee\CashierChargebee\Events\WebhookReceived;
 use Symfony\Component\HttpFoundation\Response;
 
 class WebhookController extends Controller

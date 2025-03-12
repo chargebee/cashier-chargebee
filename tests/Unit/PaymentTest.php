@@ -1,11 +1,11 @@
 <?php
 
-namespace Laravel\CashierChargebee\Tests\Unit;
+namespace Chargebee\CashierChargebee\Tests\Unit;
 
 use ChargeBee\ChargeBee\Models\PaymentIntent;
-use Laravel\CashierChargebee\Exceptions\IncompletePayment;
-use Laravel\CashierChargebee\Payment;
-use Laravel\CashierChargebee\Tests\TestCase;
+use Chargebee\CashierChargebee\Exceptions\IncompletePayment;
+use Chargebee\CashierChargebee\Payment;
+use Chargebee\CashierChargebee\Tests\TestCase;
 
 class PaymentTest extends TestCase
 {

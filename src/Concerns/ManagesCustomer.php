@@ -1,6 +1,6 @@
 <?php
 
-namespace Laravel\CashierChargebee\Concerns;
+namespace Chargebee\CashierChargebee\Concerns;
 
 use ChargeBee\ChargeBee\Exceptions\InvalidRequestException;
 use ChargeBee\ChargeBee\Models\Customer;
@@ -9,10 +9,10 @@ use ChargeBee\ChargeBee\Models\PromotionalCredit;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Schema;
-use Laravel\CashierChargebee\Cashier;
-use Laravel\CashierChargebee\CustomerBalanceTransaction;
-use Laravel\CashierChargebee\Exceptions\CustomerAlreadyCreated;
-use Laravel\CashierChargebee\Exceptions\CustomerNotFound;
+use Chargebee\CashierChargebee\Cashier;
+use Chargebee\CashierChargebee\CustomerBalanceTransaction;
+use Chargebee\CashierChargebee\Exceptions\CustomerAlreadyCreated;
+use Chargebee\CashierChargebee\Exceptions\CustomerNotFound;
 
 trait ManagesCustomer
 {
@@ -35,7 +35,7 @@ trait ManagesCustomer
     /**
      * Determine if the customer has a Chargebee customer ID and throw an exception if not.
      *
-     * @throws \Laravel\CashierChargebee\Exceptions\CustomerNotFound
+     * @throws \Chargebee\CashierChargebee\Exceptions\CustomerNotFound
      */
     protected function assertCustomerExists()
     {
@@ -47,7 +47,7 @@ trait ManagesCustomer
     /**
      * Create a Chargebee customer for the given model.
      *
-     * @throws \Laravel\CashierChargebee\Exceptions\CustomerAlreadyCreated
+     * @throws \Chargebee\CashierChargebee\Exceptions\CustomerAlreadyCreated
      */
     public function createAsChargebeeCustomer(array $options = []): Customer
     {

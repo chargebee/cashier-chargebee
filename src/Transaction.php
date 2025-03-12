@@ -1,6 +1,6 @@
 <?php
 
-namespace Laravel\CashierChargebee;
+namespace Chargebee\CashierChargebee;
 
 use ChargeBee\ChargeBee\Models\Transaction as ChargebeeTransaction;
 use Illuminate\Contracts\Support\Arrayable;

@@ -1,5 +1,5 @@
 providers:
-  - Laravel\CashierChargebee\CashierServiceProvider
+  - Chargebee\CashierChargebee\CashierServiceProvider
 
 migrations:
   - database/migrations

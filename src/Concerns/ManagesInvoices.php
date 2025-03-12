@@ -1,6 +1,6 @@
 <?php
 
-namespace Laravel\CashierChargebee\Concerns;
+namespace Chargebee\CashierChargebee\Concerns;
 
 use ChargeBee\ChargeBee\Exceptions\InvalidRequestException;
 use ChargeBee\ChargeBee\Models\Estimate as ChargeBeeEstimate;
@@ -10,11 +10,11 @@ use Illuminate\Pagination\CursorPaginator;
 use Illuminate\Pagination\Paginator as IlluminatePaginator;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
-use Laravel\CashierChargebee\Estimate;
-use Laravel\CashierChargebee\Exceptions\InvalidInvoice;
-use Laravel\CashierChargebee\Invoice;
-use Laravel\CashierChargebee\InvoiceBuilder;
-use Laravel\CashierChargebee\Paginator;
+use Chargebee\CashierChargebee\Estimate;
+use Chargebee\CashierChargebee\Exceptions\InvalidInvoice;
+use Chargebee\CashierChargebee\Invoice;
+use Chargebee\CashierChargebee\InvoiceBuilder;
+use Chargebee\CashierChargebee\Paginator;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -34,9 +34,9 @@ trait ManagesInvoices
      * @param  int  $quantity
      * @param  array  $tabOptions
      * @param  array  $invoiceOptions
-     * @return \Laravel\CashierChargebee\Invoice
+     * @return \Chargebee\CashierChargebee\Invoice
      *
-     * @throws \Laravel\CashierChargebee\Exceptions\IncompletePayment
+     * @throws \Chargebee\CashierChargebee\Exceptions\IncompletePayment
      */
     public function invoicePrice($price, $quantity = 1, array $tabOptions = [], array $invoiceOptions = [])
     {
@@ -52,9 +52,9 @@ trait ManagesInvoices
      * @param  int  $amount
      * @param  array  $tabOptions
      * @param  array  $invoiceOptions
-     * @return \Laravel\CashierChargebee\Invoice
+     * @return \Chargebee\CashierChargebee\Invoice
      *
-     * @throws \Laravel\CashierChargebee\Exceptions\IncompletePayment
+     * @throws \Chargebee\CashierChargebee\Exceptions\IncompletePayment
      */
     public function invoiceFor($description, $amount, array $tabOptions = [], array $invoiceOptions = [])
     {
@@ -67,7 +67,7 @@ trait ManagesInvoices
      * Get the customer's upcoming invoice.
      *
      * @param  array  $options
-     * @return \Laravel\CashierChargebee\Estimate|null
+     * @return \Chargebee\CashierChargebee\Estimate|null
      */
     public function upcomingInvoice(array $options = []): Estimate|null
     {
@@ -97,7 +97,7 @@ trait ManagesInvoices
      * Find an invoice by ID.
      *
      * @param  string  $id
-     * @return \Laravel\CashierChargebee\Invoice|null
+     * @return \Chargebee\CashierChargebee\Invoice|null
      */
     public function findInvoice($id)
     {
@@ -116,7 +116,7 @@ trait ManagesInvoices
      * Find an invoice or throw a 404 or 403 error.
      *
      * @param  string  $id
-     * @return \Laravel\CashierChargebee\Invoice
+     * @return \Chargebee\CashierChargebee\Invoice
      *
      * @throws \Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException
      * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
@@ -156,7 +156,7 @@ trait ManagesInvoices
      *
      * @param  bool  $includePending
      * @param  array  $parameters
-     * @return \Illuminate\Support\Collection|\Laravel\CashierChargebee\Invoice[]
+     * @return \Illuminate\Support\Collection|\Chargebee\CashierChargebee\Invoice[]
      */
     public function invoices($includePending = false, $parameters = [])
     {
@@ -192,7 +192,7 @@ trait ManagesInvoices
      * Get an array of the customer's invoices, including pending invoices.
      *
      * @param  array  $parameters
-     * @return \Illuminate\Support\Collection|\Laravel\CashierChargebee\Invoice[]
+     * @return \Illuminate\Support\Collection|\Chargebee\CashierChargebee\Invoice[]
      */
     public function invoicesIncludingPending(array $parameters = [])
     {
@@ -206,7 +206,7 @@ trait ManagesInvoices
      * @param  array  $parameters
      * @param  string  $cursorName
      * @param  \Illuminate\Pagination\Cursor|string|null  $cursor
-     * @return \Laravel\CashierChargebee\Paginator
+     * @return \Chargebee\CashierChargebee\Paginator
      */
     public function cursorPaginateInvoices($perPage = 24, array $parameters = [], $cursorName = 'cursor', $cursor = null)
     {

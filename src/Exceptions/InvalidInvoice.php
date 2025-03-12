@@ -1,6 +1,6 @@
 <?php
 
-namespace Laravel\CashierChargebee\Exceptions;
+namespace Chargebee\CashierChargebee\Exceptions;
 
 use ChargeBee\ChargeBee\Models\Invoice as ChargeBeeInvoice;
 use Exception;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Laravel\CashierChargebee;
+namespace Chargebee\CashierChargebee;
 
 use Carbon\Carbon;
 use Carbon\CarbonInterface;
@@ -13,9 +13,9 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Traits\Conditionable;
 use InvalidArgumentException;
-use Laravel\CashierChargebee\Concerns\AllowsCoupons;
-use Laravel\CashierChargebee\Concerns\HandlesTaxes;
-use Laravel\CashierChargebee\Concerns\Prorates;
+use Chargebee\CashierChargebee\Concerns\AllowsCoupons;
+use Chargebee\CashierChargebee\Concerns\HandlesTaxes;
+use Chargebee\CashierChargebee\Concerns\Prorates;
 
 class SubscriptionBuilder
 {
@@ -27,7 +27,7 @@ class SubscriptionBuilder
     /**
      * The model that is subscribing.
      *
-     * @var \Laravel\CashierChargebee\Billable|\Illuminate\Database\Eloquent\Model
+     * @var \Chargebee\CashierChargebee\Billable|\Illuminate\Database\Eloquent\Model
      */
     protected $owner;
 
@@ -296,7 +296,7 @@ class SubscriptionBuilder
      *
      * @param  array  $sessionOptions
      * @param  array  $customerOptions
-     * @return \Laravel\CashierChargebee\Checkout
+     * @return \Chargebee\CashierChargebee\Checkout
      */
     public function checkout(array $sessionOptions = [], array $customerOptions = []): Checkout
     {

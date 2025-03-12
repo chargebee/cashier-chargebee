@@ -1,8 +1,8 @@
 <?php
 
-namespace Laravel\CashierChargebee\Concerns;
+namespace Chargebee\CashierChargebee\Concerns;
 
-use Laravel\CashierChargebee\Cashier;
+use Chargebee\CashierChargebee\Cashier;
 
 trait HandlesTaxes
 {

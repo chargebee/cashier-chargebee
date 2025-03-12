@@ -1,10 +1,10 @@
 <?php
 
-namespace Laravel\CashierChargebee\Tests\Feature;
+namespace Chargebee\CashierChargebee\Tests\Feature;
 
 use ChargeBee\ChargeBee\Models\PaymentSource;
-use Laravel\CashierChargebee\Payment;
-use Laravel\CashierChargebee\Tests\Fixtures\User;
+use Chargebee\CashierChargebee\Payment;
+use Chargebee\CashierChargebee\Tests\Fixtures\User;
 
 class ChargesTest extends FeatureTestCase
 {

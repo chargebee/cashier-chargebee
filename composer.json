@@ -1,18 +1,18 @@
 {
-    "name": "laravel/cashier-chargebee",
+    "name": "chargebee/cashier-chargebee",
     "description": "Laravel Cashier for Chargebee provides an expressive, fluent interface to Chargebee's subscription billing services.",
     "type": "library",
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "Laravel\\CashierChargebee\\": "src/",
-            "Laravel\\CashierChargebee\\Database\\Factories\\": "database/factories/"
+            "Chargebee\\CashierChargebee\\": "src/",
+            "Chargebee\\CashierChargebee\\Database\\Factories\\": "database/factories/"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "Laravel\\CashierChargebee\\CashierServiceProvider"
+                "Chargebee\\CashierChargebee\\CashierServiceProvider"
             ]
         }
     },
@@ -48,8 +48,8 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Laravel\\CashierChargebee\\Tests\\": "tests/",
-            "Laravel\\CashierChargebee\\Tests\\Fixtures\\": "tests/Fixtures/"
+            "Chargebee\\CashierChargebee\\Tests\\": "tests/",
+            "Chargebee\\CashierChargebee\\Tests\\Fixtures\\": "tests/Fixtures/"
         }
     },
     "minimum-stability": "dev",

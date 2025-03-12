@@ -1,14 +1,14 @@
 <?php
 
-namespace Laravel\CashierChargebee\Tests\Feature;
+namespace Chargebee\CashierChargebee\Tests\Feature;
 
 use ChargeBee\ChargeBee\Models\Coupon;
 use ChargeBee\ChargeBee\Models\Customer;
 use ChargeBee\ChargeBee\Models\PaymentSource;
-use Laravel\CashierChargebee\Exceptions\CustomerNotFound;
-use Laravel\CashierChargebee\Exceptions\InvalidInvoice;
-use Laravel\CashierChargebee\Invoice;
-use Laravel\CashierChargebee\Tests\Fixtures\User;
+use Chargebee\CashierChargebee\Exceptions\CustomerNotFound;
+use Chargebee\CashierChargebee\Exceptions\InvalidInvoice;
+use Chargebee\CashierChargebee\Invoice;
+use Chargebee\CashierChargebee\Tests\Fixtures\User;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 

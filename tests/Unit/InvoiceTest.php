@@ -1,16 +1,16 @@
 <?php
 
-namespace Laravel\CashierChargebee\Tests\Unit;
+namespace Chargebee\CashierChargebee\Tests\Unit;
 
 use Carbon\Carbon;
 use Carbon\CarbonTimeZone;
 use ChargeBee\ChargeBee\Models\Discount as ChargeBeeDiscount;
 use ChargeBee\ChargeBee\Models\Invoice as ChargeBeeInvoice;
 use ChargeBee\ChargeBee\Models\InvoiceLineItemTax;
-use Laravel\CashierChargebee\Discount;
-use Laravel\CashierChargebee\Invoice;
-use Laravel\CashierChargebee\Tests\Fixtures\User;
-use Laravel\CashierChargebee\Tests\TestCase;
+use Chargebee\CashierChargebee\Discount;
+use Chargebee\CashierChargebee\Invoice;
+use Chargebee\CashierChargebee\Tests\Fixtures\User;
+use Chargebee\CashierChargebee\Tests\TestCase;
 use Mockery as m;
 
 class InvoiceTest extends TestCase
