@@ -1,15 +1,15 @@
 <?php
 
-namespace Laravel\CashierChargebee\Concerns;
+namespace Chargebee\Cashier\Concerns;
 
+use Chargebee\Cashier\Exceptions\CustomerNotFound;
+use Chargebee\Cashier\Exceptions\InvalidPaymentMethod;
+use Chargebee\Cashier\PaymentMethod;
 use ChargeBee\ChargeBee\Exceptions\InvalidRequestException;
 use ChargeBee\ChargeBee\Models\Customer;
 use ChargeBee\ChargeBee\Models\PaymentIntent;
 use ChargeBee\ChargeBee\Models\PaymentSource;
 use Illuminate\Support\Collection;
-use Laravel\CashierChargebee\Exceptions\CustomerNotFound;
-use Laravel\CashierChargebee\Exceptions\InvalidPaymentMethod;
-use Laravel\CashierChargebee\PaymentMethod;
 
 trait ManagesPaymentMethods
 {

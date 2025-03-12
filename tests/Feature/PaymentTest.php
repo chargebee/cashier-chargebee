@@ -1,10 +1,10 @@
 <?php
 
-namespace Laravel\CashierChargebee\Tests\Feature;
+namespace Chargebee\Cashier\Tests\Feature;
 
+use Chargebee\Cashier\Exceptions\PaymentNotFound;
+use Chargebee\Cashier\Payment;
 use ChargeBee\ChargeBee\Models\PaymentIntent;
-use Laravel\CashierChargebee\Exceptions\PaymentNotFound;
-use Laravel\CashierChargebee\Payment;
 
 class PaymentTest extends FeatureTestCase
 {

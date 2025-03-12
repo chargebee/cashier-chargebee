@@ -1,6 +1,6 @@
 <?php
 
-namespace Laravel\CashierChargebee\Tests\Fixtures;
+namespace Chargebee\Cashier\Tests\Fixtures;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;

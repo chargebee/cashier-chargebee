@@ -1,11 +1,11 @@
 <?php
 
-namespace Laravel\CashierChargebee\Tests\Feature;
+namespace Chargebee\Cashier\Tests\Feature;
 
 use Carbon\Carbon;
-use Laravel\CashierChargebee\Subscription;
-use Laravel\CashierChargebee\SubscriptionItem;
-use Laravel\CashierChargebee\Tests\Fixtures\User;
+use Chargebee\Cashier\Subscription;
+use Chargebee\Cashier\SubscriptionItem;
+use Chargebee\Cashier\Tests\Fixtures\User;
 
 class ManagesSubscriptionsTest extends FeatureTestCase
 {

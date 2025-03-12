@@ -1,6 +1,6 @@
 <?php
 
-namespace Laravel\CashierChargebee;
+namespace Chargebee\Cashier;
 
 use Carbon\Carbon;
 use ChargeBee\ChargeBee\Models\Coupon as ChargeBeeCoupon;
@@ -38,7 +38,7 @@ class Discount implements Arrayable, Jsonable, JsonSerializable
     /**
      * Get the coupon applied to the discount.
      *
-     * @return \Laravel\CashierChargebee\Coupon|null
+     * @return \Chargebee\Cashier\Coupon|null
      */
     public function coupon(): Coupon|null
     {

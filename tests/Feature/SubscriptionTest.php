@@ -1,8 +1,13 @@
 <?php
 
-namespace Laravel\CashierChargebee\Tests\Feature;
+namespace Chargebee\Cashier\Tests\Feature;
 
 use Carbon\Carbon;
+use Chargebee\Cashier\Estimate;
+use Chargebee\Cashier\Exceptions\SubscriptionUpdateFailure;
+use Chargebee\Cashier\Subscription;
+use Chargebee\Cashier\SubscriptionBuilder;
+use Chargebee\Cashier\Transaction;
 use ChargeBee\ChargeBee\Exceptions\InvalidRequestException;
 use ChargeBee\ChargeBee\Models\Coupon;
 use ChargeBee\ChargeBee\Models\Invoice;
@@ -17,11 +22,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
-use Laravel\CashierChargebee\Estimate;
-use Laravel\CashierChargebee\Exceptions\SubscriptionUpdateFailure;
-use Laravel\CashierChargebee\Subscription;
-use Laravel\CashierChargebee\SubscriptionBuilder;
-use Laravel\CashierChargebee\Transaction;
 
 class SubscriptionTest extends FeatureTestCase
 {

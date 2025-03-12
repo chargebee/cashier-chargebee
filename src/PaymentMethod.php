@@ -1,10 +1,10 @@
 <?php
 
-namespace Laravel\CashierChargebee;
+namespace Chargebee\Cashier;
 
+use Chargebee\Cashier\Exceptions\InvalidPaymentMethod;
 use ChargeBee\ChargeBee\Models\PaymentSource;
 use Illuminate\Database\Eloquent\Model;
-use Laravel\CashierChargebee\Exceptions\InvalidPaymentMethod;
 use LogicException;
 
 class PaymentMethod

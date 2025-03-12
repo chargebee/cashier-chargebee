@@ -1,12 +1,12 @@
 <?php
 
-namespace Laravel\CashierChargebee\Tests\Fixtures;
+namespace Chargebee\Cashier\Tests\Fixtures;
 
+use Chargebee\Cashier\Billable;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Model;
 use Illuminate\Notifications\Notifiable;
-use Laravel\CashierChargebee\Billable;
 
 class User extends Model
 {

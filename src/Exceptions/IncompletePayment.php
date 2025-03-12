@@ -1,9 +1,9 @@
 <?php
 
-namespace Laravel\CashierChargebee\Exceptions;
+namespace Chargebee\Cashier\Exceptions;
 
+use Chargebee\Cashier\Payment;
 use Exception;
-use Laravel\CashierChargebee\Payment;
 use Throwable;
 
 final class IncompletePayment extends Exception

@@ -1,9 +1,13 @@
 <?php
 
-namespace Laravel\CashierChargebee;
+namespace Chargebee\Cashier;
 
 use Carbon\Carbon;
 use Carbon\CarbonInterface;
+use Chargebee\Cashier\Concerns\AllowsCoupons;
+use Chargebee\Cashier\Concerns\Prorates;
+use Chargebee\Cashier\Database\Factories\SubscriptionFactory;
+use Chargebee\Cashier\Exceptions\SubscriptionUpdateFailure;
 use ChargeBee\ChargeBee\Models\Estimate as ChargeBeeEstimate;
 use ChargeBee\ChargeBee\Models\ItemPrice;
 use ChargeBee\ChargeBee\Models\Subscription as ChargebeeSubscription;
@@ -18,10 +22,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
 use InvalidArgumentException;
-use Laravel\CashierChargebee\Concerns\AllowsCoupons;
-use Laravel\CashierChargebee\Concerns\Prorates;
-use Laravel\CashierChargebee\Database\Factories\SubscriptionFactory;
-use Laravel\CashierChargebee\Exceptions\SubscriptionUpdateFailure;
 use LogicException;
 
 class Subscription extends Model
@@ -612,7 +612,7 @@ class Subscription extends Model
     /**
      * Add a new Chargebee price to the subscription.
      *
-     * @throws \Laravel\CashierChargebee\Exceptions\SubscriptionUpdateFailure
+     * @throws \Chargebee\Cashier\Exceptions\SubscriptionUpdateFailure
      */
     public function addPrice(string $price, ?int $quantity = 1, array $options = []): self
     {
@@ -648,7 +648,7 @@ class Subscription extends Model
     /**
      * Add a new Chargebee price to the subscription, and invoice immediately.
      *
-     * @throws \Laravel\CashierChargebee\Exceptions\SubscriptionUpdateFailure
+     * @throws \Chargebee\Cashier\Exceptions\SubscriptionUpdateFailure
      */
     public function addPriceAndInvoice(string $price, ?int $quantity = 1, array $options = []): self
     {
@@ -660,7 +660,7 @@ class Subscription extends Model
     /**
      * Add a new Chargebee metered price to the subscription.
      *
-     * @throws \Laravel\CashierChargebee\Exceptions\SubscriptionUpdateFailure
+     * @throws \Chargebee\Cashier\Exceptions\SubscriptionUpdateFailure
      */
     public function addMeteredPrice(string $price, array $options = []): self
     {
@@ -670,7 +670,7 @@ class Subscription extends Model
     /**
      * Add a new Chargebee metered price to the subscription, and invoice immediately.
      *
-     * @throws \Laravel\CashierChargebee\Exceptions\SubscriptionUpdateFailure
+     * @throws \Chargebee\Cashier\Exceptions\SubscriptionUpdateFailure
      */
     public function addMeteredPriceAndInvoice(string $price, array $options = []): self
     {
@@ -682,7 +682,7 @@ class Subscription extends Model
     /**
      * Remove a Chargebee price from the subscription.
      *
-     * @throws \Laravel\CashierChargebee\Exceptions\SubscriptionUpdateFailure
+     * @throws \Chargebee\Cashier\Exceptions\SubscriptionUpdateFailure
      */
     public function removePrice(string $price): self
     {
@@ -835,7 +835,7 @@ class Subscription extends Model
     /**
      * Get the latest invoice for the subscription.
      *
-     * @return \Laravel\CashierChargebee\Invoice|null
+     * @return \Chargebee\Cashier\Invoice|null
      */
     public function latestInvoice(): Invoice|null
     {
@@ -856,7 +856,7 @@ class Subscription extends Model
      * Fetches upcoming invoice for this subscription.
      *
      * @param  array  $options
-     * @return \Laravel\CashierChargebee\Estimate|null
+     * @return \Chargebee\Cashier\Estimate|null
      */
     public function upcomingInvoice(array $options = []): Estimate|null
     {
@@ -874,7 +874,7 @@ class Subscription extends Model
      *
      * @param  string|array  $prices
      * @param  array  $options
-     * @return \Laravel\CashierChargebee\Estimate|null
+     * @return \Chargebee\Cashier\Estimate|null
      */
     public function previewInvoice($prices, array $options = []): Estimate
     {
@@ -896,7 +896,7 @@ class Subscription extends Model
      *
      * @param  bool  $includePending
      * @param  array  $parameters
-     * @return \Illuminate\Support\Collection|\Laravel\CashierChargebee\Invoice[]
+     * @return \Illuminate\Support\Collection|\Chargebee\Cashier\Invoice[]
      */
     public function invoices($includePending = false, $parameters = []): Collection
     {
@@ -910,7 +910,7 @@ class Subscription extends Model
      * Get an array of the subscription's invoices, including pending invoices.
      *
      * @param  array  $parameters
-     * @return \Illuminate\Support\Collection|\Laravel\CashierChargebee\Invoice[]
+     * @return \Illuminate\Support\Collection|\Chargebee\Cashier\Invoice[]
      */
     public function invoicesIncludingPending(array $parameters = []): array|Collection
     {
@@ -920,7 +920,7 @@ class Subscription extends Model
     /**
      * Get the latest transaction for a Subscription.
      *
-     * @return \Laravel\CashierChargebee\Transaction|null
+     * @return \Chargebee\Cashier\Transaction|null
      */
     public function latestPayment(): Transaction|null
     {

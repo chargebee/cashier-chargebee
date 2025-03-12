@@ -1,16 +1,16 @@
 <?php
 
-namespace Laravel\CashierChargebee\Tests\Feature;
+namespace Chargebee\Cashier\Tests\Feature;
 
+use Chargebee\Cashier\Exceptions\InvalidPaymentMethod;
+use Chargebee\Cashier\PaymentMethod;
+use Chargebee\Cashier\Tests\Fixtures\User;
 use ChargeBee\ChargeBee\Exceptions\InvalidRequestException;
 use ChargeBee\ChargeBee\Models\PaymentIntent;
 use ChargeBee\ChargeBee\Models\PaymentSource;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
-use Laravel\CashierChargebee\Exceptions\InvalidPaymentMethod;
-use Laravel\CashierChargebee\PaymentMethod;
-use Laravel\CashierChargebee\Tests\Fixtures\User;
 use LogicException;
 
 class CustomerPaymentMethodsTest extends FeatureTestCase

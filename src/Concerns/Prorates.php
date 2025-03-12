@@ -1,6 +1,6 @@
 <?php
 
-namespace Laravel\CashierChargebee\Concerns;
+namespace Chargebee\Cashier\Concerns;
 
 trait Prorates
 {

@@ -1,14 +1,14 @@
 <?php
 
-namespace Laravel\CashierChargebee\Tests\Feature;
+namespace Chargebee\Cashier\Tests\Feature;
 
+use Chargebee\Cashier\Events\WebhookReceived;
+use Chargebee\Cashier\Subscription;
+use Chargebee\Cashier\Tests\Fixtures\User;
 use ChargeBee\ChargeBee\Models\PaymentSource;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Log;
-use Laravel\CashierChargebee\Events\WebhookReceived;
-use Laravel\CashierChargebee\Subscription;
-use Laravel\CashierChargebee\Tests\Fixtures\User;
 use Symfony\Component\HttpFoundation\Response;
 
 /**

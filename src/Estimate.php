@@ -1,13 +1,13 @@
 <?php
 
-namespace Laravel\CashierChargebee;
+namespace Chargebee\Cashier;
 
+use Chargebee\Cashier\Exceptions\InvalidEstimate;
 use ChargeBee\ChargeBee\Models\InvoiceEstimate as ChargeBeeEstimate;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Database\Eloquent\Model;
 use JsonSerializable;
-use Laravel\CashierChargebee\Exceptions\InvalidEstimate;
 
 class Estimate implements Arrayable, Jsonable, JsonSerializable
 {
@@ -32,7 +32,7 @@ class Estimate implements Arrayable, Jsonable, JsonSerializable
      * @param  \ChargeBee\ChargeBee\Models\InvoiceEstimate  $estimate
      * @return void
      *
-     * @throws \Laravel\CashierChargebee\Exceptions\InvalidInvoice
+     * @throws \Chargebee\Cashier\Exceptions\InvalidInvoice
      */
     public function __construct($owner, ChargeBeeEstimate $estimate)
     {
