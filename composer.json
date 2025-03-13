@@ -2,6 +2,13 @@
     "name": "chargebee/cashier",
     "description": "Laravel Cashier for Chargebee provides an expressive, fluent interface to Chargebee's subscription billing services.",
     "type": "library",
+    "keywords": [
+        "laravel",
+        "chargebee",
+        "billing",
+        "subscriptions",
+        "recurring"
+    ],
     "license": "MIT",
     "autoload": {
         "psr-4": {
@@ -18,16 +25,8 @@
     },
     "authors": [
         {
-            "name": "Padraig Nolan",
-            "email": "padraig@threadable.io"
-        },
-        {
-            "name": "Anna Karykowska",
-            "email": "anna@threadable.io"
-        },
-        {
-            "name": "Tomasz Mroziński",
-            "email": "tomasz@threadable.io"
+            "name": "Chargebee",
+            "email": "dx@chargebee.com"
         }
     ],
     "require": {
@@ -53,12 +52,5 @@
         }
     },
     "minimum-stability": "dev",
-    "prefer-stable": true,
-    "repositories": {
-        "packagist.org": false,
-        "private-packagist": {
-            "type": "composer",
-            "url": "https://repo.packagist.com/c4cb/"
-        }
-    }
+    "prefer-stable": true
 }
