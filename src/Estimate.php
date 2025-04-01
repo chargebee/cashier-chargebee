@@ -3,7 +3,7 @@
 namespace Chargebee\Cashier;
 
 use Chargebee\Cashier\Exceptions\InvalidEstimate;
-use ChargeBee\ChargeBee\Models\InvoiceEstimate as ChargeBeeEstimate;
+use Chargebee\Resources\InvoiceEstimate\InvoiceEstimate as ChargeBeeEstimate;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Database\Eloquent\Model;
@@ -29,14 +29,14 @@ class Estimate implements Arrayable, Jsonable, JsonSerializable
      * Create a new estimate instance.
      *
      * @param  \Illuminate\Database\Eloquent\Model  $owner
-     * @param  \ChargeBee\ChargeBee\Models\InvoiceEstimate  $estimate
+     * @param  \Chargebee\Resources\InvoiceEstimate\InvoiceEstimate $estimate
      * @return void
      *
      * @throws \Chargebee\Cashier\Exceptions\InvalidInvoice
      */
     public function __construct($owner, ChargeBeeEstimate $estimate)
     {
-        if ($owner->chargebee_id !== $estimate->customerId) {
+        if ($owner->chargebee_id !== $estimate->customer_id) {
             throw InvalidEstimate::invalidOwner($estimate, $owner);
         }
 
@@ -57,7 +57,7 @@ class Estimate implements Arrayable, Jsonable, JsonSerializable
     /**
      * Get the Chargebee estimate instance.
      *
-     * @return \ChargeBee\ChargeBee\Models\InvoiceEstimate
+     * @return \Chargebee\Resources\InvoiceEstimate\InvoiceEstimate
      */
     public function asChargebeeEstimate()
     {
@@ -71,7 +71,7 @@ class Estimate implements Arrayable, Jsonable, JsonSerializable
      */
     public function toArray(): mixed
     {
-        return $this->asChargebeeEstimate()->getValues();
+        return $this->asChargebeeEstimate()->toArray();
     }
 
     /**

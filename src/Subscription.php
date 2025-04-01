@@ -8,11 +8,8 @@ use Chargebee\Cashier\Concerns\AllowsCoupons;
 use Chargebee\Cashier\Concerns\Prorates;
 use Chargebee\Cashier\Database\Factories\SubscriptionFactory;
 use Chargebee\Cashier\Exceptions\SubscriptionUpdateFailure;
-use ChargeBee\ChargeBee\Models\Estimate as ChargeBeeEstimate;
-use ChargeBee\ChargeBee\Models\ItemPrice;
-use ChargeBee\ChargeBee\Models\Subscription as ChargebeeSubscription;
-use ChargeBee\ChargeBee\Models\Transaction as ChargebeeTransaction;
-use ChargeBee\ChargeBee\Models\Usage;
+use Chargebee\Resources\Subscription\Subscription as ChargebeeSubscription;
+use Chargebee\Resources\Usage\Usage;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -172,7 +169,7 @@ class Subscription extends Model
     {
         $subscription = $this->asChargebeeSubscription();
 
-        $this->chargebee_status = $subscription->status;
+        $this->chargebee_status = $subscription->status->value;
 
         $this->save();
     }
@@ -352,17 +349,17 @@ class Subscription extends Model
         $chargebeeSubscription = $this->asChargebeeSubscription();
 
         $subscriptionItems = array_map(function ($item) use ($subscriptionItem, $quantity) {
-            if ($item->itemPriceId === $subscriptionItem->chargebee_price) {
-                return array_merge($item->getValues(), ['quantity' => $quantity]);
+            if ($item->item_price_id === $subscriptionItem->chargebee_price) {
+                return array_merge($item->toArray(), ['quantity' => $quantity]);
             }
 
-            return $item->getValues();
-        }, $chargebeeSubscription->subscriptionItems);
+            return $item->toArray();
+        }, $chargebeeSubscription->subscription_items);
 
         // Prepare the data for $this->updateChargebeeSubscription
         $updateData = [
-            'replaceItemsList' => true,
-            'subscriptionItems' => array_values($subscriptionItems),
+            'replace_items_list' => true,
+            'subscription_items' => array_values($subscriptionItems),
         ];
 
         if (! is_null($this->prorateBehavior())) {
@@ -370,7 +367,7 @@ class Subscription extends Model
         }
 
         if ($invoiceImmediately) {
-            $updateData['invoiceImmediately'] = true;
+            $updateData['invoice_immediately'] = true;
         }
 
         // Update subscription items in Chargebee
@@ -378,7 +375,7 @@ class Subscription extends Model
 
         // Update the local Subscription model
         $this->fill([
-            'chargebee_status' => $updatedChargebeeSubscription->status,
+            'chargebee_status' => $updatedChargebeeSubscription->status->value,
         ])->save();
 
         if ($this->hasSinglePrice()) {
@@ -456,7 +453,7 @@ class Subscription extends Model
             return $this;
         }
 
-        $updateData = ['trialEnd' => 0];
+        $updateData = ['trial_end' => 0];
 
         if (! is_null($this->prorateBehavior())) {
             $updateData['prorate'] = $this->prorateBehavior();
@@ -480,11 +477,11 @@ class Subscription extends Model
         }
 
         $chargebeeSubscription = $this->asChargebeeSubscription();
-        if (! in_array($chargebeeSubscription->status, ['future', 'in_trial', 'cancelled'])) {
-            throw new SubscriptionUpdateFailure("Cannot extend trial for a subscription with status '{$chargebeeSubscription->status}'.");
+        if (! in_array($chargebeeSubscription->status->value, ['future', 'in_trial', 'cancelled'])) {
+            throw new SubscriptionUpdateFailure("Cannot extend trial for a subscription with status '{$chargebeeSubscription->status->value}'.");
         }
 
-        $updateData = ['trialEnd' => $date->getTimestamp()];
+        $updateData = ['trial_end' => $date->getTimestamp()];
 
         if (! is_null($this->prorateBehavior())) {
             $updateData['prorate'] = $this->prorateBehavior();
@@ -524,12 +521,12 @@ class Subscription extends Model
      */
     public function refreshSubscriptionAttributes(ChargebeeSubscription $chargebeeSubscription): void
     {
-        $firstItem = $chargebeeSubscription->subscriptionItems[0];
-        $isSinglePrice = count($chargebeeSubscription->subscriptionItems) === 1;
+        $firstItem = $chargebeeSubscription->subscription_items[0];
+        $isSinglePrice = count($chargebeeSubscription->subscription_items) === 1;
 
         $this->fill([
-            'chargebee_status' => $chargebeeSubscription->status,
-            'chargebee_price' => $isSinglePrice ? $firstItem->itemPriceId : null,
+            'chargebee_status' => $chargebeeSubscription->status->value,
+            'chargebee_price' => $isSinglePrice ? $firstItem->item_price_id : null,
             'quantity' => $isSinglePrice ? ($firstItem->quantity ?? null) : null,
         ])->save();
     }
@@ -540,13 +537,13 @@ class Subscription extends Model
     public function refreshSubscriptionItems(ChargebeeSubscription $chargebeeSubscription): void
     {
         $subscriptionItemPriceIds = [];
-
-        foreach ($chargebeeSubscription->subscriptionItems as $item) {
-            $subscriptionItemPriceIds[] = $item->itemPriceId;
+        $chargebee = Cashier::chargebee();
+        foreach ($chargebeeSubscription->subscription_items as $item) {
+            $subscriptionItemPriceIds[] = $item->item_price_id;
             $this->items()->updateOrCreate(
-                ['chargebee_price' => $item->itemPriceId],
+                ['chargebee_price' => $item->item_price_id],
                 [
-                    'chargebee_product' => ItemPrice::retrieve($item->itemPriceId)->itemPrice()->itemId,
+                    'chargebee_product' => $chargebee->itemPrice()->retrieve($item->item_price_id)->item_price->item_id,
                     'quantity' => $item->quantity ?? null,
                 ]
             );
@@ -563,7 +560,7 @@ class Subscription extends Model
      */
     public function swapAndInvoice(string|array $prices, array $options = []): self
     {
-        $options['invoiceImmediately'] = true;
+        $options['invoice_immediately'] = true;
 
         return $this->swap($prices, $options);
     }
@@ -580,7 +577,7 @@ class Subscription extends Model
             $options = is_string($options) ? [] : $options;
 
             $payload = [
-                'itemPriceId' => $price,
+                'item_price_id' => $price,
             ];
 
             if ($isSinglePriceSwap && ! is_null($this->quantity)) {
@@ -597,10 +594,10 @@ class Subscription extends Model
     protected function getSwapOptions(Collection $items, array $options = []): array
     {
         $payload = array_filter([
-            'subscriptionItems' => $items->values()->all(),
-            'replaceItemsList' => true,
-            'couponIds' => $this->couponIds,
-            'trialEnd' => $this->trialExpires ? $this->trialExpires->getTimestamp() : 0,
+            'subscription_items' => $items->values()->all(),
+            'replace_items_list' => true,
+            'coupon_ids' => $this->couponIds,
+            'trial_end' => $this->trialExpires ? $this->trialExpires->getTimestamp() : 0,
             'prorate' => $this->prorateBehavior(),
         ], fn ($value) => ! is_null($value));
 
@@ -621,20 +618,20 @@ class Subscription extends Model
         }
 
         $subscriptionItem = [
-            'itemPriceId' => $price,
+            'item_price_id' => $price,
         ];
 
         if (! is_null($quantity)) {
             $subscriptionItem['quantity'] = $quantity;
         }
-
+        $chargebee = Cashier::chargebee();
         $chargebeeSubscription = $this->updateChargebeeSubscription(array_filter(array_merge([
-            'subscriptionItems' => [$subscriptionItem],
+            'subscription_items' => [$subscriptionItem],
             'prorate' => $this->prorateBehavior(),
         ], $options)), fn ($value) => ! is_null($value));
 
         $this->items()->create([
-            'chargebee_product' => ItemPrice::retrieve($price)->itemPrice()->itemId,
+            'chargebee_product' => $chargebee->itemPrice()->retrieve($price)->item_price->item_id,
             'chargebee_price' => $price,
             'quantity' => $quantity,
         ]);
@@ -652,7 +649,7 @@ class Subscription extends Model
      */
     public function addPriceAndInvoice(string $price, ?int $quantity = 1, array $options = []): self
     {
-        $options['invoiceImmediately'] = true;
+        $options['invoice_immediately'] = true;
 
         return $this->addPrice($price, $quantity, $options);
     }
@@ -674,7 +671,7 @@ class Subscription extends Model
      */
     public function addMeteredPriceAndInvoice(string $price, array $options = []): self
     {
-        $options['invoiceImmediately'] = true;
+        $options['invoice_immediately'] = true;
 
         return $this->addPriceAndInvoice($price, null, $options);
     }
@@ -692,15 +689,15 @@ class Subscription extends Model
 
         $chargebeeSubscription = $this->asChargebeeSubscription();
 
-        $subscriptionItems = array_filter($chargebeeSubscription->subscriptionItems, function ($item) use ($price) {
-            return $item->itemPriceId !== $price;
+        $subscriptionItems = array_filter($chargebeeSubscription->subscription_items, function ($item) use ($price) {
+            return $item->item_price_id !== $price;
         });
 
-        $subscriptionItems = array_map(fn ($item) => $item->getValues(), $subscriptionItems);
+        $subscriptionItems = array_map(fn ($item) => $item->toArray(), $subscriptionItems);
 
         $updateData = [
-            'replaceItemsList' => true,
-            'subscriptionItems' => array_values($subscriptionItems),
+            'replace_items_list' => true,
+            'subscription_items' => array_values($subscriptionItems),
         ];
 
         if (! is_null($this->prorateBehavior())) {
@@ -722,11 +719,12 @@ class Subscription extends Model
      */
     public function cancel(): self
     {
-        $chargebeeSubscription = ChargebeeSubscription::cancelForItems($this->chargebee_id, [
-            'cancelOption' => 'end_of_term',
-        ])->subscription();
+        $chargebee = Cashier::chargebee();
+        $chargebeeSubscription = $chargebee->subscription()->cancelForItems($this->chargebee_id, [
+            'cancel_option' => 'end_of_term',
+        ])->subscription;
 
-        $this->chargebee_status = $chargebeeSubscription->status;
+        $this->chargebee_status = $chargebeeSubscription->status->value;
 
         // If the user was on trial, we will set the grace period to end when the trial
         // would have ended. Otherwise, we'll retrieve the end of the billing period
@@ -752,15 +750,15 @@ class Subscription extends Model
         if ($endsAt instanceof DateTimeInterface) {
             $endsAt = $endsAt->getTimestamp();
         }
+        $chargebee = Cashier::chargebee();
+        $chargebeeSubscription = $chargebee->subscription()->cancelForItems($this->chargebee_id, [
+            'cancel_option' => 'specific_date',
+            'cancel_at' => $endsAt,
+            'credit_option_for_current_term_charges' => $this->getCreditOptionForCurrentCharges(),
+        ])->subscription;
 
-        $chargebeeSubscription = ChargebeeSubscription::cancelForItems($this->chargebee_id, [
-            'cancelOption' => 'specific_date',
-            'cancelAt' => $endsAt,
-            'creditOptionForCurrentTermCharges' => $this->getCreditOptionForCurrentCharges(),
-        ])->subscription();
-
-        $this->chargebee_status = $chargebeeSubscription->status;
-        $this->ends_at = Carbon::createFromTimestamp($chargebeeSubscription->cancelledAt);
+        $this->chargebee_status = $chargebeeSubscription->status->value;
+        $this->ends_at = Carbon::createFromTimestamp($chargebeeSubscription->cancelled_at);
 
         $this->save();
 
@@ -772,10 +770,11 @@ class Subscription extends Model
      */
     public function cancelNow(): self
     {
-        ChargebeeSubscription::cancelForItems($this->chargebee_id, [
-            'cancelOption' => 'immediately',
-            'creditOptionForCurrentTermCharges' => $this->getCreditOptionForCurrentCharges(),
-        ])->subscription();
+        $chargebee = Cashier::chargebee();
+        $chargebee->subscription()->cancelForItems($this->chargebee_id, [
+            'cancel_option' => 'immediately',
+            'credit_option_for_current_term_charges' => $this->getCreditOptionForCurrentCharges(),
+        ])->subscription;
 
         $this->markAsCanceled();
 
@@ -787,10 +786,11 @@ class Subscription extends Model
      */
     public function cancelNowAndInvoice(): self
     {
-        ChargebeeSubscription::cancelForItems($this->chargebee_id, [
-            'cancelOption' => 'immediately',
-            'unbilledChargesOption' => 'invoice',
-        ])->subscription();
+        $chargebee = Cashier::chargebee();
+        $chargebee->subscription()->cancelForItems($this->chargebee_id, [
+            'cancel_option' => 'immediately',
+            'unbilled_charges_option' => 'invoice',
+        ])->subscription;
 
         $this->markAsCanceled();
 
@@ -820,13 +820,13 @@ class Subscription extends Model
         if (! $this->paused()) {
             throw new LogicException('Only paused subscriptions can be resumed.');
         }
-
-        $chargebeeSubscription = ChargebeeSubscription::resume($this->chargebee_id, [
-            'resumeOption' => 'immediately',
-        ])->subscription();
+        $chargebee = Cashier::chargebee();
+        $chargebeeSubscription = $chargebee->subscription()->resume($this->chargebee_id, [
+            'resume_option' => 'immediately',
+        ])->subscription;
 
         $this->fill([
-            'chargebee_status' => $chargebeeSubscription->status,
+            'chargebee_status' => $chargebeeSubscription->status->value,
         ])->save();
 
         return $this;
@@ -841,8 +841,8 @@ class Subscription extends Model
     {
         $invoices = $this->user->invoices(true, [
             'limit' => 1,
-            'sortBy[desc]' => 'date',
-            'subscriptionId[is]' => $this->chargebee_id,
+            'sort_by[desc]' => 'date',
+            'subscription_id[is]' => $this->chargebee_id,
         ]);
 
         if ($invoices && $invoices->first()) {
@@ -865,7 +865,7 @@ class Subscription extends Model
         }
 
         return $this->owner->upcomingInvoice(array_merge([
-            'subscriptionId' => $this->chargebee_id,
+            'subscription_id' => $this->chargebee_id,
         ], $options));
     }
 
@@ -883,12 +883,12 @@ class Subscription extends Model
         }
 
         $items = $this->getSwapOptions($this->parseSwapPrices($prices), $options);
-
-        $chargebeeEstimate = ChargeBeeEstimate::updateSubscriptionForItems(array_merge($items, [
+        $chargebee = Cashier::chargebee();
+        $chargebeeEstimate = $chargebee->estimate()->updateSubscriptionForItems(array_merge($items, [
             'subscription' => ['id' => $this->chargebee_id],
         ]));
 
-        return new Estimate($this->owner, $chargebeeEstimate->estimate()->invoiceEstimate);
+        return new Estimate($this->owner, $chargebeeEstimate->estimate->invoice_estimate);
     }
 
     /**
@@ -902,7 +902,7 @@ class Subscription extends Model
     {
         return $this->owner->invoices(
             $includePending,
-            array_merge($parameters, ['subscriptionId' => $this->chargebee_id])
+            array_merge($parameters, ['subscription_id' => $this->chargebee_id])
         );
     }
 
@@ -924,13 +924,14 @@ class Subscription extends Model
      */
     public function latestPayment(): Transaction|null
     {
-        $items = ChargebeeTransaction::all([
+        $chargebee = Cashier::chargebee();
+        $items = $chargebee->transaction()->all([
             'limit' => 1,
-            'sortBy[desc]' => 'date',
-            'subscriptionId[is]' => $this->chargebee_id,
+            'sort_by[desc]' => 'date',
+            'subscription_id[is]' => $this->chargebee_id,
         ]);
 
-        return $items->count() > 0 ? new Transaction($items[0]->transaction()) : null;
+        return count($items->list) > 0 ? new Transaction($items->list[0]->transaction) : null;
     }
 
     /**
@@ -939,7 +940,7 @@ class Subscription extends Model
     public function applyCoupon(string|array $coupons): void
     {
         $this->updateChargebeeSubscription([
-            'couponIds' => is_array($coupons) ? $coupons : [$coupons],
+            'coupon_ids' => is_array($coupons) ? $coupons : [$coupons],
         ]);
     }
 
@@ -983,16 +984,16 @@ class Subscription extends Model
         $chargebeeSubscription = $this->asChargebeeSubscription();
 
         $subscriptionItems = array_map(function ($item) use ($price, $itemOptions) {
-            if ($item->itemPriceId === $price) {
+            if ($item->item_price_id === $price) {
                 return $itemOptions;
             }
 
-            return $item->getValues();
-        }, $chargebeeSubscription->subscriptionItems);
+            return $item->toArray();
+        }, $chargebeeSubscription->subscription_items);
 
         $updateData = array_merge([
-            'replaceItemsList' => true,
-            'subscriptionItems' => array_values($subscriptionItems),
+            'replace_items_list' => true,
+            'subscription_items' => array_values($subscriptionItems),
         ], $subscriptionOptions);
 
         return $this->updateChargebeeSubscription($updateData);
@@ -1003,9 +1004,10 @@ class Subscription extends Model
      */
     public function updateChargebeeSubscription(array $options = []): ChargebeeSubscription
     {
-        $result = ChargebeeSubscription::updateForItems($this->chargebee_id, $options);
+        $chargebee = Cashier::chargebee();
+        $result = $chargebee->subscription()->updateForItems($this->chargebee_id, $options);
 
-        return $result->subscription();
+        return $result->subscription;
     }
 
     /**
@@ -1013,9 +1015,10 @@ class Subscription extends Model
      */
     public function asChargebeeSubscription(): ChargebeeSubscription
     {
-        $response = ChargebeeSubscription::retrieve($this->chargebee_id);
+        $chargebee = Cashier::chargebee();
+        $response = $chargebee->subscription()->retrieve($this->chargebee_id);
 
-        return $response->subscription();
+        return $response->subscription;
     }
 
     /**

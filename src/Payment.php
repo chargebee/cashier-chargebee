@@ -3,7 +3,7 @@
 namespace Chargebee\Cashier;
 
 use Chargebee\Cashier\Exceptions\IncompletePayment;
-use ChargeBee\ChargeBee\Models\PaymentIntent;
+use Chargebee\Resources\PaymentIntent\PaymentIntent;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Database\Eloquent\Model;
@@ -14,7 +14,7 @@ class Payment implements Arrayable, Jsonable, JsonSerializable
     /**
      * The Chargebee PaymentIntent instance.
      *
-     * @var \ChargeBee\ChargeBee\Models\PaymentIntent
+     * @var \Chargebee\Resources\PaymentIntent\PaymentIntent
      */
     protected $paymentIntent;
 
@@ -41,8 +41,7 @@ class Payment implements Arrayable, Jsonable, JsonSerializable
         if ($this->customer) {
             return $this->customer;
         }
-
-        return $this->customer = Cashier::findBillable($this->paymentIntent->customerId);
+        return $this->customer = Cashier::findBillable($this->paymentIntent->customer_id);
     }
 
     /**
@@ -58,7 +57,7 @@ class Payment implements Arrayable, Jsonable, JsonSerializable
      */
     public function amount(): string
     {
-        return Cashier::formatAmount($this->rawAmount(), $this->paymentIntent->currencyCode);
+        return Cashier::formatAmount($this->rawAmount(), $this->paymentIntent->currency_code);
     }
 
     /**
@@ -74,7 +73,7 @@ class Payment implements Arrayable, Jsonable, JsonSerializable
      */
     public function requiresAction(): bool
     {
-        return $this->paymentIntent->status === 'inited';
+        return $this->paymentIntent->status->value === 'inited';
     }
 
     /**
@@ -82,7 +81,7 @@ class Payment implements Arrayable, Jsonable, JsonSerializable
      */
     public function requiresCapture(): bool
     {
-        return $this->paymentIntent->status === 'authorized';
+        return $this->paymentIntent->status->value === 'authorized';
     }
 
     /**
@@ -90,7 +89,7 @@ class Payment implements Arrayable, Jsonable, JsonSerializable
      */
     public function isCanceled(): bool
     {
-        return $this->paymentIntent->status === 'expired';
+        return $this->paymentIntent->status->value === 'expired';
     }
 
     /**
@@ -98,7 +97,7 @@ class Payment implements Arrayable, Jsonable, JsonSerializable
      */
     public function isSucceeded(): bool
     {
-        return $this->paymentIntent->status === 'consumed';
+        return $this->paymentIntent->status->value === 'consumed';
     }
 
     /**
@@ -106,7 +105,7 @@ class Payment implements Arrayable, Jsonable, JsonSerializable
      */
     public function isProcessing(): bool
     {
-        return $this->paymentIntent->status === 'in_progress';
+        return $this->paymentIntent->status->value === 'in_progress';
     }
 
     /**
@@ -128,7 +127,7 @@ class Payment implements Arrayable, Jsonable, JsonSerializable
      */
     public function toArray(): mixed
     {
-        return $this->asChargebeePaymentIntent()->getValues();
+        return $this->asChargebeePaymentIntent()->toArray();
     }
 
     /**

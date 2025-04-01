@@ -3,20 +3,15 @@
 namespace Chargebee\Cashier\Tests\Feature;
 
 use Carbon\Carbon;
+use Chargebee\Cashier\Cashier;
 use Chargebee\Cashier\Estimate;
 use Chargebee\Cashier\Exceptions\SubscriptionUpdateFailure;
 use Chargebee\Cashier\Subscription;
 use Chargebee\Cashier\SubscriptionBuilder;
 use Chargebee\Cashier\Transaction;
-use ChargeBee\ChargeBee\Exceptions\InvalidRequestException;
-use ChargeBee\ChargeBee\Models\Coupon;
-use ChargeBee\ChargeBee\Models\Invoice;
-use ChargeBee\ChargeBee\Models\Item;
-use ChargeBee\ChargeBee\Models\ItemFamily;
-use ChargeBee\ChargeBee\Models\ItemPrice;
-use ChargeBee\ChargeBee\Models\PaymentSource;
-use ChargeBee\ChargeBee\Models\Subscription as ChargebeeSubscription;
-use ChargeBee\ChargeBee\Models\UnbilledCharge;
+use Chargebee\Exceptions\InvalidRequestException;
+use Chargebee\Resources\PaymentSource\PaymentSource;
+use Chargebee\Resources\Subscription\Subscription as ChargebeeSubscription;
 use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -103,137 +98,137 @@ class SubscriptionTest extends FeatureTestCase
     protected function setUp(): void
     {
         parent::setUp();
-
-        static::$itemFamilyId = ItemFamily::create([
+        $chargebee = Cashier::chargebee();
+        static::$itemFamilyId = $chargebee->ItemFamily()->create([
             'id' => Str::random(40),
             'name' => Str::random(40),
-        ])->itemFamily()->id;
+        ])->item_family->id;
 
-        static::$firstItemId = Item::create([
+        static::$firstItemId = $chargebee->item()->create([
             'id' => Str::random(40),
             'name' => Str::random(40),
             'type' => 'plan',
-            'itemFamilyId' => static::$itemFamilyId,
-        ])->item()->id;
+            'item_family_id' => static::$itemFamilyId,
+        ])->item->id;
 
-        static::$firstPriceId = ItemPrice::create([
+        static::$firstPriceId = $chargebee->itemPrice()->create([
             'id' => Str::random(40),
-            'itemId' => static::$firstItemId,
+            'item_id' => static::$firstItemId,
             'name' => Str::random(40),
-            'pricingModel' => 'per_unit',
+            'pricing_model' => 'per_unit',
             'price' => 5000,
-            'externalName' => 'Test ItemPrice 1',
-            'periodUnit' => 'month',
+            'external_name' => 'Test ItemPrice 1',
+            'period_unit' => 'month',
             'period' => 1,
-            'currencyCode' => 'EUR',
-        ])->itemPrice()->id;
+            'currency_code' => 'EUR',
+        ])->item_price->id;
 
-        static::$secondItemId = Item::create([
+        static::$secondItemId = $chargebee->item()->create([
             'id' => Str::random(40),
             'name' => Str::random(40),
             'type' => 'addon',
-            'itemFamilyId' => static::$itemFamilyId,
-        ])->item()->id;
+            'item_family_id' => static::$itemFamilyId,
+        ])->item->id;
 
-        static::$secondPriceId = ItemPrice::create([
+        static::$secondPriceId = $chargebee->itemPrice()->create([
             'id' => Str::random(40),
-            'itemId' => static::$secondItemId,
+            'item_id' => static::$secondItemId,
             'name' => Str::random(40),
-            'pricingModel' => 'per_unit',
+            'pricing_model' => 'per_unit',
             'price' => 2000,
-            'externalName' => 'Test ItemPrice 2',
-            'periodUnit' => 'month',
+            'external_name' => 'Test ItemPrice 2',
+            'period_unit' => 'month',
             'period' => 1,
-            'currencyCode' => 'EUR',
-        ])->itemPrice()->id;
+            'currency_code' => 'EUR',
+        ])->item_price->id;
 
-        static::$thirdItemId = Item::create([
+        static::$thirdItemId = $chargebee->item()->create([
             'id' => Str::random(40),
             'name' => Str::random(40),
             'type' => 'plan',
-            'itemFamilyId' => static::$itemFamilyId,
-        ])->item()->id;
+            'item_family_id' => static::$itemFamilyId,
+        ])->item->id;
 
-        static::$thirdPriceId = ItemPrice::create([
+        static::$thirdPriceId = $chargebee->itemPrice()->create([
             'id' => Str::random(40),
-            'itemId' => static::$thirdItemId,
+            'item_id' => static::$thirdItemId,
             'name' => Str::random(40),
-            'pricingModel' => 'per_unit',
+            'pricing_model' => 'per_unit',
             'price' => 3000,
-            'externalName' => 'Test ItemPrice 3',
-            'periodUnit' => 'month',
+            'external_name' => 'Test ItemPrice 3',
+            'period_unit' => 'month',
             'period' => 1,
-            'currencyCode' => 'EUR',
-        ])->itemPrice()->id;
+            'currency_code' => 'EUR',
+        ])->item_price->id;
 
-        static::$firstMeteredItemId = Item::create([
+        static::$firstMeteredItemId = $chargebee->item()->create([
             'id' => Str::random(40),
             'name' => Str::random(40),
             'type' => 'plan',
-            'itemFamilyId' => static::$itemFamilyId,
+            'item_family_id' => static::$itemFamilyId,
             'metered' => true,
-        ])->item()->id;
+        ])->item->id;
 
-        static::$firstMeteredPriceId = ItemPrice::create([
+        static::$firstMeteredPriceId = $chargebee->itemPrice()->create([
             'id' => Str::random(40),
-            'itemId' => static::$firstMeteredItemId,
+            'item_id' => static::$firstMeteredItemId,
             'name' => Str::random(40),
-            'pricingModel' => 'per_unit',
+            'pricing_model' => 'per_unit',
             'price' => 5000,
-            'externalName' => 'Test metered ItemPrice 1',
-            'periodUnit' => 'month',
+            'external_name' => 'Test metered ItemPrice 1',
+            'period_unit' => 'month',
             'period' => 1,
-            'currencyCode' => 'EUR',
-        ])->itemPrice()->id;
+            'currency_code' => 'EUR',
+        ])->item_price->id;
 
-        static::$secondMeteredItemId = Item::create([
+        static::$secondMeteredItemId = $chargebee->item()->create([
             'id' => Str::random(40),
             'name' => Str::random(40),
             'type' => 'addon',
-            'itemFamilyId' => static::$itemFamilyId,
+            'item_family_id' => static::$itemFamilyId,
             'metered' => true,
-        ])->item()->id;
+        ])->item->id;
 
-        static::$secondMeteredPriceId = ItemPrice::create([
+        static::$secondMeteredPriceId = $chargebee->itemPrice()->create([
             'id' => Str::random(40),
-            'itemId' => static::$secondMeteredItemId,
+            'item_id' => static::$secondMeteredItemId,
             'name' => Str::random(40),
-            'pricingModel' => 'per_unit',
+            'pricing_model' => 'per_unit',
             'price' => 1000,
-            'externalName' => 'Test metered ItemPrice 2',
-            'periodUnit' => 'month',
+            'external_name' => 'Test metered ItemPrice 2',
+            'period_unit' => 'month',
             'period' => 1,
-            'currencyCode' => 'EUR',
-        ])->itemPrice()->id;
+            'currency_code' => 'EUR',
+        ])->item_price->id;
 
-        static::$firstPriceWithTrial = ItemPrice::create([
+        static::$firstPriceWithTrial = $chargebee->itemPrice()->create([
             'id' => Str::random(40),
-            'itemId' => static::$firstItemId,
+            'item_id' => static::$firstItemId,
             'name' => Str::random(40),
-            'pricingModel' => 'per_unit',
+            'pricing_model' => 'per_unit',
             'price' => 5000,
-            'externalName' => 'Test ItemPrice 1',
-            'periodUnit' => 'year',
+            'external_name' => 'Test ItemPrice 1',
+            'period_unit' => 'year',
             'period' => 1,
-            'currencyCode' => 'EUR',
-            'trialPeriod' => 7,
-            'trialPeriodUnit' => 'day',
-        ])->itemPrice()->id;
+            'currency_code' => 'EUR',
+            'trial_period' => 7,
+            'trial_period_unit' => 'day',
+        ])->item_price->id;
 
-        static::$couponId = Coupon::createForItems([
+        static::$couponId = $chargebee->coupon()->createForItems([
             'id' => Str::random(40),
             'name' => Str::random(40),
-            'discountPercentage' => 10,
-            'discountType' => 'PERCENTAGE',
-            'durationType' => 'FOREVER',
-            'applyOn' => 'EACH_SPECIFIED_ITEM',
-            'itemConstraints' => [
+            'discount_percentage' => 10,
+            'discount_type' => 'PERCENTAGE',
+            'duration_type' => 'FOREVER',
+            'apply_on' => 'EACH_SPECIFIED_ITEM',
+            'item_constraints' => [
                 [
                     'constraint' => 'ALL',
-                    'itemType' => 'PLAN',
+                    'item_type' => 'PLAN',
                 ],
             ],
-        ])->coupon()->id;
+        ])->coupon->id;
     }
 
     public function test_subscription_can_be_created_and_status_synced(): void
@@ -254,7 +249,7 @@ class SubscriptionTest extends FeatureTestCase
 
         $subscription->chargebee_status = null;
         $subscription->syncChargebeeStatus();
-        $this->assertSame($retrievedSubscription->status, $subscription->chargebee_status);
+        $this->assertSame($retrievedSubscription->status->value, $subscription->chargebee_status);
     }
 
     public function test_subscriptions_can_be_updated(): void
@@ -264,20 +259,20 @@ class SubscriptionTest extends FeatureTestCase
         $subscription = $user->newSubscription('main', static::$firstPriceId)->add();
 
         $updateOptions = [
-            'subscriptionItems' => [
+            'subscription_items' => [
                 [
-                    'itemPriceId' => static::$firstPriceId,
+                    'item_price_id' => static::$firstPriceId,
                     'quantity' => 4,
-                    'unitPrice' => 2000,
+                    'unit_price' => 2000,
                 ],
             ],
         ];
 
         $updatedSubscription = $subscription->updateChargebeeSubscription($updateOptions);
 
-        $this->assertSame(static::$firstPriceId, $updatedSubscription->subscriptionItems[0]->itemPriceId);
-        $this->assertSame(4, $updatedSubscription->subscriptionItems[0]->quantity);
-        $this->assertSame(2000, $updatedSubscription->subscriptionItems[0]->unitPrice);
+        $this->assertSame(static::$firstPriceId, $updatedSubscription->subscription_items[0]->item_price_id);
+        $this->assertSame(4, $updatedSubscription->subscription_items[0]->quantity);
+        $this->assertSame(2000, $updatedSubscription->subscription_items[0]->unit_price);
     }
 
     public function test_subscription_can_be_cancelled_at_the_end_of_the_billing_period(): void
@@ -315,7 +310,7 @@ class SubscriptionTest extends FeatureTestCase
         $retrievedSubscription = $subscription->asChargebeeSubscription();
 
         $this->assertSame($retrievedSubscription->status, $subscription->chargebee_status);
-        $this->assertEquals(Carbon::createFromTimestamp($retrievedSubscription->cancelledAt), $subscription->ends_at);
+        $this->assertEquals(Carbon::createFromTimestamp($retrievedSubscription->cancelled_at), $subscription->ends_at);
     }
 
     public function test_subscription_can_be_cancelled_now(): void
@@ -360,6 +355,7 @@ class SubscriptionTest extends FeatureTestCase
 
     public function test_subscription_can_be_resumed(): void
     {
+        $chargebee = Cashier::chargebee();
         $user = $this->createCustomer('test_subscription_can_be_resumed');
         $user->createAsChargebeeCustomer();
         $paymentSource = $this->createCard($user);
@@ -367,9 +363,9 @@ class SubscriptionTest extends FeatureTestCase
         $subscription = $user->newSubscription('main', static::$firstPriceId)
             ->create($paymentSource);
 
-        ChargebeeSubscription::pause($subscription->chargebee_id, [
-            'pauseOption' => 'immediately',
-        ])->subscription();
+        $chargebee->subscription()->pause($subscription->chargebee_id, [
+            'pause_option' => 'immediately',
+        ])->subscription;
 
         $subscription->syncChargebeeStatus();
 
@@ -393,7 +389,7 @@ class SubscriptionTest extends FeatureTestCase
         $subscription = $user->subscription('main');
 
         $this->assertTrue($subscription->onTrial());
-        $this->assertSame('in_trial', $subscription->asChargebeeSubscription()->status);
+        $this->assertSame('in_trial', $subscription->asChargebeeSubscription()->status->value);
         $this->assertEquals(Carbon::today()->addDays(7)->day, $user->trialEndsAt('main')->day);
     }
 
@@ -409,7 +405,7 @@ class SubscriptionTest extends FeatureTestCase
         $subscription = $user->subscription('main');
 
         $this->assertFalse($subscription->onTrial());
-        $this->assertSame('active', $subscription->asChargebeeSubscription()->status);
+        $this->assertSame('active', $subscription->asChargebeeSubscription()->status->value);
     }
 
     public function test_trial_can_be_extended(): void
@@ -461,12 +457,12 @@ class SubscriptionTest extends FeatureTestCase
             ->trialDays(10)
             ->create($paymentSource);
 
-        $this->assertSame('in_trial', $subscription->asChargebeeSubscription()->status);
+        $this->assertSame('in_trial', $subscription->asChargebeeSubscription()->status->value);
 
         $subscription->endTrial();
 
         $this->assertNull($subscription->trial_ends_at);
-        $this->assertSame('active', $subscription->asChargebeeSubscription()->status);
+        $this->assertSame('active', $subscription->asChargebeeSubscription()->status->value);
     }
 
     public function test_end_trial_does_nothing_if_not_on_trial(): void
@@ -498,12 +494,12 @@ class SubscriptionTest extends FeatureTestCase
         $this->assertTrue($subscription->items->pluck('chargebee_price')->contains(static::$secondPriceId));
 
         $chargebeeSubscription = $subscription->asChargebeeSubscription();
-        $chargebeeSubscriptionItems = collect($chargebeeSubscription->subscriptionItems);
+        $chargebeeSubscriptionItems = collect($chargebeeSubscription->subscription_items);
 
         $this->assertCount(2, $chargebeeSubscriptionItems);
-        $this->assertTrue($chargebeeSubscriptionItems->pluck('itemPriceId')->contains(static::$firstPriceId));
+        $this->assertTrue($chargebeeSubscriptionItems->pluck('item_price_id')->contains(static::$firstPriceId));
 
-        $secondPriceItem = $chargebeeSubscriptionItems->firstWhere('itemPriceId', static::$secondPriceId);
+        $secondPriceItem = $chargebeeSubscriptionItems->firstWhere('item_price_id', static::$secondPriceId);
         $this->assertNotNull($secondPriceItem);
         $this->assertEquals(1, $secondPriceItem->quantity);
 
@@ -513,7 +509,7 @@ class SubscriptionTest extends FeatureTestCase
         } catch (Exception $e) {
             $this->assertInstanceOf(SubscriptionUpdateFailure::class, $e);
             $this->assertSame(
-                "The price \"$secondPriceItem->itemPriceId\" is already attached to subscription \"{$subscription->chargebee_id}\".",
+                "The price \"$secondPriceItem->item_price_id\" is already attached to subscription \"{$subscription->chargebee_id}\".",
                 $e->getMessage()
             );
         }
@@ -525,8 +521,8 @@ class SubscriptionTest extends FeatureTestCase
         $this->assertCount(1, $subscription->items);
         $this->assertEquals(static::$firstPriceId, $subscription->items->first()->chargebee_price);
 
-        $this->assertCount(1, $chargebeeSubscription->subscriptionItems);
-        $this->assertEquals(static::$firstPriceId, $chargebeeSubscription->subscriptionItems[0]->itemPriceId);
+        $this->assertCount(1, $chargebeeSubscription->subscription_items);
+        $this->assertEquals(static::$firstPriceId, $chargebeeSubscription->subscription_items[0]->item_price_id);
 
         // Test removing last price (should throw an exception)
         try {
@@ -559,12 +555,12 @@ class SubscriptionTest extends FeatureTestCase
         $this->assertTrue($subscription->items->pluck('chargebee_price')->contains(static::$secondMeteredPriceId));
 
         $chargebeeSubscription = $subscription->asChargebeeSubscription();
-        $chargebeeSubscriptionItems = collect($chargebeeSubscription->subscriptionItems);
+        $chargebeeSubscriptionItems = collect($chargebeeSubscription->subscription_items);
 
         $this->assertCount(2, $chargebeeSubscriptionItems);
-        $this->assertTrue($chargebeeSubscriptionItems->pluck('itemPriceId')->contains(static::$firstMeteredPriceId));
+        $this->assertTrue($chargebeeSubscriptionItems->pluck('item_price_id')->contains(static::$firstMeteredPriceId));
 
-        $secondPriceItem = $chargebeeSubscriptionItems->firstWhere('itemPriceId', static::$secondMeteredPriceId);
+        $secondPriceItem = $chargebeeSubscriptionItems->firstWhere('item_price_id', static::$secondMeteredPriceId);
         $this->assertNotNull($secondPriceItem);
         $this->assertNull($secondPriceItem->quantity ?? null);
 
@@ -575,8 +571,8 @@ class SubscriptionTest extends FeatureTestCase
         $this->assertCount(1, $subscription->items);
         $this->assertEquals(static::$firstMeteredPriceId, $subscription->items->first()->chargebee_price);
 
-        $this->assertCount(1, $chargebeeSubscription->subscriptionItems);
-        $this->assertEquals(static::$firstMeteredPriceId, $chargebeeSubscription->subscriptionItems[0]->itemPriceId);
+        $this->assertCount(1, $chargebeeSubscription->subscription_items);
+        $this->assertEquals(static::$firstMeteredPriceId, $chargebeeSubscription->subscription_items[0]->item_price_id);
     }
 
     public function test_usage_can_be_reported_and_retrieved(): void
@@ -638,7 +634,7 @@ class SubscriptionTest extends FeatureTestCase
         $coupons = $chargebeeSubscription->coupons;
 
         $this->assertCount(1, $coupons);
-        $this->assertEquals(static::$couponId, $coupons[0]->couponId);
+        $this->assertEquals(static::$couponId, $coupons[0]->coupon_id);
     }
 
     public function test_item_quantity_can_be_updated_from_subscription(): void
@@ -664,7 +660,7 @@ class SubscriptionTest extends FeatureTestCase
         $this->assertEquals(1, $subscription->quantity);
 
         $chargebeeSubscription = $subscription->asChargebeeSubscription();
-        $chargebeeItem = collect($chargebeeSubscription->subscriptionItems)->firstWhere('itemPriceId', static::$firstPriceId);
+        $chargebeeItem = collect($chargebeeSubscription->subscription_items)->firstWhere('item_price_id', static::$firstPriceId);
         $this->assertEquals(1, $chargebeeItem->quantity);
 
         // Add second price and increment its quantity by 2
@@ -682,8 +678,8 @@ class SubscriptionTest extends FeatureTestCase
         $this->assertNull($subscription->quantity);
 
         $chargebeeSubscription = $subscription->asChargebeeSubscription();
-        $chargebeeFirstItem = collect($chargebeeSubscription->subscriptionItems)->firstWhere('itemPriceId', static::$firstPriceId);
-        $chargebeeSecondItem = collect($chargebeeSubscription->subscriptionItems)->firstWhere('itemPriceId', static::$secondPriceId);
+        $chargebeeFirstItem = collect($chargebeeSubscription->subscription_items)->firstWhere('item_price_id', static::$firstPriceId);
+        $chargebeeSecondItem = collect($chargebeeSubscription->subscription_items)->firstWhere('item_price_id', static::$secondPriceId);
 
         $this->assertEquals(1, $chargebeeFirstItem->quantity);
         $this->assertEquals(3, $chargebeeSecondItem->quantity);
@@ -719,7 +715,7 @@ class SubscriptionTest extends FeatureTestCase
         $this->assertEquals(1, $subscription->quantity);
 
         $chargebeeSubscription = $subscription->asChargebeeSubscription();
-        $chargebeeItem = collect($chargebeeSubscription->subscriptionItems)->firstWhere('itemPriceId', static::$firstPriceId);
+        $chargebeeItem = collect($chargebeeSubscription->subscription_items)->firstWhere('item_price_id', static::$firstPriceId);
         $this->assertEquals(1, $chargebeeItem->quantity);
 
         // Add second price and increment its quantity by 2
@@ -737,8 +733,8 @@ class SubscriptionTest extends FeatureTestCase
         $this->assertNull($subscription->quantity);
 
         $chargebeeSubscription = $subscription->asChargebeeSubscription();
-        $chargebeeFirstItem = collect($chargebeeSubscription->subscriptionItems)->firstWhere('itemPriceId', static::$firstPriceId);
-        $chargebeeSecondItem = collect($chargebeeSubscription->subscriptionItems)->firstWhere('itemPriceId', static::$secondPriceId);
+        $chargebeeFirstItem = collect($chargebeeSubscription->subscription_items)->firstWhere('item_price_id', static::$firstPriceId);
+        $chargebeeSecondItem = collect($chargebeeSubscription->subscription_items)->firstWhere('item_price_id', static::$secondPriceId);
 
         $this->assertEquals(1, $chargebeeFirstItem->quantity);
         $this->assertEquals(3, $chargebeeSecondItem->quantity);
@@ -767,7 +763,7 @@ class SubscriptionTest extends FeatureTestCase
 
         $chargebeeItem = $subscription->items->first()->asChargebeeSubscriptionItem();
 
-        $this->assertEquals(static::$thirdPriceId, $chargebeeItem->itemPriceId);
+        $this->assertEquals(static::$thirdPriceId, $chargebeeItem->item_price_id);
         $this->assertEquals(5, $chargebeeItem->quantity);
     }
 
@@ -794,7 +790,7 @@ class SubscriptionTest extends FeatureTestCase
 
         $chargebeeItem = $subscription->items->first()->asChargebeeSubscriptionItem();
 
-        $this->assertEquals(static::$thirdPriceId, $chargebeeItem->itemPriceId);
+        $this->assertEquals(static::$thirdPriceId, $chargebeeItem->item_price_id);
         $this->assertEquals(3, $chargebeeItem->quantity);
     }
 
@@ -819,7 +815,7 @@ class SubscriptionTest extends FeatureTestCase
 
         $chargebeeItem = $subscription->items->first()->asChargebeeSubscriptionItem();
 
-        $this->assertEquals(static::$thirdPriceId, $chargebeeItem->itemPriceId);
+        $this->assertEquals(static::$thirdPriceId, $chargebeeItem->item_price_id);
         $this->assertEquals(5, $chargebeeItem->quantity);
     }
 
@@ -844,12 +840,13 @@ class SubscriptionTest extends FeatureTestCase
 
         $chargebeeItem = $subscription->items->first()->asChargebeeSubscriptionItem();
 
-        $this->assertEquals(static::$thirdPriceId, $chargebeeItem->itemPriceId);
+        $this->assertEquals(static::$thirdPriceId, $chargebeeItem->item_price_id);
         $this->assertEquals(3, $chargebeeItem->quantity);
     }
 
     public function test_swap_on_item_with_prorate(): void
     {
+        $chargebee = Cashier::chargebee();
         $user = $this->createCustomer('test_swap_on_item_with_prorate');
         $user->createAsChargebeeCustomer();
         $paymentSource = $this->createCard($user);
@@ -858,19 +855,18 @@ class SubscriptionTest extends FeatureTestCase
             ->create($paymentSource);
 
         $subscription->items->first()->prorate()->swapAndInvoice(static::$thirdPriceId);
-
-        $result = Invoice::all([
+        $result = $chargebee->invoice()->all([
             'subscriptionId[is]' => $subscription->chargebee_id,
             'limit' => 1,
             'sortBy[desc]' => 'date',
-        ]);
+        ])->list;
 
-        $latestInvoice = $result[0]->invoice();
+        $latestInvoice = $result[0]->invoice;
 
         $this->assertNotNull($latestInvoice);
-        $this->assertGreaterThan(0, count($latestInvoice->lineItems));
+        $this->assertGreaterThan(0, count($latestInvoice->line_items));
 
-        $hasProratedCharge = collect($latestInvoice->lineItems)->contains(function ($item) {
+        $hasProratedCharge = collect($latestInvoice->line_items)->contains(function ($item) {
             return str_contains(strtolower($item->description), 'prorated');
         });
 
@@ -879,6 +875,7 @@ class SubscriptionTest extends FeatureTestCase
 
     public function test_swap_on_item_with_no_prorate(): void
     {
+        $chargebee = Cashier::chargebee();
         $user = $this->createCustomer('test_swap_on_item_with_no_prorate');
         $user->createAsChargebeeCustomer();
         $paymentSource = $this->createCard($user);
@@ -886,13 +883,13 @@ class SubscriptionTest extends FeatureTestCase
         $subscription = $user->newSubscription('main', static::$firstPriceId)
             ->create($paymentSource);
 
-        $initialInvoiceCount = count(Invoice::all(['subscriptionId[is]' => $subscription->chargebee_id]));
-        $initialUnbilledCount = count(UnbilledCharge::all(['subscriptionId[is]' => $subscription->chargebee_id]));
+        $initialInvoiceCount = count($chargebee->invoice()->all(['subscription_id[is]' => $subscription->chargebee_id])->list);
+        $initialUnbilledCount = count($chargebee->unbilledCharge()->all(['subscription_id[is]' => $subscription->chargebee_id])->list);
 
         $subscription->items->first()->noProrate()->swap(static::$thirdPriceId);
 
-        $finalInvoiceCount = count(Invoice::all(['subscriptionId[is]' => $subscription->chargebee_id]));
-        $finalUnbilledCount = count(UnbilledCharge::all(['subscriptionId[is]' => $subscription->chargebee_id]));
+        $finalInvoiceCount = count($chargebee->invoice()->all(['subscription_id[is]' => $subscription->chargebee_id])->list);
+        $finalUnbilledCount = count($chargebee->unbilledCharge()->all(['subscription_id[is]' => $subscription->chargebee_id])->list);
 
         $this->assertEquals($initialInvoiceCount, $finalInvoiceCount);
         $this->assertEquals($initialUnbilledCount, $finalUnbilledCount);
@@ -908,19 +905,19 @@ class SubscriptionTest extends FeatureTestCase
             ->create($paymentSource);
 
         $subscription->prorate()->incrementAndInvoice(4, static::$firstPriceId);
-
-        $result = Invoice::all([
-            'subscriptionId[is]' => $subscription->chargebee_id,
+        $chargebee = Cashier::chargebee();
+        $result = $chargebee->invoice()->all([
+            'subscription_id[is]' => $subscription->chargebee_id,
             'limit' => 1,
-            'sortBy[desc]' => 'date',
-        ]);
+            'sort_by[desc]' => 'date',
+        ])->list;
 
-        $latestInvoice = $result[0]->invoice();
+        $latestInvoice = $result[0]->invoice;
 
         $this->assertNotNull($latestInvoice);
-        $this->assertGreaterThan(0, count($latestInvoice->lineItems));
+        $this->assertGreaterThan(0, count($latestInvoice->line_items));
 
-        $hasProratedCharge = collect($latestInvoice->lineItems)->contains(function ($item) {
+        $hasProratedCharge = collect($latestInvoice->line_items)->contains(function ($item) {
             return str_contains(strtolower($item->description), 'prorated');
         });
 
@@ -935,14 +932,13 @@ class SubscriptionTest extends FeatureTestCase
 
         $subscription = $user->newSubscription('main', static::$firstPriceId)
             ->create($paymentSource);
-
-        $initialInvoiceCount = count(Invoice::all(['subscriptionId[is]' => $subscription->chargebee_id]));
-        $initialUnbilledCount = count(UnbilledCharge::all(['subscriptionId[is]' => $subscription->chargebee_id]));
+        $chargebee = Cashier::chargebee();
+        $initialInvoiceCount = count($chargebee->invoice()->all(['subscripiton_id[is]' => $subscription->chargebee_id])->list);
+        $initialUnbilledCount = count($chargebee->unbilledCharge()->all(['subscripiton_id[is]' => $subscription->chargebee_id])->list);
 
         $subscription->noProrate()->updateQuantity(5, static::$firstPriceId);
-
-        $finalInvoiceCount = count(Invoice::all(['subscriptionId[is]' => $subscription->chargebee_id]));
-        $finalUnbilledCount = count(UnbilledCharge::all(['subscriptionId[is]' => $subscription->chargebee_id]));
+        $finalInvoiceCount = count($chargebee->invoice()->all(['subscription_id[is]' => $subscription->chargebee_id])->list);
+        $finalUnbilledCount = count($chargebee->unbilledCharge()->all(['subscription_id[is]' => $subscription->chargebee_id])->list);
 
         $this->assertEquals($initialInvoiceCount, $finalInvoiceCount);
         $this->assertEquals($initialUnbilledCount, $finalUnbilledCount);
@@ -978,10 +974,14 @@ class SubscriptionTest extends FeatureTestCase
             'chargebee_id' => 'test_chargebee_id_123',
             'chargebee_status' => 'active',
         ]);
-
-        $mockChargebeeSubscription = new ChargebeeSubscription([
+        $mockChargebeeSubscription = ChargebeeSubscription::from([
             'id' => 'test_chargebee_id_123',
+            'currency_code' => 'EUR',
             'status' => 'active',
+            'customer_id' => 'cust_67890',
+            'has_scheduled_advance_invoices' => false,
+            'has_scheduled_changes' => false,
+            'deleted' => false,
         ]);
 
         $builder = $user->newSubscription('main', static::$firstPriceId);
@@ -1098,7 +1098,8 @@ class SubscriptionTest extends FeatureTestCase
 
     private function createFailedCard(Model $user): ?PaymentSource
     {
-        return PaymentSource::createCard(
+        $chargebee = Cashier::chargebee();
+        return $chargebee->paymentSource()->createCard(
             [
                 'customer_id' => $user->chargebeeId(),
                 'card' => [
@@ -1108,12 +1109,13 @@ class SubscriptionTest extends FeatureTestCase
                     'expiry_month' => date('m', strtotime('+ 1 year')),
                 ],
             ]
-        )->paymentSource();
+        )->payment_source;
     }
 
     private function createCard(Model $user): ?PaymentSource
     {
-        return PaymentSource::createCard(
+        $chargebee = Cashier::chargebee();
+        return $chargebee->paymentSource()->createCard(
             [
                 'customer_id' => $user->chargebeeId(),
                 'card' => [
@@ -1123,12 +1125,13 @@ class SubscriptionTest extends FeatureTestCase
                     'expiry_month' => date('m', strtotime('+ 1 year')),
                 ],
             ]
-        )->paymentSource();
+        )->payment_source;
     }
 
     private function create3DS2Card(Model $user): ?PaymentSource
     {
-        return PaymentSource::createCard(
+        $chargebee = Cashier::chargebee();
+        return $chargebee->paymentSource()->createCard(
             [
                 'customer_id' => $user->chargebeeId(),
                 'card' => [
@@ -1138,6 +1141,6 @@ class SubscriptionTest extends FeatureTestCase
                     'expiry_month' => date('m', strtotime('+ 1 year')),
                 ],
             ]
-        )->paymentSource();
+        )->payment_source;
     }
 }

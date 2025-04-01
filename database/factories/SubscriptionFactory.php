@@ -4,7 +4,7 @@ namespace Chargebee\Cashier\Database\Factories;
 
 use Chargebee\Cashier\Cashier;
 use Chargebee\Cashier\Subscription;
-use ChargeBee\ChargeBee\Models\ItemPrice;
+use Chargebee\Resources\ItemPrice\ItemPrice;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 

@@ -69,12 +69,12 @@ class CheckoutBuilder
         $payload = array_filter([
             'mode' => Session::MODE_PAYMENT,
             'coupon_ids' => $this->checkoutDiscounts(),
-            'itemPrices' => Collection::make((array) $items)->map(function ($item, $key) {
+            'item_prices' => Collection::make((array) $items)->map(function ($item, $key) {
                 if (is_string($key)) {
-                    return ['itemPriceId' => $key, 'quantity' => $item];
+                    return ['item_price_id' => $key, 'quantity' => $item];
                 }
 
-                $item = is_string($item) ? ['itemPriceId' => $item] : $item;
+                $item = is_string($item) ? ['item_price_id' => $item] : $item;
 
                 $item['quantity'] = $item['quantity'] ?? 1;
 

@@ -55,7 +55,7 @@
                     <span style="font-size: 28px;">
                         Invoice
 
-                        @if ($invoice->status == 'paid')
+                        @if ($invoice->status->value == 'paid')
                             <span style="color: #0c0; font-size: 20px;">(Paid)</span>
                         @endif
                     </span>
@@ -72,7 +72,7 @@
                             <strong>Due date:</strong> {{ $dueDate->toFormattedDateString() }}<br>
                         @endif
 
-                        @if ($invoiceId = $id ?? $invoice->poNumber)
+                        @if ($invoiceId = $id ?? $invoice->po_number)
                             <strong>Invoice Number:</strong> {{ $invoiceId }}<br>
                         @endif
                     </p>
@@ -81,14 +81,14 @@
                 <!-- Account Name / Header Image -->
                 <td align="right">
                     <span style="font-size: 28px; color: #ccc;">
-                        <strong>{{ $header ?? $vendor ?? $invoice->customerId }}</strong>
+                        <strong>{{ $header ?? $vendor ?? $invoice->customer_id }}</strong>
                     </span>
                 </td>
             </tr>
             <tr valign="top">
                 <td width="50%">
                     <!-- Account Details -->
-                    <strong>{{ $vendor ?? $invoice->customerId }}</strong><br>
+                    <strong>{{ $vendor ?? $invoice->customer_id }}</strong><br>
 
                     @isset($street)
                         {{ $street }}<br>
@@ -122,9 +122,9 @@
                     <!-- Customer Details -->
                     <strong>Recipient</strong><br>
 
-                    {{ $invoice->billingAddress->firstName ?? $invoice->billingAddress->email }}<br>
+                    {{ $invoice->billing_address->first_name ?? $invoice->billing_address->email }}<br>
 
-                    @if ($address = $invoice->billingAddress)
+                    @if ($address = $invoice->billing_address)
                         @if ($address->line1)
                             {{ $address->line1 }}<br>
                         @endif
@@ -146,21 +146,21 @@
                         @endif
                     @endif
 
-                    @if ($invoice->billingAddress->phone)
-                        {{ $invoice->billingAddress->phone }}<br>
+                    @if ($invoice->billing_address->phone)
+                        {{ $invoice->billing_address->phone }}<br>
                     @endif
 
-                    @if ($invoice->billingAddress->email)
-                        {{ $invoice->billingAddress->email }}<br>
+                    @if ($invoice->billing_address->email)
+                        {{ $invoice->billing_address->email }}<br>
                     @endif
                 </td>
             </tr>
             <tr valign="top">
                 <td colspan="2">
                     <!-- Memo / Description -->
-                    @if ($invoice->statementDescriptor)
+                    @if ($invoice->statement_descriptor)
                         <p>
-                            {{ $invoice->statementDescriptor }}
+                            {{ $invoice->statement_descriptor }}
                         </p>
                     @endif
 

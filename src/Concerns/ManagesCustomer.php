@@ -6,10 +6,8 @@ use Chargebee\Cashier\Cashier;
 use Chargebee\Cashier\CustomerBalanceTransaction;
 use Chargebee\Cashier\Exceptions\CustomerAlreadyCreated;
 use Chargebee\Cashier\Exceptions\CustomerNotFound;
-use ChargeBee\ChargeBee\Exceptions\InvalidRequestException;
-use ChargeBee\ChargeBee\Models\Customer;
-use ChargeBee\ChargeBee\Models\PortalSession;
-use ChargeBee\ChargeBee\Models\PromotionalCredit;
+use Chargebee\Exceptions\InvalidRequestException;
+use Chargebee\Resources\Customer\Customer;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Schema;
@@ -56,20 +54,21 @@ trait ManagesCustomer
         }
 
         $defaultOptions = [
-            'firstName' => $this->chargebeeFirstName(),
-            'lastName' => $this->chargebeeLastName(),
+            'first_name' => $this->chargebeeFirstName(),
+            'last_name' => $this->chargebeeLastName(),
             'email' => $this->chargebeeEmail(),
             'phone' => $this->chargebeePhone(),
-            'billingAddress' => $this->chargebeeBillingAddress(),
+            'billing_address' => $this->chargebeeBillingAddress(),
             'locale' => $this->chargebeeLocale(),
-            'metaData' => $this->chargebeeMetaData(),
+            'meta_data' => $this->chargebeeMetaData(),
         ];
 
         $options = array_merge(array_filter($defaultOptions), $options);
 
         // Create a customer instance on Chargebee and store its ID for future retrieval.
-        $result = Customer::create($options);
-        $customer = $result->customer();
+        $chargebee = Cashier::chargebee();
+        $result = $chargebee->customer()->create($options);
+        $customer = $result->customer;
 
         $this->chargebee_id = $customer->id;
         $this->save();
@@ -85,9 +84,10 @@ trait ManagesCustomer
         $this->assertCustomerExists();
 
         try {
-            $response = Customer::retrieve($this->chargebeeId());
+            $chargebee = Cashier::chargebee();
+            $response = $chargebee->customer()->retrieve($this->chargebeeId());
 
-            return $response->customer();
+            return $response->customer;
         } catch (InvalidRequestException $exception) {
             if (strpos($exception->getApiErrorCode(), 'resource_not_found') !== false) {
                 throw CustomerNotFound::notFound($this);
@@ -105,14 +105,15 @@ trait ManagesCustomer
 
         try {
             // We need to make 2 separate API calls to update customer and billing info.
-            $response = Customer::update($this->chargebeeId(), $options);
+            $chargebee = Cashier::chargebee();
+            $response = $chargebee->customer()->update($this->chargebeeId(), $options);
 
             // Call updateBillingInfo only if billingAddress is not empty and contains at least one non-null, non-empty value.
-            if (! empty($options['billingAddress']) && collect($options['billingAddress'])->reject(fn ($value) => is_null($value) || $value === '')->isNotEmpty()) {
-                $response = Customer::updateBillingInfo($this->chargebeeId(), $options);
+            if (! empty($options['billing_address']) && collect($options['billing_address'])->reject(fn ($value) => is_null($value) || $value === '')->isNotEmpty()) {
+                $response = $chargebee->customer()->updateBillingInfo($this->chargebeeId(), $options);
             }
 
-            return $response->customer();
+            return $response->customer;
         } catch (InvalidRequestException $exception) {
             if (strpos($exception->getApiErrorCode(), 'resource_not_found') !== false) {
                 throw CustomerNotFound::notFound($this);
@@ -129,8 +130,8 @@ trait ManagesCustomer
         $customer = $this->asChargebeeCustomer();
 
         $chargebeeData = [
-            'first_name' => $customer->firstName,
-            'last_name' => $customer->lastName,
+            'first_name' => $customer->first_name,
+            'last_name' => $customer->last_name,
             'email' => $customer->email,
             'phone' => $customer->phone,
         ];
@@ -176,13 +177,13 @@ trait ManagesCustomer
     public function syncChargebeeCustomerDetails(): Customer
     {
         return $this->updateChargebeeCustomer([
-            'firstName' => $this->chargebeeFirstName(),
-            'lastName' => $this->chargebeeLastName(),
+            'first_name' => $this->chargebeeFirstName(),
+            'last_name' => $this->chargebeeLastName(),
             'email' => $this->chargebeeEmail(),
             'phone' => $this->chargebeePhone(),
-            'billingAddress' => $this->chargebeeBillingAddress(),
+            'billing_address' => $this->chargebeeBillingAddress(),
             'locale' => $this->chargebeeLocale(),
-            'metaData' => $this->chargebeeMetaData(),
+            'meta_data' => $this->chargebeeMetaData(),
         ]);
     }
 
@@ -291,13 +292,13 @@ trait ManagesCustomer
      */
     public function rawBalance(): int
     {
-        if (! $this->hasChargebeeId()) {
+        if (!$this->hasChargebeeId()) {
             return 0;
         }
 
         $customer = $this->asChargebeeCustomer();
 
-        return $customer->promotionalCredits;
+        return $customer->promotional_credits;
     }
 
     /**
@@ -313,14 +314,15 @@ trait ManagesCustomer
      */
     public function creditBalance(int $amount, string $description = 'Add promotional credits.', array $options = []): CustomerBalanceTransaction
     {
-        $result = PromotionalCredit::add(array_merge([
-            'customerId' => $this->chargebeeId(),
+        $chargebee = Cashier::chargebee();
+        $result = $chargebee->promotionalCredit()->add(array_merge([
+            'customer_id' => $this->chargebeeId(),
             'amount' => $amount,
             'description' => $description,
             'currency_code' => $this->preferredCurrency(),
         ], $options));
 
-        return new CustomerBalanceTransaction($this, $result->promotionalCredit());
+        return new CustomerBalanceTransaction($this, $result->promotional_credit);
     }
 
     /**
@@ -328,14 +330,15 @@ trait ManagesCustomer
      */
     public function debitBalance(int $amount, string $description = 'Deduct promotional credits.', array $options = []): CustomerBalanceTransaction
     {
-        $result = PromotionalCredit::deduct(array_merge([
-            'customerId' => $this->chargebeeId(),
+        $chargebee = Cashier::chargebee();
+        $result = $chargebee->promotionalCredit()->deduct(array_merge([
+            'customer_id' => $this->chargebeeId(),
             'amount' => $amount,
             'description' => $description,
             'currency_code' => $this->preferredCurrency(),
         ], $options));
 
-        return new CustomerBalanceTransaction($this, $result->promotionalCredit());
+        return new CustomerBalanceTransaction($this, $result->promotional_credit);
     }
 
     /**
@@ -360,14 +363,14 @@ trait ManagesCustomer
         if (! $this->hasChargebeeId()) {
             return new Collection();
         }
-
-        $all = PromotionalCredit::all(array_merge([
+        $chargebee = Cashier::chargebee();
+        $all = $chargebee->promotionalCredit()->all(array_merge([
             'limit' => $limit,
-            'customerId[is]' => $this->chargebeeId(),
+            'customer_id[is]' => $this->chargebeeId(),
         ], $options));
 
-        return collect($all)->map(function ($entry) {
-            return $entry->promotionalCredit();
+        return collect($all->list)->map(function ($entry) {
+            return $entry->promotional_credit;
         });
     }
 
@@ -377,15 +380,15 @@ trait ManagesCustomer
     public function billingPortalUrl($returnUrl = null, array $options = []): string
     {
         $this->assertCustomerExists();
-
-        $response = PortalSession::create(array_merge([
+        $chargebee = Cashier::chargebee();
+        $response = $chargebee->portalSession()->create(array_merge([
             'redirect_url' => $returnUrl ?? route('home'),
             'customer' => [
                 'id' => $this->chargebeeId(),
             ],
         ], $options));
 
-        return $response->portalSession()->accessUrl;
+        return $response->portal_session->access_url;
     }
 
     /**

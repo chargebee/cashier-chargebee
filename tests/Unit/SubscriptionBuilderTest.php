@@ -14,16 +14,16 @@ class SubscriptionBuilderTest extends TestCase
     {
         $builder = new SubscriptionBuilder(new User, 'default', [
             'price_foo',
-            ['itemPriceId' => 'price_bux'],
-            ['itemPriceId' => 'price_bar', 'quantity' => 1],
-            ['itemPriceId' => 'price_baz', 'quantity' => 2],
+            ['item_price_id' => 'price_bux'],
+            ['item_price_id' => 'price_bar', 'quantity' => 1],
+            ['item_price_id' => 'price_baz', 'quantity' => 2],
         ]);
 
         $this->assertSame([
-            'price_foo' => ['itemPriceId' => 'price_foo', 'quantity' => 1],
-            'price_bux' => ['itemPriceId' => 'price_bux', 'quantity' => 1],
-            'price_bar' => ['itemPriceId' => 'price_bar', 'quantity' => 1],
-            'price_baz' => ['itemPriceId' => 'price_baz', 'quantity' => 2],
+            'price_foo' => ['item_price_id' => 'price_foo', 'quantity' => 1],
+            'price_bux' => ['item_price_id' => 'price_bux', 'quantity' => 1],
+            'price_bar' => ['item_price_id' => 'price_bar', 'quantity' => 1],
+            'price_baz' => ['item_price_id' => 'price_baz', 'quantity' => 2],
         ], $builder->getItems());
     }
 
@@ -39,7 +39,7 @@ class SubscriptionBuilderTest extends TestCase
     public function test_price_must_include_item_price_id(): void
     {
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Each price must include an "itemPriceId" key.');
+        $this->expectExceptionMessage('Each price must include an "item_price_id" key.');
 
         new SubscriptionBuilder(new User, 'default', [
             ['quantity' => 3],
@@ -52,7 +52,7 @@ class SubscriptionBuilderTest extends TestCase
         $builder->price('price_xyz', 2);
 
         $this->assertSame([
-            'price_xyz' => ['itemPriceId' => 'price_xyz', 'quantity' => 2],
+            'price_xyz' => ['item_price_id' => 'price_xyz', 'quantity' => 2],
         ], $builder->getItems());
     }
 
@@ -62,7 +62,7 @@ class SubscriptionBuilderTest extends TestCase
         $builder->meteredPrice('metered_price_abc');
 
         $this->assertSame([
-            'metered_price_abc' => ['itemPriceId' => 'metered_price_abc'],
+            'metered_price_abc' => ['item_price_id' => 'metered_price_abc'],
         ], $builder->getItems());
     }
 
@@ -72,7 +72,7 @@ class SubscriptionBuilderTest extends TestCase
         $builder->quantity(5);
 
         $this->assertSame([
-            'price_123' => ['itemPriceId' => 'price_123', 'quantity' => 5],
+            'price_123' => ['item_price_id' => 'price_123', 'quantity' => 5],
         ], $builder->getItems());
     }
 

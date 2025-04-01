@@ -2,14 +2,13 @@
 
 namespace Chargebee\Cashier\Concerns;
 
+use Chargebee\Cashier\Cashier;
 use Chargebee\Cashier\Estimate;
 use Chargebee\Cashier\Exceptions\InvalidInvoice;
 use Chargebee\Cashier\Invoice;
 use Chargebee\Cashier\InvoiceBuilder;
 use Chargebee\Cashier\Paginator;
-use ChargeBee\ChargeBee\Exceptions\InvalidRequestException;
-use ChargeBee\ChargeBee\Models\Estimate as ChargeBeeEstimate;
-use ChargeBee\ChargeBee\Models\Invoice as ChargeBeeInvoice;
+use Chargebee\Exceptions\InvalidRequestException;
 use Illuminate\Pagination\Cursor;
 use Illuminate\Pagination\CursorPaginator;
 use Illuminate\Pagination\Paginator as IlluminatePaginator;
@@ -76,17 +75,18 @@ trait ManagesInvoices
         }
 
         try {
-            if (Arr::has($options, 'subscriptionId')) {
-                $chargebeeEstimate = ChargeBeeEstimate::advanceInvoiceEstimate(
-                    $options['subscriptionId'],
+            $chargebee = Cashier::chargebee();
+            if (Arr::has($options, 'subscription_id')) {
+                $chargebeeEstimate = $chargebee->estimate()->advanceInvoiceEstimate(
+                    $options['subscription_id'],
                     $options
                 );
 
-                return new Estimate($this, $chargebeeEstimate->estimate()->invoiceEstimate);
+                return new Estimate($this, $chargebeeEstimate->estimate->invoice_estimate);
             } else {
-                $chargebeeEstimate = ChargeBeeEstimate::upcomingInvoicesEstimate($this->chargebeeId());
+                $chargebeeEstimate = $chargebee->estimate()->upcomingInvoicesEstimate($this->chargebeeId());
 
-                return new Estimate($this, $chargebeeEstimate->estimate()->invoiceEstimates[0]);
+                return new Estimate($this, $chargebeeEstimate->estimate->invoice_estimates[0]);
             }
         } catch (InvalidRequestException $exception) {
             return null;
@@ -104,7 +104,8 @@ trait ManagesInvoices
         $chargebeeInvoice = null;
 
         try {
-            $chargebeeInvoice = ChargeBeeInvoice::retrieve($id)->invoice();
+            $chargebee = Cashier::chargebee();
+            $chargebeeInvoice = $chargebee->invoice()->retrieve($id)->invoice;
         } catch (InvalidRequestException $exception) {
             //
         }
@@ -167,19 +168,20 @@ trait ManagesInvoices
         $invoices = [];
 
         $parameters = array_merge(['limit' => 24], $parameters);
+        $chargebee = Cashier::chargebee();
 
-        $chargebeeInvoices = ChargeBeeInvoice::all(
-            ['customerId[is]' => $this->chargebeeId()] + $parameters
+        $chargebeeInvoices = $chargebee->invoice()->all(
+            ['customer_id[is]' => $this->chargebeeId()] + $parameters
         );
 
         if (! is_null($chargebeeInvoices)) {
-            foreach ($chargebeeInvoices as $chargebeeInvoice) {
-                $invoice = $chargebeeInvoice->invoice();
-                if ($invoice->status == 'paid' || $includePending) {
+            foreach ($chargebeeInvoices->list as $chargebeeInvoice) {
+                $invoice = $chargebeeInvoice->invoice;
+                if ($invoice->status->value == 'paid' || $includePending) {
                     $invoices[] = new Invoice(
                         $this,
                         $invoice,
-                        $chargebeeInvoices->nextOffset()
+                        $chargebeeInvoices->next_offset
                     );
                 }
             }

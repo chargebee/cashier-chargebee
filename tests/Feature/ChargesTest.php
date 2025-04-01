@@ -2,9 +2,9 @@
 
 namespace Chargebee\Cashier\Tests\Feature;
 
+use Chargebee\Cashier\Cashier;
 use Chargebee\Cashier\Payment;
 use Chargebee\Cashier\Tests\Fixtures\User;
-use ChargeBee\ChargeBee\Models\PaymentSource;
 
 class ChargesTest extends FeatureTestCase
 {
@@ -17,7 +17,7 @@ class ChargesTest extends FeatureTestCase
 
         $this->assertInstanceOf(Payment::class, $response);
         $this->assertEquals(1000, $response->rawAmount());
-        $this->assertEquals($user->chargebee_id, $response->customerId);
+        $this->assertEquals($user->chargebee_id, $response->customer_id);
 
         $payment = $user->findPayment($response->id);
 
@@ -50,12 +50,13 @@ class ChargesTest extends FeatureTestCase
             ->invoice();
 
         $refund = $user->refund($invoice->id);
-        $this->assertEquals(1000, $refund->transaction()->amount);
+        $this->assertEquals(1000, $refund->transaction->amount);
     }
 
     protected function paymentSource(User $user)
     {
-        return PaymentSource::createCard([
+        $chargebee = Cashier::chargebee();
+        return $chargebee->paymentSource()->createCard([
             'customer_id' => $user->chargebeeId(),
             'replace_primary_payment_source' => true,
             'card' => [
@@ -64,6 +65,6 @@ class ChargesTest extends FeatureTestCase
                 'expiry_month' => now()->month,
                 'expiry_year' => now()->addYear()->year,
             ],
-        ])->paymentSource();
+        ])->payment_source;
     }
 }

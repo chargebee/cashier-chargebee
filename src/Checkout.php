@@ -2,7 +2,6 @@
 
 namespace Chargebee\Cashier;
 
-use ChargeBee\ChargeBee\Models\HostedPage;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Contracts\Support\Responsable;
@@ -79,20 +78,20 @@ class Checkout implements Arrayable, Jsonable, JsonSerializable, Responsable
             $data['customer']['id'] = $owner->createOrGetChargebeeCustomer($customerOptions)->id;
         }
 
-        $data['redirectUrl'] = $sessionOptions['success_url'] ?? route('home').'?checkout=success';
-        $data['cancelUrl'] = $sessionOptions['cancel_url'] ?? route('home').'?checkout=cancelled';
-        $data['currencyCode'] = $sessionOptions['currency_code'] ?? $owner ? $owner->preferredCurrency() : '';
+        $data['redirect_url'] = $sessionOptions['success_url'] ?? route('home').'?checkout=success';
+        $data['cancel_url'] = $sessionOptions['cancel_url'] ?? route('home').'?checkout=cancelled';
+        $data['currency_code'] = $sessionOptions['currency_code'] ?? $owner ? $owner->preferredCurrency() : '';
+        $chargebee = Cashier::chargebee();
 
         if ($data['mode'] == Session::MODE_SUBSCRIPTION) {
-            $result = HostedPage::checkoutNewForItems($data);
+            $result = $chargebee->hostedPage()->checkoutNewForItems($data);
         } elseif ($data['mode'] == Session::MODE_SETUP) {
-            $result = HostedPage::managePaymentSources($data);
+            $result = $chargebee->hostedPage()->managePaymentSources($data);
         } else {
-            $result = HostedPage::checkoutOneTimeForItems($data);
+            $result = $chargebee->hostedPage()->checkoutOneTimeForItems($data);
         }
-
         return new Checkout($owner, new Session(
-            $result->hostedPage()->getValues(),
+            $result->hosted_page->toArray(),
             $data['mode']
         ));
     }
@@ -135,7 +134,7 @@ class Checkout implements Arrayable, Jsonable, JsonSerializable, Responsable
      */
     public function toArray(): mixed
     {
-        return $this->asChargebeeCheckoutSession()->getValues();
+        return $this->asChargebeeCheckoutSession()->toArray();
     }
 
     /**

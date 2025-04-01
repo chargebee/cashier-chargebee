@@ -2,7 +2,7 @@
 
 namespace Chargebee\Cashier;
 
-use ChargeBee\ChargeBee\Models\HostedPage;
+use Chargebee\Resources\HostedPage\HostedPage;
 
 class Session extends HostedPage
 {
@@ -14,7 +14,10 @@ class Session extends HostedPage
 
     public function __construct($values, $mode = self::MODE_PAYMENT)
     {
-        parent::__construct($values);
+        $hostedPage = HostedPage::from($values);
+        foreach (get_object_vars($hostedPage) as $property => $value) {
+            $this->$property = $value;
+        }
         $this->mode = $mode;
     }
 }

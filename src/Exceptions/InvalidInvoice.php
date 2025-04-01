@@ -2,7 +2,7 @@
 
 namespace Chargebee\Cashier\Exceptions;
 
-use ChargeBee\ChargeBee\Models\Invoice as ChargeBeeInvoice;
+use Chargebee\Resources\Invoice\Invoice as ChargeBeeInvoice;
 use Exception;
 
 final class InvalidInvoice extends Exception
@@ -10,7 +10,7 @@ final class InvalidInvoice extends Exception
     /**
      * Create a new InvalidInvoice instance.
      *
-     * @param  \ChargeBee\ChargeBee\Models\Invoice  $invoice
+     * @param  \Chargebee\Resources\Invoice\Invoice  $invoice
      * @param  \Illuminate\Database\Eloquent\Model  $owner
      * @return static
      */

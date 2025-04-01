@@ -5,7 +5,6 @@ namespace Chargebee\Cashier\Listeners;
 use Carbon\Carbon;
 use Chargebee\Cashier\Cashier;
 use Chargebee\Cashier\Events\WebhookReceived;
-use ChargeBee\ChargeBee\Models\ItemPrice;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
@@ -180,14 +179,14 @@ class HandleWebhookReceived
         );
 
         $subscriptionItemPriceIds = [];
-
+        $chargebee = Cashier::chargebee();
         foreach ($data['subscription_items'] as $item) {
             $subscriptionItemPriceIds[] = $item['item_price_id'];
 
             $subscription->items()->updateOrCreate(
                 ['chargebee_price' => $item['item_price_id']],
                 [
-                    'chargebee_product' => ItemPrice::retrieve($item['item_price_id'])->itemPrice()->itemId,
+                    'chargebee_product' => $chargebee->itemPrice()->retrieve($item['item_price_id'])->item_price->item_id,
                     'quantity' => $item['quantity'] ?? null,
                 ]
             );

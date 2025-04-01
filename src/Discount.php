@@ -2,10 +2,9 @@
 
 namespace Chargebee\Cashier;
 
-use Carbon\Carbon;
-use ChargeBee\ChargeBee\Models\Coupon as ChargeBeeCoupon;
-use ChargeBee\ChargeBee\Models\Discount as ChargeBeeDiscount;
-use ChargeBee\ChargeBee\Models\InvoiceDiscount as ChargeBeeInvoiceDiscount;
+use Chargebee\Resources\Coupon\Coupon as ChargeBeeCoupon;
+use Chargebee\Resources\Discount\Discount as ChargeBeeDiscount;
+use Chargebee\Resources\Invoice\Discount as ChargeBeeInvoiceDiscount;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
 use JsonSerializable;
@@ -15,7 +14,7 @@ class Discount implements Arrayable, Jsonable, JsonSerializable
     /**
      * The Chargebee Discount instance.
      *
-     * @var ChargeBeeDiscount
+     * @var ChargeBeeDiscount | ChargeBeeInvoiceDiscount
      */
     protected $discount;
 
@@ -27,10 +26,10 @@ class Discount implements Arrayable, Jsonable, JsonSerializable
     /**
      * Create a new Discount instance.
      *
-     * @param  \ChargeBee\ChargeBee\Models\Discount|\ChargeBee\ChargeBee\Models\InvoiceDiscount  $discount
+     * @param  ChargeBeeDiscount | ChargeBeeInvoiceDiscount  $discount
      * @return void
      */
-    public function __construct(ChargeBeeDiscount|ChargeBeeInvoiceDiscount $discount)
+    public function __construct(ChargeBeeDiscount | ChargeBeeInvoiceDiscount $discount)
     {
         $this->discount = $discount;
     }
@@ -42,54 +41,28 @@ class Discount implements Arrayable, Jsonable, JsonSerializable
      */
     public function coupon(): Coupon|null
     {
+        $chargebee = Cashier::chargebee();
         if (! is_null($this->coupon)) {
             return new Coupon($this->coupon);
         }
 
         if (
-            $this->discount->entityType == 'item_level_coupon' ||
-            $this->discount->entityType == 'document_level_coupon'
+            $this->discount->entity_type == 'item_level_coupon' ||
+            $this->discount->entity_type == 'document_level_coupon'
         ) {
-            $this->coupon = ChargeBeeCoupon::retrieve($this->discount->entityId)->coupon();
+            $this->coupon = $chargebee->coupon()->retrieve($this->discount->entity_id)->coupon;
 
             return new Coupon($this->coupon);
         }
 
         return null;
     }
-
-    /**
-     * Get the date that the coupon was applied.
-     *
-     * @return \Carbon\Carbon|null
-     */
-    public function start()
-    {
-        if (! is_null($this->discount->start)) {
-            return Carbon::createFromTimestamp($this->discount->start);
-        }
-    }
-
-    /**
-     * Get the date that this discount will end.
-     *
-     * @return \Carbon\Carbon|null
-     */
-    public function end(): Carbon|null
-    {
-        if (! is_null($this->discount->end)) {
-            return Carbon::createFromTimestamp($this->discount->end);
-        }
-
-        return null;
-    }
-
     /**
      * Get the Chargebee Discount instance.
      *
-     * @return \ChargeBee\ChargeBee\Models\Discount
+     * @return  ChargeBeeDiscount | ChargeBeeInvoiceDiscount
      */
-    public function asChargebeeDiscount(): ChargeBeeDiscount
+    public function asChargebeeDiscount(): ChargeBeeDiscount | ChargeBeeInvoiceDiscount
     {
         return $this->discount;
     }
@@ -101,7 +74,7 @@ class Discount implements Arrayable, Jsonable, JsonSerializable
      */
     public function toArray(): mixed
     {
-        return $this->asChargebeeDiscount()->getValues();
+        return $this->asChargebeeDiscount()->toArray();
     }
 
     /**

@@ -7,10 +7,9 @@ use Carbon\CarbonInterface;
 use Chargebee\Cashier\Concerns\AllowsCoupons;
 use Chargebee\Cashier\Concerns\HandlesTaxes;
 use Chargebee\Cashier\Concerns\Prorates;
-use ChargeBee\ChargeBee\Models\Customer;
-use ChargeBee\ChargeBee\Models\ItemPrice;
-use ChargeBee\ChargeBee\Models\PaymentSource;
-use ChargeBee\ChargeBee\Models\Subscription as ChargebeeSubscription;
+use Chargebee\Resources\Customer\Customer;
+use Chargebee\Resources\PaymentSource\PaymentSource;
+use Chargebee\Resources\Subscription\Subscription as ChargebeeSubscription;
 use Exception;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
@@ -84,7 +83,7 @@ class SubscriptionBuilder
      */
     public function price(string|array $price, ?int $quantity = 1): static
     {
-        $options = is_array($price) ? $price : ['itemPriceId' => $price];
+        $options = is_array($price) ? $price : ['item_price_id' => $price];
 
         $quantity = $price['quantity'] ?? $quantity;
 
@@ -92,11 +91,11 @@ class SubscriptionBuilder
             $options['quantity'] = $quantity;
         }
 
-        if (! isset($options['itemPriceId'])) {
-            throw new InvalidArgumentException('Each price must include an "itemPriceId" key.');
+        if (! isset($options['item_price_id'])) {
+            throw new InvalidArgumentException('Each price must include an "item_price_id" key.');
         }
 
-        $this->items[$options['itemPriceId']] = $options;
+        $this->items[$options['item_price_id']] = $options;
 
         return $this;
     }
@@ -119,7 +118,7 @@ class SubscriptionBuilder
                 throw new InvalidArgumentException('Price is required when creating subscriptions with multiple prices.');
             }
 
-            $price = Arr::first($this->items)['itemPriceId'];
+            $price = Arr::first($this->items)['item_price_id'];
         }
 
         return $this->price($price, $quantity);
@@ -185,13 +184,13 @@ class SubscriptionBuilder
         }
 
         $chargebeeCustomer = $this->getChargebeeCustomer($paymentSource, $customerOptions);
-
-        $chargebeeSubscription = ChargebeeSubscription::createWithItems($chargebeeCustomer->id, array_merge(
+        $chargebee = Cashier::chargebee();
+        $chargebeeSubscription = $chargebee->subscription()->createWithItems($chargebeeCustomer->id, array_merge(
             $this->buildPayload(),
             $subscriptionOptions
         ));
 
-        return $this->createSubscription($chargebeeSubscription->subscription());
+        return $this->createSubscription($chargebeeSubscription->subscription);
     }
 
     /**
@@ -203,23 +202,23 @@ class SubscriptionBuilder
             return $subscription;
         }
 
-        $firstItem = $chargebeeSubscription->subscriptionItems[0];
-        $isSinglePrice = count($chargebeeSubscription->subscriptionItems) === 1;
+        $firstItem = $chargebeeSubscription->subscription_items[0];
+        $isSinglePrice = count($chargebeeSubscription->subscription_items) === 1;
 
         $subscription = $this->owner->subscriptions()->create([
             'type' => $this->type,
             'chargebee_id' => $chargebeeSubscription->id,
-            'chargebee_status' => $chargebeeSubscription->status,
-            'chargebee_price' => $isSinglePrice ? $firstItem->itemPriceId : null,
+            'chargebee_status' => $chargebeeSubscription->status->value,
+            'chargebee_price' => $isSinglePrice ? $firstItem->item_price_id : null,
             'quantity' => $isSinglePrice ? ($firstItem->quantity ?? null) : null,
-            'trial_ends_at' => $chargebeeSubscription->trialEnd ?? null,
+            'trial_ends_at' => $chargebeeSubscription->trial_end ?? null,
             'ends_at' => null,
         ]);
-
-        foreach ($chargebeeSubscription->subscriptionItems as $item) {
+        $chargebee = Cashier::chargebee();
+        foreach ($chargebeeSubscription->subscription_items as $item) {
             $subscription->items()->create([
-                'chargebee_product' => ItemPrice::retrieve($item->itemPriceId)->itemPrice()->itemId,
-                'chargebee_price' => $item->itemPriceId,
+                'chargebee_product' => $chargebee->itemPrice()->retrieve($item->item_price_id)->item_price->item_id,
+                'chargebee_price' => $item->item_price_id,
                 'quantity' => $item->quantity ?? null,
             ]);
         }
@@ -254,7 +253,7 @@ class SubscriptionBuilder
         ], fn ($value) => ! is_null($value));
 
         if (! empty($this->metadata)) {
-            $payload['metaData'] = json_encode($this->metadata);
+            $payload['meta_data'] = json_encode($this->metadata);
         }
 
         return $payload;
@@ -313,11 +312,11 @@ class SubscriptionBuilder
         }
 
         $payload = array_filter([
-            'subscriptionItems' => Collection::make($this->items)->values()->all(),
+            'subscription_items' => Collection::make($this->items)->values()->all(),
             'mode' => Session::MODE_SUBSCRIPTION,
             'subscription' => array_filter([
-                'trialEnd' => $trialEnd ? $trialEnd->getTimestamp() : null,
-                'metadata' => array_merge($this->metadata, [
+                'trial_end' => $trialEnd ? $trialEnd->getTimestamp() : null,
+                'meta_data' => array_merge($this->metadata, [
                     'name' => $this->type,
                     'type' => $this->type,
                 ]),

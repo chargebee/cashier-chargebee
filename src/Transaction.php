@@ -2,7 +2,7 @@
 
 namespace Chargebee\Cashier;
 
-use ChargeBee\ChargeBee\Models\Transaction as ChargebeeTransaction;
+use Chargebee\Resources\Transaction\Transaction as ChargebeeTransaction;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Database\Eloquent\Model;
@@ -13,7 +13,7 @@ class Transaction implements Arrayable, Jsonable, JsonSerializable
     /**
      * The Chargebee Transaction instance.
      *
-     * @var \ChargeBee\ChargeBee\Models\Transaction
+     * @var \Chargebee\Resources\Transaction\Transaction
      */
     protected $transaction;
 
@@ -41,7 +41,7 @@ class Transaction implements Arrayable, Jsonable, JsonSerializable
             return $this->customer;
         }
 
-        return $this->customer = Cashier::findBillable($this->transaction->customerId);
+        return $this->customer = Cashier::findBillable($this->transaction->customer_id);
     }
 
     /**
@@ -57,7 +57,7 @@ class Transaction implements Arrayable, Jsonable, JsonSerializable
      */
     public function amount(): string
     {
-        return Cashier::formatAmount($this->rawAmount(), $this->transaction->currencyCode);
+        return Cashier::formatAmount($this->rawAmount(), $this->transaction->currency_code);
     }
 
     /**
@@ -75,7 +75,7 @@ class Transaction implements Arrayable, Jsonable, JsonSerializable
      */
     public function toArray(): mixed
     {
-        return $this->asChargebeeTransaction()->getValues();
+        return $this->asChargebeeTransaction()->toArray();
     }
 
     /**

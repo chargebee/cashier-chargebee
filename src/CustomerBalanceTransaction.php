@@ -3,7 +3,7 @@
 namespace Chargebee\Cashier;
 
 use Chargebee\Cashier\Exceptions\InvalidCustomerBalanceTransaction;
-use ChargeBee\ChargeBee\Models\PromotionalCredit;
+use Chargebee\Resources\PromotionalCredit\PromotionalCredit;
 
 class CustomerBalanceTransaction
 {
@@ -17,7 +17,7 @@ class CustomerBalanceTransaction
     /**
      * The Chargebee CustomerBalanceTransaction instance.
      *
-     * @var \ChargeBee\ChargeBee\Models\PromotionalCredit
+     * @var \Chargebee\Resources\PromotionalCredit\PromotionalCredit;
      */
     protected $transaction;
 
@@ -25,14 +25,14 @@ class CustomerBalanceTransaction
      * Create a new CustomerBalanceTransaction instance.
      *
      * @param  \Illuminate\Database\Eloquent\Model  $owner
-     * @param  \ChargeBee\ChargeBee\Models\PromotionalCredit  $transaction
+     * @param  \Chargebee\Resources\PromotionalCredit\PromotionalCredit  $transaction
      * @return void
      *
      * @throws \Chargebee\Cashier\Exceptions\InvalidCustomerBalanceTransaction
      */
     public function __construct($owner, PromotionalCredit $transaction)
     {
-        if ($owner->chargebee_id !== $transaction->customerId) {
+        if ($owner->chargebee_id !== $transaction->customer_id) {
             throw InvalidCustomerBalanceTransaction::invalidOwner($transaction, $owner);
         }
 
@@ -77,7 +77,7 @@ class CustomerBalanceTransaction
      */
     public function rawEndingBalance(): mixed
     {
-        return $this->transaction->closingBalance;
+        return $this->transaction->closing_balance;
     }
 
     /**
@@ -88,13 +88,13 @@ class CustomerBalanceTransaction
      */
     protected function formatAmount($amount)
     {
-        return Cashier::formatAmount($amount, $this->transaction->currency);
+        return Cashier::formatAmount($amount, $this->transaction->currency_code);
     }
 
     /**
      * Get the Chargebee PromotionalCredit instance.
      *
-     * @return \ChargeBee\ChargeBee\Models\PromotionalCredit
+     * @return \Chargebee\Resources\PromotionalCredit\PromotionalCredit;
      */
     public function asChargebeeCustomerBalanceTransaction()
     {
@@ -108,7 +108,7 @@ class CustomerBalanceTransaction
      */
     public function toArray(): mixed
     {
-        return $this->asChargebeeCustomerBalanceTransaction()->getValues();
+        return $this->asChargebeeCustomerBalanceTransaction()->toArray();
     }
 
     /**

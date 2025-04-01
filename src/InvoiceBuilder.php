@@ -2,7 +2,6 @@
 
 namespace Chargebee\Cashier;
 
-use ChargeBee\ChargeBee\Models\Invoice as ChargeBeeInvoice;
 use Illuminate\Support\Arr;
 
 class InvoiceBuilder
@@ -60,7 +59,7 @@ class InvoiceBuilder
     public function tabPrice($price, $quantity = 1, array $tabOptions = []): static
     {
         $this->itemPrices[] = array_merge([
-            'itemPriceId' => $price,
+            'item_price_id' => $price,
             'quantity' => $quantity,
         ], $tabOptions);
 
@@ -76,18 +75,18 @@ class InvoiceBuilder
     public function invoice(?array $options = []): Invoice
     {
         $data = array_filter(array_merge([
-            'customerId' => $this->owner->chargebeeId(),
-            'currencyCode' => $this->owner->preferredCurrency(),
+            'customer_id' => $this->owner->chargebeeId(),
+            'currency_code' => $this->owner->preferredCurrency(),
             'charges' => $this->charges,
-            'itemPrices' => $this->itemPrices,
+            'item_prices' => $this->itemPrices,
         ], $options));
 
-        if (Arr::has($data, 'subscriptionId')) {
-            Arr::forget($data, ['customerId', 'currencyCode']);
+        if (Arr::has($data, 'subscription_id')) {
+            Arr::forget($data, ['customer_id', 'currency_code']);
         }
+        $chargebee = Cashier::chargebee();
+        $response = $chargebee->invoice()->createForChargeItemsAndCharges($data);
 
-        $response = ChargeBeeInvoice::createForChargeItemsAndCharges($data);
-
-        return new Invoice($this->owner, $response->invoice());
+        return new Invoice($this->owner, $response->invoice);
     }
 }

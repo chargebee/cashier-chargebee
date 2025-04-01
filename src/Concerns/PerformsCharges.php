@@ -2,12 +2,11 @@
 
 namespace Chargebee\Cashier\Concerns;
 
+use Chargebee\Cashier\Cashier;
 use Chargebee\Cashier\Checkout;
 use Chargebee\Cashier\Exceptions\PaymentNotFound;
 use Chargebee\Cashier\Payment;
-use ChargeBee\ChargeBee\Exceptions\InvalidRequestException;
-use ChargeBee\ChargeBee\Models\Invoice as ChargeBeeInvoice;
-use ChargeBee\ChargeBee\Models\PaymentIntent;
+use Chargebee\Exceptions\InvalidRequestException;
 use Illuminate\Support\Arr;
 
 trait PerformsCharges
@@ -28,19 +27,19 @@ trait PerformsCharges
     public function createPayment(int $amount, array $options = []): Payment
     {
         $options = array_merge([
-            'currencyCode' => $this->preferredCurrency(),
+            'currency_code' => $this->preferredCurrency(),
         ], $options);
 
         $options['amount'] = $amount;
 
         if ($this->hasChargebeeId()) {
-            $options['customerId'] = $this->chargebeeId();
+            $options['customer_id'] = $this->chargebeeId();
         }
-
-        $result = PaymentIntent::create($options);
+        $chargebee = Cashier::chargebee();
+        $result = $chargebee->paymentIntent()->create($options);
 
         return new Payment(
-            $result->paymentIntent()
+            $result->payment_intent
         );
     }
 
@@ -50,10 +49,10 @@ trait PerformsCharges
     public function findPayment(string $id): Payment
     {
         try {
-            $result = PaymentIntent::retrieve($id);
-
+            $chargebee = Cashier::chargebee();
+            $result = $chargebee->paymentIntent()->retrieve($id);
             return new Payment(
-                $result->paymentIntent()
+                $result->payment_intent
             );
         } catch (InvalidRequestException $exception) {
             if (strpos($exception->getApiErrorCode(), 'resource_not_found') !== false) {
@@ -68,11 +67,12 @@ trait PerformsCharges
      *
      * @param  string  $invoiceId
      * @param  array  $options
-     * @return \ChargeBee\ChargeBee\Result
+     * @return \Chargebee\Responses\InvoiceResponse\RefundInvoiceResponse
      */
     public function refund($invoiceId, array $options = [])
     {
-        return ChargeBeeInvoice::refund($invoiceId, $options);
+        $chargeee = Cashier::chargebee();
+        return $chargeee->invoice()->refund($invoiceId, $options);
     }
 
     /**
@@ -110,7 +110,7 @@ trait PerformsCharges
         ];
 
         return $this->checkout([], array_merge($sessionOptions, [
-            'currencyCode' => $this->preferredCurrency(),
+            'currency_code' => $this->preferredCurrency(),
             'charges' => $charges,
         ]), $customerOptions);
     }

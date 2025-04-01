@@ -2,13 +2,11 @@
 
 namespace Chargebee\Cashier\Tests\Feature;
 
+use Chargebee\Cashier\Cashier;
 use Chargebee\Cashier\Exceptions\CustomerNotFound;
 use Chargebee\Cashier\Exceptions\InvalidInvoice;
 use Chargebee\Cashier\Invoice;
 use Chargebee\Cashier\Tests\Fixtures\User;
-use ChargeBee\ChargeBee\Models\Coupon;
-use ChargeBee\ChargeBee\Models\Customer;
-use ChargeBee\ChargeBee\Models\PaymentSource;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -35,18 +33,19 @@ class InvoicesTest extends FeatureTestCase
         $user = $this->createCustomerWithPaymentSource('customer_can_be_invoiced_with_coupon');
 
         $id = 'coupon_'.now()->timestamp;
-        $coupon = Coupon::createForItems([
+        $chargebee = Cashier::chargebee();
+        $coupon = $chargebee->coupon()->createForItems([
             'id' => $id,
             'name' => $id,
-            'discountType' => 'fixed_amount',
-            'discountAmount' => 500,
-            'durationType' => 'one_time',
-            'applyOn' => 'invoice_amount',
-            'currencyCode' => config('cashier.currency'),
-        ])->coupon();
+            'discount_type' => 'fixed_amount',
+            'discount_amount' => 500,
+            'duration_type' => 'one_time',
+            'apply_on' => 'invoice_amount',
+            'currency_code' => config('cashier.currency'),
+        ])->coupon;
 
         $invoice = $user->invoiceFor('Laracon', 49900, [], [
-            'couponIds' => [$coupon->id],
+            'coupon_ids' => [$coupon->id],
         ]);
 
         $this->assertNotNull($invoice->discounts()[0]->coupon());
@@ -74,7 +73,7 @@ class InvoicesTest extends FeatureTestCase
 
         $this->assertInstanceOf(Invoice::class, $response);
         $this->assertEquals(599, $response->total);
-        $this->assertEquals(false, $response->invoiceLineItems()[0]->isTaxed);
+        $this->assertEquals(false, $response->invoiceLineItems()[0]->is_taxed);
     }
 
     public function test_find_invoice_by_id()
@@ -214,7 +213,7 @@ class InvoicesTest extends FeatureTestCase
         $response = $user->newInvoice()
             ->tabFor('Laracon', amount: 5000)
             ->invoice([
-                'autoCollection' => 'off',
+                'auto_collection' => 'off',
             ]);
 
         $invoice = $response->void();
@@ -228,7 +227,7 @@ class InvoicesTest extends FeatureTestCase
         $response = $user->newInvoice()
             ->tabFor('Laracon', amount: 5000)
             ->invoice([
-                'autoCollection' => 'off',
+                'auto_collection' => 'off',
             ]);
 
         $this->assertFalse($response->isPaid());
@@ -246,7 +245,7 @@ class InvoicesTest extends FeatureTestCase
         $response = $user->newInvoice()
             ->tabFor('Laracon', amount: 5000)
             ->invoice([
-                'autoCollection' => 'off',
+                'auto_collection' => 'off',
             ]);
 
         $this->assertFalse($response->isPaid());
@@ -262,7 +261,7 @@ class InvoicesTest extends FeatureTestCase
         $response = $user->newInvoice()
             ->tabFor('Laracon', amount: 5000)
             ->invoice([
-                'autoCollection' => 'off',
+                'auto_collection' => 'off',
             ]);
 
         $this->assertFalse($response->deleted);
@@ -280,9 +279,9 @@ class InvoicesTest extends FeatureTestCase
             null,
             [],
             [
-                'createPendingInvoices' => true,
-                'autoCollection' => 'off',
-                'firstInvoicePending' => true,
+                'create_pending_invoices' => true,
+                'auto_collection' => 'off',
+                'first_invoice_pending' => true,
             ]
         );
 
@@ -302,9 +301,9 @@ class InvoicesTest extends FeatureTestCase
             null,
             [],
             [
-                'createPendingInvoices' => true,
-                'autoCollection' => 'off',
-                'firstInvoicePending' => true,
+                'create_pending_invoices' => true,
+                'auto_collection' => 'off',
+                'first_invoice_pending' => true,
             ]
         );
 
@@ -319,7 +318,7 @@ class InvoicesTest extends FeatureTestCase
         $invoice = $user->newInvoice()
             ->tabFor('Laracon', amount: 5000)
             ->invoice([
-                'autoCollection' => 'off',
+                'auto_collection' => 'off',
             ]);
 
         $this->assertFalse($invoice->chargesAutomatically());
@@ -332,7 +331,7 @@ class InvoicesTest extends FeatureTestCase
         $invoice = $user->newInvoice()
             ->tabFor('Laracon', amount: 5000)
             ->invoice([
-                'autoCollection' => 'on',
+                'auto_collection' => 'on',
             ]);
 
         $this->assertTrue($invoice->chargesAutomatically());
@@ -345,7 +344,7 @@ class InvoicesTest extends FeatureTestCase
         $invoice = $user->newInvoice()
             ->tabFor('Laracon', amount: 5000)
             ->invoice([
-                'autoCollection' => 'off',
+                'auto_collection' => 'off',
             ]);
 
         $this->assertTrue($invoice->isNotTaxExempt());
@@ -356,8 +355,9 @@ class InvoicesTest extends FeatureTestCase
     {
         $user = $this->createCustomer($description, $options);
         $user->createAsChargebeeCustomer();
+        $chargebee = Cashier::chargebee();
 
-        $paymentSource = PaymentSource::createCard([
+        $paymentSource = $chargebee->paymentSource()->createCard([
             'customer_id' => $user->chargebeeId(),
             'replace_primary_payment_source' => true,
             'card' => [
@@ -366,9 +366,9 @@ class InvoicesTest extends FeatureTestCase
                 'expiry_month' => now()->month,
                 'expiry_year' => now()->addYear()->year,
             ],
-        ])->paymentSource();
+        ])->payment_source;
 
-        Customer::assignPaymentRole(
+        $chargebee->customer()->assignPaymentRole(
             $user->chargebeeId(),
             [
                 'payment_source_id' => $paymentSource->id,

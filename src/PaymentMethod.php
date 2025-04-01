@@ -3,7 +3,7 @@
 namespace Chargebee\Cashier;
 
 use Chargebee\Cashier\Exceptions\InvalidPaymentMethod;
-use ChargeBee\ChargeBee\Models\PaymentSource;
+use Chargebee\Resources\PaymentSource\PaymentSource;
 use Illuminate\Database\Eloquent\Model;
 use LogicException;
 
@@ -14,11 +14,11 @@ class PaymentMethod
      */
     public function __construct(protected Model $owner, protected PaymentSource $paymentMethod)
     {
-        if (is_null($paymentMethod->customerId)) {
+        if (is_null($paymentMethod->customer_id)) {
             throw new LogicException('The payment method is not attached to a customer.');
         }
 
-        if ($owner->chargebee_id !== $paymentMethod->customerId) {
+        if ($owner->chargebee_id !== $paymentMethod->customer_id) {
             throw InvalidPaymentMethod::invalidOwner($paymentMethod, $owner);
         }
     }

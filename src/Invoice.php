@@ -5,7 +5,7 @@ namespace Chargebee\Cashier;
 use Carbon\Carbon;
 use Chargebee\Cashier\Contracts\InvoiceRenderer;
 use Chargebee\Cashier\Exceptions\InvalidInvoice;
-use ChargeBee\ChargeBee\Models\Invoice as ChargeBeeInvoice;
+use Chargebee\Resources\Invoice\Invoice as ChargeBeeInvoice;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Contracts\View\View as ViewView;
@@ -48,7 +48,7 @@ class Invoice implements Arrayable, Jsonable, JsonSerializable
      * Create a new invoice instance.
      *
      * @param  \Illuminate\Database\Eloquent\Model  $owner
-     * @param  \ChargeBee\ChargeBee\Models\Invoice  $invoice
+     * @param  \Chargebee\Resources\Invoice\Invoice  $invoice
      * @param  array  $refreshData
      * @return void
      *
@@ -56,7 +56,7 @@ class Invoice implements Arrayable, Jsonable, JsonSerializable
      */
     public function __construct($owner, ChargeBeeInvoice $invoice, $nextOffset = null)
     {
-        if ($owner->chargebee_id !== $invoice->customerId) {
+        if ($owner->chargebee_id !== $invoice->customer_id) {
             throw InvalidInvoice::invalidOwner($invoice, $owner);
         }
 
@@ -86,8 +86,8 @@ class Invoice implements Arrayable, Jsonable, JsonSerializable
      */
     public function dueDate($timezone = null): Carbon|null
     {
-        if ($this->invoice->dueDate) {
-            $carbon = Carbon::createFromTimestampUTC($this->invoice->dueDate);
+        if ($this->invoice->due_date) {
+            $carbon = Carbon::createFromTimestampUTC($this->invoice->due_date);
 
             return $timezone ? $carbon->setTimezone($timezone) : $carbon;
         }
@@ -122,7 +122,7 @@ class Invoice implements Arrayable, Jsonable, JsonSerializable
      */
     public function subtotal(): string
     {
-        return $this->formatAmount($this->invoice->subTotal);
+        return $this->formatAmount($this->invoice->sub_total);
     }
 
     /**
@@ -142,7 +142,7 @@ class Invoice implements Arrayable, Jsonable, JsonSerializable
      */
     public function rawAmountDue(): mixed
     {
-        return $this->invoice->amountDue ?? 0;
+        return $this->invoice->amount_due ?? 0;
     }
 
     /**
@@ -196,7 +196,7 @@ class Invoice implements Arrayable, Jsonable, JsonSerializable
     {
         return optional(Collection::make($this->invoice->discounts)
             ->first(function ($discountAmount) use ($discount) {
-                return $discountAmount->entityId === $discount->entityId;
+                return $discountAmount->entity_id === $discount->entity_id;
             }))
             ->amount;
     }
@@ -258,12 +258,12 @@ class Invoice implements Arrayable, Jsonable, JsonSerializable
      */
     public function taxes(): array
     {
-        return Collection::make($this->invoice->lineItemTaxes)
+        return Collection::make($this->invoice->line_item_taxes)
             ->map(function ($lineItemTax) {
                 return new Tax(
-                    $lineItemTax->taxAmount,
-                    $this->invoice->currencyCode,
-                    $lineItemTax->taxRate
+                    $lineItemTax->tax_amount,
+                    $this->invoice->currency_code,
+                    $lineItemTax->tax_rate
                 );
             })
             ->all();
@@ -296,7 +296,7 @@ class Invoice implements Arrayable, Jsonable, JsonSerializable
      */
     public function chargesAutomatically(): bool
     {
-        return $this->invoice->status === 'paid';
+        return $this->invoice->status->value === 'paid';
     }
 
     /**
@@ -306,7 +306,7 @@ class Invoice implements Arrayable, Jsonable, JsonSerializable
      */
     public function sendsInvoice(): bool
     {
-        return $this->invoice->status === 'pending' || $this->invoice->status === 'payment_due';
+        return $this->invoice->status->value === 'pending' || $this->invoice->status->value === 'payment_due';
     }
 
     /**
@@ -317,7 +317,7 @@ class Invoice implements Arrayable, Jsonable, JsonSerializable
     public function invoiceItems(): array
     {
         return Collection::make($this->invoiceLineItems())->filter(function (InvoiceLineItem $item) {
-            return $item->subscriptionId == null;
+            return $item->subscription_id == null;
         })->all();
     }
 
@@ -329,7 +329,7 @@ class Invoice implements Arrayable, Jsonable, JsonSerializable
     public function subscriptions(): array
     {
         return Collection::make($this->invoiceLineItems())->filter(function (InvoiceLineItem $item) {
-            return $item->subscriptionId != null;
+            return $item->subscription_id != null;
         })->all();
     }
 
@@ -344,7 +344,7 @@ class Invoice implements Arrayable, Jsonable, JsonSerializable
             return $this->items;
         }
 
-        $lineItems = $this->invoice->lineItems;
+        $lineItems = $this->invoice->line_items;
 
         $items = Collection::make();
 
@@ -361,16 +361,17 @@ class Invoice implements Arrayable, Jsonable, JsonSerializable
      * @param  string  $description
      * @param  int  $amount
      * @param  array  $options
-     * @return \ChargeBee\ChargeBee\Models\Invoice
+     * @return \Chargebee\Resources\Invoice\Invoice
      */
     public function tab($description, $amount, array $options = []): ChargeBeeInvoice
     {
-        $item = ChargeBeeInvoice::addCharge($this->invoice->id, array_merge($options, [
+        $chargebee = Cashier::chargebee();
+        $item = $chargebee->invoice()->addCharge($this->invoice->id, array_merge($options, [
             'amount' => $amount,
             'description' => $description,
         ]));
 
-        $this->invoice = $item->invoice();
+        $this->invoice = $item->invoice;
 
         return $this->invoice;
     }
@@ -381,18 +382,19 @@ class Invoice implements Arrayable, Jsonable, JsonSerializable
      * @param  string  $price
      * @param  int  $quantity
      * @param  array  $options
-     * @return \ChargeBee\ChargeBee\Models\Invoice
+     * @return \Chargebee\Resources\Invoice\Invoice
      */
     public function tabPrice($price, $quantity = 1, array $options = []): ChargeBeeInvoice
     {
-        $item = ChargeBeeInvoice::addChargeItem($this->invoice->id, array_merge($options, [
-            'itemPrice' => [
-                'itemPriceId' => $price,
+        $chargebee = Cashier::chargebee();
+        $item = $chargebee->invoice()->addChargeItem($this->invoice->id, array_merge($options, [
+            'item_price' => [
+                'item_price_id' => $price,
                 'quantity' => $quantity,
             ],
         ]));
 
-        $this->invoice = $item->invoice();
+        $this->invoice = $item->invoice;
 
         return $this->invoice;
     }
@@ -404,7 +406,8 @@ class Invoice implements Arrayable, Jsonable, JsonSerializable
      */
     public function refresh(): static
     {
-        $this->invoice = ChargeBeeInvoice::retrieve($this->invoice->id)->invoice();
+        $chargebee = Cashier::chargebee();
+        $this->invoice = $chargebee->invoice()->retrieve($this->invoice->id)->invoice;
 
         return $this;
     }
@@ -417,7 +420,7 @@ class Invoice implements Arrayable, Jsonable, JsonSerializable
      */
     protected function formatAmount($amount): string
     {
-        return Cashier::formatAmount($amount, $this->invoice->currencyCode);
+        return Cashier::formatAmount($amount, $this->invoice->currency_code);
     }
 
     /**
@@ -428,15 +431,16 @@ class Invoice implements Arrayable, Jsonable, JsonSerializable
      */
     public function pay(array $options = []): static
     {
+        $chargebee = Cashier::chargebee();
         if (Arr::get($options, 'off_session', true)) {
-            $this->invoice = ChargeBeeInvoice::recordPayment($this->invoice->id, array_merge([
+            $this->invoice = $chargebee->invoice()->recordPayment($this->invoice->id, array_merge([
                 'transaction' => [
-                    'paymentMethod' => 'other',
+                    'payment_method' => 'other',
                 ],
                 $options,
-            ]))->invoice();
+            ]))->invoice;
         } else {
-            $this->invoice = ChargeBeeInvoice::collectPayment($this->invoice->id, $options)->invoice();
+            $this->invoice = $chargebee->invoice()->collectPayment($this->invoice->id, $options)->invoice;
         }
 
         return $this;
@@ -450,7 +454,8 @@ class Invoice implements Arrayable, Jsonable, JsonSerializable
      */
     public function void(array $options = []): static
     {
-        $this->invoice = ChargeBeeInvoice::voidInvoice($this->invoice->id, $options)->invoice();
+        $chargebee = Cashier::chargebee();
+        $this->invoice = $chargebee->invoice()->voidInvoice($this->invoice->id, $options)->invoice;
 
         return $this;
     }
@@ -463,7 +468,8 @@ class Invoice implements Arrayable, Jsonable, JsonSerializable
      */
     public function delete(array $options = []): static
     {
-        $this->invoice = ChargeBeeInvoice::delete($this->invoice->id, $options)->invoice();
+        $chargebee = Cashier::chargebee();
+        $this->invoice = $chargebee->invoice()->delete($this->invoice->id, $options)->invoice;
 
         return $this;
     }
@@ -475,7 +481,7 @@ class Invoice implements Arrayable, Jsonable, JsonSerializable
      */
     public function isOpen(): bool
     {
-        return $this->invoice->status === 'payment_due';
+        return $this->invoice->status->value === 'payment_due';
     }
 
     /**
@@ -485,7 +491,7 @@ class Invoice implements Arrayable, Jsonable, JsonSerializable
      */
     public function isPending(): bool
     {
-        return $this->invoice->status === 'pending';
+        return $this->invoice->status->value === 'pending';
     }
 
     /**
@@ -495,7 +501,7 @@ class Invoice implements Arrayable, Jsonable, JsonSerializable
      */
     public function isPaid(): bool
     {
-        return $this->invoice->status === 'paid';
+        return $this->invoice->status->value === 'paid';
     }
 
     /**
@@ -505,7 +511,7 @@ class Invoice implements Arrayable, Jsonable, JsonSerializable
      */
     public function isVoid(): bool
     {
-        return $this->invoice->status === 'voided';
+        return $this->invoice->status->value === 'voided';
     }
 
     /**

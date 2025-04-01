@@ -2,7 +2,7 @@
 
 namespace Chargebee\Cashier\Exceptions;
 
-use ChargeBee\ChargeBee\Models\PromotionalCredit;
+use Chargebee\Resources\PromotionalCredit\PromotionalCredit;
 use Exception;
 
 final class InvalidCustomerBalanceTransaction extends Exception
@@ -10,7 +10,7 @@ final class InvalidCustomerBalanceTransaction extends Exception
     /**
      * Create a new CustomerBalanceTransaction instance.
      *
-     * @param  \ChargeBee\ChargeBee\Models\PromotionalCredit  $transaction
+     * @param  \Chargebee\Resources\PromotionalCredit\PromotionalCredit  $transaction
      * @param  \Illuminate\Database\Eloquent\Model  $owner
      * @return static
      */

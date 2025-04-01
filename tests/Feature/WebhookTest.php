@@ -2,10 +2,11 @@
 
 namespace Chargebee\Cashier\Tests\Feature;
 
+use Chargebee\Cashier\Cashier;
 use Chargebee\Cashier\Events\WebhookReceived;
 use Chargebee\Cashier\Subscription;
 use Chargebee\Cashier\Tests\Fixtures\User;
-use ChargeBee\ChargeBee\Models\PaymentSource;
+use Chargebee\Resources\PaymentSource\PaymentSource;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Log;
@@ -27,9 +28,9 @@ class WebhookTest extends FeatureTestCase
 
         $mockItemPrice = \Mockery::mock();
         $mockItemPrice->shouldReceive('itemPrice')
-            ->andReturn((object) ['itemId' => 'product_abc']);
+            ->andReturn((object) ['item_id' => 'product_abc']);
 
-        $mockItemPriceModel = \Mockery::mock('overload:ChargeBee\ChargeBee\Models\ItemPrice');
+        $mockItemPriceModel = \Mockery::mock('overload:Chargebee\Resources\ItemPrice\ItemPrice');
         $mockItemPriceModel->shouldReceive('retrieve')
             ->with(\Mockery::any())
             ->andReturn($mockItemPrice);
@@ -495,7 +496,8 @@ class WebhookTest extends FeatureTestCase
 
     private function createCard(Model $user): ?PaymentSource
     {
-        return PaymentSource::createCard([
+        $chargebee = Cashier::chargebee();
+        return $chargebee->paymentSource()->createCard([
             'customer_id' => $user->chargebeeId(),
             'card' => [
                 'number' => '4111 1111 1111 1111',
@@ -504,6 +506,6 @@ class WebhookTest extends FeatureTestCase
                 'expiry_month' => date('m', strtotime('+ 1 year')),
             ],
         ]
-        )->paymentSource();
+        )->payment_source;
     }
 }

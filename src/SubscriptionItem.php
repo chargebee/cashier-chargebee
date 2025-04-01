@@ -4,9 +4,9 @@ namespace Chargebee\Cashier;
 
 use Chargebee\Cashier\Concerns\Prorates;
 use Chargebee\Cashier\Database\Factories\SubscriptionItemFactory;
-use ChargeBee\ChargeBee\Models\ItemPrice;
-use ChargeBee\ChargeBee\Models\SubscriptionSubscriptionItem;
-use ChargeBee\ChargeBee\Models\Usage;
+use Chargebee\Resources\ItemPrice\ItemPrice;
+use Chargebee\Resources\Subscription\SubscriptionItem as ChargebeeSubscriptionItem;
+use Chargebee\Resources\Usage\Usage;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -90,7 +90,8 @@ class SubscriptionItem extends Model
      */
     public function swap(string $price, array $itemOptions = [], array $subscriptionOptions = []): static
     {
-        $item = ['itemPriceId' => $price];
+        $chargebee = Cashier::chargebee();
+        $item = ['item_price_id' => $price];
         if ($this->quantity) {
             $item['quantity'] = $this->quantity;
         }
@@ -104,8 +105,8 @@ class SubscriptionItem extends Model
         $chargebeeSubscriptionItem = $this->updateChargebeeSubscriptionItem($itemOptions, $subscriptionOptions);
 
         $this->fill([
-            'chargebee_product' => ItemPrice::retrieve($price)->itemPrice()->itemId,
-            'chargebee_price' => $chargebeeSubscriptionItem->itemPriceId,
+            'chargebee_product' => $chargebee->itemPrice()->retrieve($price)->item_price->item_id,
+            'chargebee_price' => $chargebeeSubscriptionItem->item_price_id,
             'quantity' => $chargebeeSubscriptionItem->quantity,
         ])->save();
 
@@ -120,7 +121,7 @@ class SubscriptionItem extends Model
      */
     public function swapAndInvoice(string $price, array $itemOptions = [], array $subscriptionOptions = []): static
     {
-        $subscriptionOptions['invoiceImmediately'] = true;
+        $subscriptionOptions['invoice_immediately'] = true;
 
         return $this->swap($price, $itemOptions, $subscriptionOptions);
     }
@@ -130,15 +131,16 @@ class SubscriptionItem extends Model
      */
     public function reportUsage(int $quantity = 1, DateTimeInterface|int|null $timestamp = null): Usage
     {
+        $chargebee = Cashier::chargebee();
         $timestamp = $timestamp instanceof DateTimeInterface ? $timestamp->getTimestamp() : $timestamp;
 
-        $result = Usage::create($this->subscription->chargebee_id, [
-            'itemPriceId' => $this->chargebee_price,
+        $result = $chargebee->usage()->create($this->subscription->chargebee_id, [
+            'item_price_id' => $this->chargebee_price,
             'quantity' => $quantity,
-            'usageDate' => $timestamp ?? time(),
+            'usage_date' => $timestamp ?? time(),
         ]);
 
-        return $result->usage();
+        return $result->usage;
     }
 
     /**
@@ -146,25 +148,26 @@ class SubscriptionItem extends Model
      */
     public function usageRecords(array $options = []): Collection
     {
-        $all = Usage::all(array_merge([
-            'subscriptionId[is]' => $this->subscription->chargebee_id,
-            'itemPriceId[is]' => $this->chargebee_price,
+        $chargebee = Cashier::chargebee();
+        $all = $chargebee->usage()->all(array_merge([
+            'subscription_id[is]' => $this->subscription->chargebee_id,
+            'item_price_id[is]' => $this->chargebee_price,
         ], $options));
 
-        return collect($all)->map(function ($entry) {
-            return $entry->usage();
+        return collect($all->list)->map(function ($entry) {
+            return $entry->usage;
         });
     }
 
     /**
      * Update the underlying Chargebee subscription item information for the model.
      */
-    public function updateChargebeeSubscriptionItem(array $itemOptions = [], array $subscriptionOptions = []): SubscriptionSubscriptionItem
+    public function updateChargebeeSubscriptionItem(array $itemOptions = [], array $subscriptionOptions = []): ChargebeeSubscriptionItem
     {
         $chargebeeSubscription = $this->subscription->updateChargebeeSubscriptionItem($this->chargebee_price, $itemOptions, $subscriptionOptions);
-        $price = $itemOptions['itemPriceId'] ?? $this->chargebee_price;
+        $price = $itemOptions['item_price_id'] ?? $this->chargebee_price;
 
-        return collect($chargebeeSubscription->subscriptionItems)->firstWhere('itemPriceId', $price);
+        return collect($chargebeeSubscription->subscription_items)->firstWhere('item_price_id', $price);
     }
 
     /**
@@ -172,11 +175,11 @@ class SubscriptionItem extends Model
      *
      * @throws ModelNotFoundException
      */
-    public function asChargebeeSubscriptionItem(): SubscriptionSubscriptionItem
+    public function asChargebeeSubscriptionItem(): ChargebeeSubscriptionItem
     {
         $chargebeeSubscription = $this->subscription->asChargebeeSubscription();
 
-        $subscriptionItem = collect($chargebeeSubscription->subscriptionItems)->firstWhere('itemPriceId', $this->chargebee_price);
+        $subscriptionItem = collect($chargebeeSubscription->subscription_items)->firstWhere('item_price_id', $this->chargebee_price);
 
         if (! $subscriptionItem) {
             throw new ModelNotFoundException("Subscription item with price '{$this->chargebee_price}' not found in Chargebee.");

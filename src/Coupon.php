@@ -2,7 +2,7 @@
 
 namespace Chargebee\Cashier;
 
-use ChargeBee\ChargeBee\Models\Coupon as ChargeBeeCoupon;
+use Chargebee\Resources\Coupon\Coupon as ChargeBeeCoupon;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
 use JsonSerializable;
@@ -12,14 +12,14 @@ class Coupon implements Arrayable, Jsonable, JsonSerializable
     /**
      * The Chargebee Coupon instance.
      *
-     * @var \ChargeBee\ChargeBee\Models\Coupon
+     * @var \Chargebee\Resources\Coupon\Coupon
      */
     protected $coupon;
 
     /**
      * Create a new Coupon instance.
      *
-     * @param  \ChargeBee\ChargeBee\Models\Coupon  $coupon
+     * @param  \Chargebee\Resources\Coupon\Coupon $coupon
      * @return void
      */
     public function __construct(ChargeBeeCoupon $coupon)
@@ -44,7 +44,7 @@ class Coupon implements Arrayable, Jsonable, JsonSerializable
      */
     public function isPercentage(): bool
     {
-        return $this->coupon->discountType == 'percentage';
+        return $this->coupon->discount_type == 'percentage';
     }
 
     /**
@@ -54,7 +54,7 @@ class Coupon implements Arrayable, Jsonable, JsonSerializable
      */
     public function percentOff(): mixed
     {
-        return $this->coupon->discountPercentage;
+        return $this->coupon->discount_percentage;
     }
 
     /**
@@ -64,7 +64,7 @@ class Coupon implements Arrayable, Jsonable, JsonSerializable
      */
     public function amountOff(): string|null
     {
-        if (! is_null($this->coupon->discountAmount)) {
+        if (! is_null($this->coupon->discount_amount)) {
             return $this->formatAmount($this->rawAmountOff());
         }
 
@@ -78,7 +78,7 @@ class Coupon implements Arrayable, Jsonable, JsonSerializable
      */
     public function rawAmountOff(): mixed
     {
-        return $this->coupon->discountAmount;
+        return $this->coupon->discount_amount;
     }
 
     /**
@@ -89,13 +89,13 @@ class Coupon implements Arrayable, Jsonable, JsonSerializable
      */
     protected function formatAmount($amount)
     {
-        return Cashier::formatAmount($amount, $this->coupon->currencyCode);
+        return Cashier::formatAmount($amount, $this->coupon->currency_code);
     }
 
     /**
      * Get the Chargebee Coupon instance.
      *
-     * @return \ChargeBee\ChargeBee\Models\Coupon
+     * @return \Chargebee\Resources\Coupon\Coupon
      */
     public function asChargebeeCoupon(): ChargeBeeCoupon
     {
@@ -109,7 +109,7 @@ class Coupon implements Arrayable, Jsonable, JsonSerializable
      */
     public function toArray(): mixed
     {
-        return $this->asChargebeeCoupon()->getValues();
+        return $this->asChargebeeCoupon()->toArray();
     }
 
     /**

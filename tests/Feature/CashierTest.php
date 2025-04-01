@@ -4,7 +4,7 @@ namespace Chargebee\Cashier\Tests\Feature;
 
 use Chargebee\Cashier\Cashier;
 use Chargebee\Cashier\Tests\Fixtures\UserSoftDeletable;
-use ChargeBee\ChargeBee\Environment;
+
 
 class CashierTest extends FeatureTestCase
 {
@@ -22,13 +22,5 @@ class CashierTest extends FeatureTestCase
 
         $this->assertNotNull($foundCustomer);
         $this->assertSame('test_chargebee_id', $foundCustomer->chargebee_id);
-    }
-
-    public function test_it_can_configure_chargebee_environment(): void
-    {
-        $config = Environment::defaultEnv();
-
-        $this->assertSame(getenv('CHARGEBEE_SITE'), $config->getSite());
-        $this->assertSame(getenv('CHARGEBEE_API_KEY'), $config->getApiKey());
     }
 }

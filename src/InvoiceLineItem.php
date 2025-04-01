@@ -3,7 +3,7 @@
 namespace Chargebee\Cashier;
 
 use Carbon\Carbon;
-use ChargeBee\ChargeBee\Models\InvoiceLineItem as ChargeBeeInvoiceLineItem;
+use Chargebee\Resources\Invoice\LineItem as ChargeBeeInvoiceLineItem;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
 use JsonSerializable;
@@ -20,7 +20,7 @@ class InvoiceLineItem implements Arrayable, Jsonable, JsonSerializable
     /**
      * The Chargebee invoice line item instance.
      *
-     * @var \ChargeBee\ChargeBee\Models\InvoiceLineItem
+     * @var \Chargebee\Resources\Invoice\LineItem
      */
     protected $item;
 
@@ -28,7 +28,7 @@ class InvoiceLineItem implements Arrayable, Jsonable, JsonSerializable
      * Create a new invoice line item instance.
      *
      * @param  \Chargebee\Cashier\Invoice  $invoice
-     * @param  \ChargeBee\ChargeBee\Models\InvoiceLineItem  $item
+     * @param  \Chargebee\Resources\Invoice\LineItem  $item
      * @return void
      */
     public function __construct(Invoice $invoice, ChargeBeeInvoiceLineItem $item)
@@ -54,7 +54,7 @@ class InvoiceLineItem implements Arrayable, Jsonable, JsonSerializable
      */
     public function unitAmountExcludingTax(): string
     {
-        return $this->formatAmount($this->item->unitAmount - $this->item->taxAmount);
+        return $this->formatAmount($this->item->unit_amount - $this->item->tax_amount);
     }
 
     /**
@@ -64,7 +64,7 @@ class InvoiceLineItem implements Arrayable, Jsonable, JsonSerializable
      */
     public function inclusiveTaxPercentage(): mixed
     {
-        return $this->invoice->priceType == 'tax_inclusive' ? $this->taxRate : 0;
+        return $this->invoice->price_type->value == 'tax_inclusive' ? $this->item->tax_rate : 0;
     }
 
     /**
@@ -74,7 +74,7 @@ class InvoiceLineItem implements Arrayable, Jsonable, JsonSerializable
      */
     public function exclusiveTaxPercentage(): mixed
     {
-        return $this->invoice->priceType == 'tax_exclusive' ? $this->taxRate : 0;
+        return $this->invoice->price_type->value == 'tax_exclusive' ? $this->item->tax_rate : 0;
     }
 
     /**
@@ -84,7 +84,7 @@ class InvoiceLineItem implements Arrayable, Jsonable, JsonSerializable
      */
     public function hasTaxRates(): bool
     {
-        return ! empty($this->item->taxRate);
+        return ! empty($this->item->tax_rate);
     }
 
     /**
@@ -123,7 +123,7 @@ class InvoiceLineItem implements Arrayable, Jsonable, JsonSerializable
     public function startDateAsCarbon(): Carbon|null
     {
         if ($this->hasPeriod()) {
-            return Carbon::createFromTimestampUTC($this->item->dateFrom);
+            return Carbon::createFromTimestampUTC($this->item->date_from);
         }
 
         return null;
@@ -137,7 +137,7 @@ class InvoiceLineItem implements Arrayable, Jsonable, JsonSerializable
     public function endDateAsCarbon(): Carbon|null
     {
         if ($this->hasPeriod()) {
-            return Carbon::createFromTimestampUTC($this->item->dateTo);
+            return Carbon::createFromTimestampUTC($this->item->date_to);
         }
 
         return null;
@@ -150,7 +150,7 @@ class InvoiceLineItem implements Arrayable, Jsonable, JsonSerializable
      */
     public function hasPeriod(): bool
     {
-        return ! is_null($this->item->dateFrom) && ! is_null($this->item->dateTo);
+        return ! is_null($this->item->date_from) && ! is_null($this->item->date_to);
     }
 
     /**
@@ -160,7 +160,7 @@ class InvoiceLineItem implements Arrayable, Jsonable, JsonSerializable
      */
     public function periodStartAndEndAreEqual(): bool
     {
-        return $this->hasPeriod() ? $this->item->dateFrom === $this->item->dateTo : false;
+        return $this->hasPeriod() ? $this->item->date_from === $this->item->date_to : false;
     }
 
     /**
@@ -170,7 +170,7 @@ class InvoiceLineItem implements Arrayable, Jsonable, JsonSerializable
      */
     public function isSubscription(): bool
     {
-        return $this->item->subscriptionId != null;
+        return $this->item->subscription_id != null;
     }
 
     /**
@@ -181,7 +181,7 @@ class InvoiceLineItem implements Arrayable, Jsonable, JsonSerializable
      */
     protected function formatAmount($amount): string
     {
-        return Cashier::formatAmount($amount, $this->invoice()->currencyCode);
+        return Cashier::formatAmount($amount, $this->invoice()->currency_code);
     }
 
     /**
