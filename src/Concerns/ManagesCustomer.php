@@ -260,7 +260,7 @@ trait ManagesCustomer
      */
     public function isNotTaxExempt(): bool
     {
-        return $this->asChargebeeCustomer()->taxability === 'taxable';
+        return $this->asChargebeeCustomer()->taxability->value === 'taxable';
     }
 
     /**
@@ -268,7 +268,7 @@ trait ManagesCustomer
      */
     public function isTaxExempt(): bool
     {
-        return $this->asChargebeeCustomer()->taxability === 'exempt';
+        return $this->asChargebeeCustomer()->taxability->value === 'exempt';
     }
 
     /**

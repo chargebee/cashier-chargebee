@@ -145,8 +145,8 @@ trait ManagesPaymentMethods
 
         $customer = $this->asChargebeeCustomer();
 
-        if (! empty($customer->primaryPaymentSourceId)) {
-            return new PaymentMethod($this, $this->resolveChargebeePaymentMethod($customer->primaryPaymentSourceId));
+        if (! empty($customer->primary_payment_source_id)) {
+            return new PaymentMethod($this, $this->resolveChargebeePaymentMethod($customer->primary_payment_source_id));
         }
 
         return null;
@@ -162,7 +162,6 @@ trait ManagesPaymentMethods
     public function updateDefaultPaymentMethodFromChargebee(): self
     {
         $defaultPaymentMethod = $this->defaultPaymentMethod();
-
         if ($defaultPaymentMethod && $defaultPaymentMethod instanceof PaymentMethod) {
             $this->fillPaymentMethodDetails(
                 $defaultPaymentMethod->asChargebeePaymentMethod()
@@ -211,7 +210,7 @@ trait ManagesPaymentMethods
      */
     protected function fillPaymentMethodDetails(PaymentSource $paymentSource): self
     {
-        if ($paymentSource->type === 'card') {
+        if ($paymentSource->type->value === 'card') {
             $this->pm_type = $paymentSource->card->brand;
             $this->pm_last_four = $paymentSource->card->last4;
         } else {

@@ -184,7 +184,7 @@ class CustomerPaymentMethodsTest extends FeatureTestCase
         $user->createAsChargebeeCustomer();
         $paymentSource = $this->createCard($user);
         $user->deletePaymentMethods($paymentSource->type->value);
-        $this->assertNull($user->paymentMethods()->filter(fn (PaymentSource $listPaymentMethod) => $listPaymentMethod->type === $paymentSource->type)->first());
+        $this->assertNull($user->paymentMethods()->filter(fn (PaymentSource $listPaymentMethod) => $listPaymentMethod->type === $paymentSource->type->value)->first());
     }
 
     public function test_chargebee_customer_cannot_delete_payment_method(): void

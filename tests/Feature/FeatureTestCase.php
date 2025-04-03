@@ -15,9 +15,9 @@ abstract class FeatureTestCase extends TestCase
 
     protected function setUp(): void
     {
-        // if (! getenv('CHARGEBEE_SITE') || ! getenv('CHARGEBEE_API_KEY')) {
-        //     $this->markTestSkipped('Chargebee site or API key not set.');
-        // }
+        if (! getenv('CHARGEBEE_SITE') || ! getenv('CHARGEBEE_API_KEY')) {
+            $this->markTestSkipped('Chargebee site or API key not set.');
+        }
 
         parent::setUp();
 

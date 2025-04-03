@@ -120,7 +120,7 @@ class CheckoutTest extends FeatureTestCase
             ]);
 
         $this->assertInstanceOf(Checkout::class, $checkout);
-        $this->assertSame('checkout_new', $checkout->type);
+        $this->assertSame('checkout_new', $checkout->type->value);
     }
 
     public function test_guest_customers_can_start_a_checkout_session()

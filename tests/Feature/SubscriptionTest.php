@@ -290,8 +290,8 @@ class SubscriptionTest extends FeatureTestCase
 
         $retrievedSubscription = $subscription->asChargebeeSubscription();
 
-        $this->assertSame($retrievedSubscription->status, $subscription->chargebee_status);
-        $this->assertEquals(Carbon::createFromTimestamp($retrievedSubscription->currentTermEnd), $subscription->ends_at);
+        $this->assertSame($retrievedSubscription->status->value, $subscription->chargebee_status);
+        $this->assertEquals(Carbon::createFromTimestamp($retrievedSubscription->current_trem_end), $subscription->ends_at);
     }
 
     public function test_subscription_can_be_cancelled_at_specific_date(): void
@@ -309,7 +309,7 @@ class SubscriptionTest extends FeatureTestCase
 
         $retrievedSubscription = $subscription->asChargebeeSubscription();
 
-        $this->assertSame($retrievedSubscription->status, $subscription->chargebee_status);
+        $this->assertSame($retrievedSubscription->status->value, $subscription->chargebee_status);
         $this->assertEquals(Carbon::createFromTimestamp($retrievedSubscription->cancelled_at), $subscription->ends_at);
     }
 
@@ -328,7 +328,7 @@ class SubscriptionTest extends FeatureTestCase
 
         $retrievedSubscription = $subscription->asChargebeeSubscription();
 
-        $this->assertSame('cancelled', $retrievedSubscription->status);
+        $this->assertSame('cancelled', $retrievedSubscription->status->value);
         $this->assertEquals('cancelled', $subscription->chargebee_status);
         $this->assertTrue($subscription->ends_at->isToday());
     }
@@ -348,7 +348,7 @@ class SubscriptionTest extends FeatureTestCase
 
         $retrievedSubscription = $subscription->asChargebeeSubscription();
 
-        $this->assertSame('cancelled', $retrievedSubscription->status);
+        $this->assertSame('cancelled', $retrievedSubscription->status->value);
         $this->assertEquals('cancelled', $subscription->chargebee_status);
         $this->assertTrue($subscription->ends_at->isToday());
     }
@@ -418,13 +418,13 @@ class SubscriptionTest extends FeatureTestCase
             ->trialDays(7)
             ->create($paymentSource);
 
-        $this->assertSame('in_trial', $subscription->asChargebeeSubscription()->status);
+        $this->assertSame('in_trial', $subscription->asChargebeeSubscription()->status->value);
 
         $subscription->extendTrial($trialEndsAt = now()->addDays(8)->floor());
 
-        $this->assertSame('in_trial', $subscription->asChargebeeSubscription()->status);
+        $this->assertSame('in_trial', $subscription->asChargebeeSubscription()->status->value);
         $this->assertTrue($trialEndsAt->equalTo($subscription->trial_ends_at));
-        $this->assertEquals($subscription->asChargebeeSubscription()->trialEnd, $trialEndsAt->getTimestamp());
+        $this->assertEquals($subscription->asChargebeeSubscription()->trial_end, $trialEndsAt->getTimestamp());
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage("Extending a subscription's trial requires a date in the future.");
