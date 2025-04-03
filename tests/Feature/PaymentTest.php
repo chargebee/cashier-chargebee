@@ -41,13 +41,13 @@ class PaymentTest extends FeatureTestCase
             'chargebee_id' => 'id_123',
         ]);
         $paymentIntent = PaymentIntent::from([
-            'id' => 'id_123',
+            'id' => 'pay_123',
             'amount' => 1000,
             'gateway_account_id' => 'gw_987654321',
             'expires_at' => time() + 3600,
             'created_at' => time(),
             'modified_at' => time(),
-            'customer_id' => 'cus_123',
+            'customer_id' => 'id_123',
             'status' => 'consumed',
         ]);
         $payment = new Payment($paymentIntent);

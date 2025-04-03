@@ -109,7 +109,7 @@ trait ManagesPaymentMethods
 
         $customer = $this->asChargebeeCustomer();
 
-        if (! empty($customer->primaryPaymentSourceId) && $paymentSource->id === $customer->primaryPaymentSourceId) {
+        if (! empty($customer->primary_payment_source_id) && $paymentSource->id === $customer->primary_payment_source_id) {
             $this->forceFill([
                 'pm_type' => null,
                 'pm_last_four' => null,

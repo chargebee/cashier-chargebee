@@ -291,7 +291,7 @@ class SubscriptionTest extends FeatureTestCase
         $retrievedSubscription = $subscription->asChargebeeSubscription();
 
         $this->assertSame($retrievedSubscription->status->value, $subscription->chargebee_status);
-        $this->assertEquals(Carbon::createFromTimestamp($retrievedSubscription->current_trem_end), $subscription->ends_at);
+        $this->assertEquals(Carbon::createFromTimestamp($retrievedSubscription->current_term_end), $subscription->ends_at);
     }
 
     public function test_subscription_can_be_cancelled_at_specific_date(): void
@@ -933,8 +933,8 @@ class SubscriptionTest extends FeatureTestCase
         $subscription = $user->newSubscription('main', static::$firstPriceId)
             ->create($paymentSource);
         $chargebee = Cashier::chargebee();
-        $initialInvoiceCount = count($chargebee->invoice()->all(['subscripiton_id[is]' => $subscription->chargebee_id])->list);
-        $initialUnbilledCount = count($chargebee->unbilledCharge()->all(['subscripiton_id[is]' => $subscription->chargebee_id])->list);
+        $initialInvoiceCount = count($chargebee->invoice()->all(['subscription_id[is]' => $subscription->chargebee_id])->list);
+        $initialUnbilledCount = count($chargebee->unbilledCharge()->all(['subscription_id[is]' => $subscription->chargebee_id])->list);
 
         $subscription->noProrate()->updateQuantity(5, static::$firstPriceId);
         $finalInvoiceCount = count($chargebee->invoice()->all(['subscription_id[is]' => $subscription->chargebee_id])->list);

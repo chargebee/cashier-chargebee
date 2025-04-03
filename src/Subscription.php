@@ -733,7 +733,7 @@ class Subscription extends Model
             $this->ends_at = $this->trial_ends_at;
         } else {
             $this->ends_at = Carbon::createFromTimestamp(
-                $chargebeeSubscription->currentTermEnd
+                $chargebeeSubscription->current_term_end
             );
         }
 
