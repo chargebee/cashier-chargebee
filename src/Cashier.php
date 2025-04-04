@@ -93,7 +93,8 @@ final class Cashier
         $apiKey = config('cashier.api_key');
         self::$chargebeeClient = new ChargebeeClient([
             "site" => $site,
-            "apiKey" => $apiKey
+            "apiKey" => $apiKey,
+            "userAgentSuffix" => "Cashier" . self::VERSION
         ]);
     }
 
