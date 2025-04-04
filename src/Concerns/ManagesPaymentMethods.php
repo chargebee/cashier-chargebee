@@ -37,7 +37,7 @@ trait ManagesPaymentMethods
     }
 
     /**
-     * Retrieve a PaymentIntent from ChargeBee.
+     * Retrieve a PaymentIntent from chargebee.
      */
     public function findSetupIntent(string $id): ?PaymentIntent
     {

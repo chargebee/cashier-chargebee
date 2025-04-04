@@ -591,7 +591,7 @@ class Invoice implements Arrayable, Jsonable, JsonSerializable
     /**
      * Get the Chargebee invoice instance.
      *
-     * @return \ChargeBee\ChargeBee\Models\Invoice
+     * @return \Chargebee\Resources\Invoice\Invoice
      */
     public function asChargebeeInvoice(): ChargeBeeInvoice
     {
@@ -605,7 +605,7 @@ class Invoice implements Arrayable, Jsonable, JsonSerializable
      */
     public function toArray(): mixed
     {
-        return $this->asChargebeeInvoice()->getValues();
+        return $this->asChargebeeInvoice()->toArray();
     }
 
     /**

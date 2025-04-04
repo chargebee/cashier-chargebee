@@ -197,7 +197,7 @@ class InvoiceLineItem implements Arrayable, Jsonable, JsonSerializable
     /**
      * Get the underlying Chargebee invoice line item.
      *
-     * @return \ChargeBee\ChargeBee\Models\InvoiceLineItem
+     * @return \Chargebee\Resources\Invoice\LineItem
      */
     public function asChargebeeInvoiceLineItem(): ChargeBeeInvoiceLineItem
     {
@@ -211,7 +211,7 @@ class InvoiceLineItem implements Arrayable, Jsonable, JsonSerializable
      */
     public function toArray(): mixed
     {
-        return $this->asChargebeeInvoiceLineItem()->getValues();
+        return $this->asChargebeeInvoiceLineItem()->toArray();
     }
 
     /**
