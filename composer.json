@@ -34,7 +34,7 @@
         "illuminate/support": "^10.0|^11.0|^12.0",
         "illuminate/database": "^10.0|^11.0|^12.0",
         "moneyphp/money": "^4.0",
-        "chargebee/chargebee-php": "v4.0.0-beta.2"
+        "chargebee/chargebee-php": "v4.0.0-beta.3"
     },
     "require-dev": {
         "dompdf/dompdf": "^2.0",
