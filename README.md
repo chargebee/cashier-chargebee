@@ -23,3 +23,7 @@ on how to report security vulnerabilities.
 
 Laravel Cashier Chargebee is open-sourced software licensed under the
 [MIT license](LICENSE.md).
+
+## Credits
+
+This package is an adapted version for Chargeee based on the [Laravel Cashier](https://github.com/laravel/cashier) package created by [Taylor Otwell](https://github.com/taylorotwell). We sincerely thank Taylor and all the contributors of this package for their contributions.
