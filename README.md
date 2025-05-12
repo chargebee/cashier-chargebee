@@ -9,9 +9,17 @@ writing. In addition to basic subscription management, Cashier can handle
 swapping subscription, subscription "quantities", subscription pausing,
 rendering invoice and much more.
 
+You can watch the below video for a quick video introduction of this package and the [starter kit](https://github.com/chargebee/laravel-react-starter-kit).
+
+[![Video introduction of Laravel Cashier for Chargebee and Starter Kit](https://img.youtube.com/vi/jBl8XagjG1w/0.jpg)](https://www.youtube.com/watch?v=jBl8XagjG1w)
+
 ## Official Documentation
 
 Documentation for Cashier Chargebee can be found [here](DOCUMENTATION.md).
+
+## Quick Start
+
+Check out our [Laravel Starter Kit](https://github.com/chargebee/laravel-react-starter-kit) for a quick start with this package.
 
 ## Security Vulnerabilities
 
