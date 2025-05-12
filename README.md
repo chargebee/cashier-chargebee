@@ -11,7 +11,11 @@ rendering invoice and much more.
 
 You can watch the below video for a quick video introduction of this package and the [starter kit](https://github.com/chargebee/laravel-react-starter-kit).
 
-[![Video introduction of Laravel Cashier for Chargebee and Starter Kit](https://img.youtube.com/vi/jBl8XagjG1w/0.jpg)](https://www.youtube.com/watch?v=jBl8XagjG1w)
+<p align="center">
+  <a href="https://www.youtube.com/watch?v=jBl8XagjG1w">
+    <img src="https://img.youtube.com/vi/jBl8XagjG1w/0.jpg" alt="Video introduction of Laravel Cashier for Chargebee and Starter Kit" align="center" />
+  </a>
+</p>
 
 ## Official Documentation
 
