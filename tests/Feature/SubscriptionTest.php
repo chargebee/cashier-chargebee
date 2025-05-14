@@ -1099,6 +1099,7 @@ class SubscriptionTest extends FeatureTestCase
     private function createFailedCard(Model $user): ?PaymentSource
     {
         $chargebee = Cashier::chargebee();
+
         return $chargebee->paymentSource()->createCard(
             [
                 'customer_id' => $user->chargebeeId(),
@@ -1115,6 +1116,7 @@ class SubscriptionTest extends FeatureTestCase
     private function createCard(Model $user): ?PaymentSource
     {
         $chargebee = Cashier::chargebee();
+
         return $chargebee->paymentSource()->createCard(
             [
                 'customer_id' => $user->chargebeeId(),
@@ -1131,6 +1133,7 @@ class SubscriptionTest extends FeatureTestCase
     private function create3DS2Card(Model $user): ?PaymentSource
     {
         $chargebee = Cashier::chargebee();
+
         return $chargebee->paymentSource()->createCard(
             [
                 'customer_id' => $user->chargebeeId(),

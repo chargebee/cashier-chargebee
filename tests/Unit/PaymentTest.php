@@ -20,7 +20,7 @@ class PaymentTest extends TestCase
             'modified_at' => time(),
             'customer_id' => 'cus_123456',
             'status' => 'consumed',
-            "currency_code" => 'EUR',
+            'currency_code' => 'EUR',
         ]);
         $payment = new Payment($paymentIntent);
 
@@ -92,7 +92,7 @@ class PaymentTest extends TestCase
             'modified_at' => time(),
             'customer_id' => 'cus_123456',
             'status' => 'consumed',
-            "currency_code" => 'EUR',
+            'currency_code' => 'EUR',
         ]);
         $payment = new Payment($paymentIntent);
 
@@ -110,7 +110,7 @@ class PaymentTest extends TestCase
             'modified_at' => time(),
             'customer_id' => 'cus_123456',
             'status' => 'consumed',
-            "currency_code" => 'EUR',
+            'currency_code' => 'EUR',
         ]);
         $payment = new Payment($paymentIntent);
         $amount = $payment->amount();

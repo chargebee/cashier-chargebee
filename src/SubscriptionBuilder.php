@@ -262,7 +262,7 @@ class SubscriptionBuilder
     /**
      * Get the trial ending date for the Chargebee payload.
      */
-    protected function getTrialEndForPayload(): int|null
+    protected function getTrialEndForPayload(): ?int
     {
         if ($this->skipTrial) {
             return 0;
@@ -281,7 +281,7 @@ class SubscriptionBuilder
      * @param  string  $price
      * @return array|null
      */
-    protected function getPriceTaxRatesForPayload($price): array|null
+    protected function getPriceTaxRatesForPayload($price): ?array
     {
         if ($taxRates = $this->owner->priceTaxRates()) {
             return $taxRates[$price] ?? null;

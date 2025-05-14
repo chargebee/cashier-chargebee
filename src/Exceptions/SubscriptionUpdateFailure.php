@@ -12,7 +12,7 @@ final class SubscriptionUpdateFailure extends Exception
      */
     public static function duplicatePrice(Subscription $subscription, string $price): static
     {
-        return new static(
+        return new self(
             "The price \"$price\" is already attached to subscription \"{$subscription->chargebee_id}\"."
         );
     }

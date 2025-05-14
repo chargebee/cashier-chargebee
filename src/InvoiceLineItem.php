@@ -92,7 +92,7 @@ class InvoiceLineItem implements Arrayable, Jsonable, JsonSerializable
      *
      * @return string|null
      */
-    public function startDate(): string|null
+    public function startDate(): ?string
     {
         if ($this->hasPeriod()) {
             return $this->startDateAsCarbon()->toFormattedDateString();
@@ -106,7 +106,7 @@ class InvoiceLineItem implements Arrayable, Jsonable, JsonSerializable
      *
      * @return string|null
      */
-    public function endDate(): string|null
+    public function endDate(): ?string
     {
         if ($this->hasPeriod()) {
             return $this->endDateAsCarbon()->toFormattedDateString();
@@ -120,7 +120,7 @@ class InvoiceLineItem implements Arrayable, Jsonable, JsonSerializable
      *
      * @return \Carbon\Carbon|null
      */
-    public function startDateAsCarbon(): Carbon|null
+    public function startDateAsCarbon(): ?Carbon
     {
         if ($this->hasPeriod()) {
             return Carbon::createFromTimestampUTC($this->item->date_from);
@@ -134,7 +134,7 @@ class InvoiceLineItem implements Arrayable, Jsonable, JsonSerializable
      *
      * @return \Carbon\Carbon|null
      */
-    public function endDateAsCarbon(): Carbon|null
+    public function endDateAsCarbon(): ?Carbon
     {
         if ($this->hasPeriod()) {
             return Carbon::createFromTimestampUTC($this->item->date_to);

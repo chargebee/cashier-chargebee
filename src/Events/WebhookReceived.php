@@ -14,6 +14,5 @@ class WebhookReceived
      */
     public function __construct(
         public array $payload
-    ) {
-    }
+    ) {}
 }

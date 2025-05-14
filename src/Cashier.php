@@ -16,16 +16,18 @@ final class Cashier
 {
     /**
      * The chargebeeclient stance
+     *
      * @var ChargebeeClient
      */
     public static $chargebeeClient;
+
     /**
      * The Cashier for Chargebee library version.
      *
      * @var string
      */
     public const VERSION = '1.0.0';
-    
+
     /**
      * The custom currency formatter.
      *
@@ -75,7 +77,7 @@ final class Cashier
     {
         $chargebeeId = $chargebeeId instanceof Customer ? $chargebeeId->id : $chargebeeId;
 
-        $model = static::$customerModel;
+        $model = self::$customerModel;
 
         $builder = in_array(SoftDeletes::class, class_uses_recursive($model))
             ? $model::withTrashed()
@@ -92,26 +94,28 @@ final class Cashier
         $site = config('cashier.site');
         $apiKey = config('cashier.api_key');
         self::$chargebeeClient = new ChargebeeClient([
-            "site" => $site,
-            "apiKey" => $apiKey,
-            "userAgentSuffix" => "Cashier" . self::VERSION
+            'site' => $site,
+            'apiKey' => $apiKey,
+            'userAgentSuffix' => 'Cashier'.self::VERSION,
         ]);
     }
 
     /**
      * Returns chargebee Client
+     *
      * @return ChargebeeClient
      */
     public static function chargebee(): ChargebeeClient
     {
         return self::$chargebeeClient;
     }
+
     /**
      * Set the custom currency formatter.
      */
     public static function formatCurrencyUsing(?callable $callback): void
     {
-        static::$formatCurrencyUsing = $callback;
+        self::$formatCurrencyUsing = $callback;
     }
 
     /**
@@ -119,8 +123,8 @@ final class Cashier
      */
     public static function formatAmount(int $amount, ?string $currency = null, ?string $locale = null, array $options = []): string
     {
-        if (static::$formatCurrencyUsing) {
-            return call_user_func(static::$formatCurrencyUsing, $amount, $currency, $locale, $options);
+        if (self::$formatCurrencyUsing) {
+            return call_user_func(self::$formatCurrencyUsing, $amount, $currency, $locale, $options);
         }
 
         $money = new Money($amount, new Currency(strtoupper($currency ?? config('cashier.currency'))));
@@ -133,7 +137,7 @@ final class Cashier
             $numberFormatter->setAttribute(NumberFormatter::MIN_FRACTION_DIGITS, $options['min_fraction_digits']);
         }
 
-        $moneyFormatter = new IntlMoneyFormatter($numberFormatter, new ISOCurrencies());
+        $moneyFormatter = new IntlMoneyFormatter($numberFormatter, new ISOCurrencies);
 
         return $moneyFormatter->format($money);
     }
@@ -143,9 +147,9 @@ final class Cashier
      */
     public static function ignoreRoutes(): static
     {
-        static::$registersRoutes = false;
+        self::$registersRoutes = false;
 
-        return new static;
+        return new self;
     }
 
     /**

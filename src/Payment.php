@@ -36,11 +36,12 @@ class Payment implements Arrayable, Jsonable, JsonSerializable
     /**
      * Retrieve the related customer for the payment intent if one exists.
      */
-    public function customer(): Model|null
+    public function customer(): ?Model
     {
         if ($this->customer) {
             return $this->customer;
         }
+
         return $this->customer = Cashier::findBillable($this->paymentIntent->customer_id);
     }
 

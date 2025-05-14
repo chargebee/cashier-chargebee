@@ -14,21 +14,21 @@ class SubscriptionTest extends FeatureTestCase
 {
     public function test_prorate_on_subscription_create(): void
     {
-        $subscription = (new Subscription())->prorate();
+        $subscription = (new Subscription)->prorate();
 
         $this->assertEquals(true, $subscription->prorateBehavior());
     }
 
     public function test_no_prorate_on_subscription_create(): void
     {
-        $subscription = (new Subscription())->noProrate();
+        $subscription = (new Subscription)->noProrate();
 
         $this->assertEquals(false, $subscription->prorateBehavior());
     }
 
     public function test_prorate_behavior_on_subscription_create(): void
     {
-        $subscription = (new Subscription())->setProrationBehavior(true);
+        $subscription = (new Subscription)->setProrationBehavior(true);
 
         $this->assertEquals(true, $subscription->prorateBehavior());
     }

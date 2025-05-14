@@ -53,7 +53,7 @@ trait Prorates
      *
      * @return bool
      */
-    public function prorateBehavior(): bool|null
+    public function prorateBehavior(): ?bool
     {
         return $this->prorationBehavior;
     }

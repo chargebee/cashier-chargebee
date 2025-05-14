@@ -56,6 +56,7 @@ class ChargesTest extends FeatureTestCase
     protected function paymentSource(User $user)
     {
         $chargebee = Cashier::chargebee();
+
         return $chargebee->paymentSource()->createCard([
             'customer_id' => $user->chargebeeId(),
             'replace_primary_payment_source' => true,

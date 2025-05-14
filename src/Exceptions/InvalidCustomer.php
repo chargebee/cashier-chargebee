@@ -14,6 +14,6 @@ final class InvalidCustomer extends Exception
      */
     public static function notYetCreated($owner)
     {
-        return new static(class_basename($owner).' is not a Chargebeee customer yet. See the createAsChargebeeCustomer method.');
+        return new self(class_basename($owner).' is not a Chargebeee customer yet. See the createAsChargebeeCustomer method.');
     }
 }

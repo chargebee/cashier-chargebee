@@ -45,7 +45,7 @@ class Checkout implements Arrayable, Jsonable, JsonSerializable, Responsable
      */
     public static function guest()
     {
-        return new CheckoutBuilder();
+        return new CheckoutBuilder;
     }
 
     /**
@@ -90,6 +90,7 @@ class Checkout implements Arrayable, Jsonable, JsonSerializable, Responsable
         } else {
             $result = $chargebee->hostedPage()->checkoutOneTimeForItems($data);
         }
+
         return new Checkout($owner, new Session(
             $result->hosted_page->toArray(),
             $data['mode']

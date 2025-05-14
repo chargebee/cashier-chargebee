@@ -29,7 +29,7 @@ class Discount implements Arrayable, Jsonable, JsonSerializable
      * @param  ChargeBeeDiscount | ChargeBeeInvoiceDiscount  $discount
      * @return void
      */
-    public function __construct(ChargeBeeDiscount | ChargeBeeInvoiceDiscount $discount)
+    public function __construct(ChargeBeeDiscount|ChargeBeeInvoiceDiscount $discount)
     {
         $this->discount = $discount;
     }
@@ -39,7 +39,7 @@ class Discount implements Arrayable, Jsonable, JsonSerializable
      *
      * @return \Chargebee\Cashier\Coupon|null
      */
-    public function coupon(): Coupon|null
+    public function coupon(): ?Coupon
     {
         $chargebee = Cashier::chargebee();
         if (! is_null($this->coupon)) {
@@ -57,12 +57,13 @@ class Discount implements Arrayable, Jsonable, JsonSerializable
 
         return null;
     }
+
     /**
      * Get the Chargebee Discount instance.
      *
-     * @return  ChargeBeeDiscount | ChargeBeeInvoiceDiscount
+     * @return ChargeBeeDiscount | ChargeBeeInvoiceDiscount
      */
-    public function asChargebeeDiscount(): ChargeBeeDiscount | ChargeBeeInvoiceDiscount
+    public function asChargebeeDiscount(): ChargeBeeDiscount|ChargeBeeInvoiceDiscount
     {
         return $this->discount;
     }

@@ -13,7 +13,7 @@ final class InvalidPaymentMethod extends Exception
      */
     public static function invalidOwner(PaymentSource $paymentMethod, Model $owner): static
     {
-        return new static(
+        return new self(
             "The payment method `{$paymentMethod->id}`'s customer `{$paymentMethod->customer_id}` does not belong to this customer `$owner->chargebee_id`."
         );
     }

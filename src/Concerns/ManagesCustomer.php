@@ -17,7 +17,7 @@ trait ManagesCustomer
     /**
      * Retrieve the Chargebee customer ID.
      */
-    public function chargebeeId(): string|null
+    public function chargebeeId(): ?string
     {
         return $this->chargebee_id;
     }
@@ -202,7 +202,7 @@ trait ManagesCustomer
     /**
      * Get the default first name.
      */
-    public function chargebeeFirstName(): string|null
+    public function chargebeeFirstName(): ?string
     {
         return $this->first_name ?? null;
     }
@@ -210,7 +210,7 @@ trait ManagesCustomer
     /**
      * Get the default last name.
      */
-    public function chargebeeLastName(): string|null
+    public function chargebeeLastName(): ?string
     {
         return $this->last_name ?? null;
     }
@@ -218,7 +218,7 @@ trait ManagesCustomer
     /**
      * Get the default email address.
      */
-    public function chargebeeEmail(): string|null
+    public function chargebeeEmail(): ?string
     {
         return $this->email ?? null;
     }
@@ -226,7 +226,7 @@ trait ManagesCustomer
     /**
      * Get the default phone number.
      */
-    public function chargebeePhone(): string|null
+    public function chargebeePhone(): ?string
     {
         return $this->phone ?? null;
     }
@@ -242,7 +242,7 @@ trait ManagesCustomer
     /**
      * Get the default locale.
      */
-    public function chargebeeLocale(): string|null
+    public function chargebeeLocale(): ?string
     {
         return $this->locale ?? null;
     }
@@ -292,7 +292,7 @@ trait ManagesCustomer
      */
     public function rawBalance(): int
     {
-        if (!$this->hasChargebeeId()) {
+        if (! $this->hasChargebeeId()) {
             return 0;
         }
 
@@ -361,7 +361,7 @@ trait ManagesCustomer
     public function balanceTransactions(int $limit = 10, array $options = []): Collection
     {
         if (! $this->hasChargebeeId()) {
-            return new Collection();
+            return new Collection;
         }
         $chargebee = Cashier::chargebee();
         $all = $chargebee->promotionalCredit()->all(array_merge([

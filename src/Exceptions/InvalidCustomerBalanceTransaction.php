@@ -16,6 +16,6 @@ final class InvalidCustomerBalanceTransaction extends Exception
      */
     public static function invalidOwner(PromotionalCredit $transaction, $owner)
     {
-        return new static("The transaction `{$transaction->id}` does not belong to customer `$owner->chargebee_id`.");
+        return new self("The transaction `{$transaction->id}` does not belong to customer `$owner->chargebee_id`.");
     }
 }

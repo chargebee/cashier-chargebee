@@ -84,7 +84,7 @@ class Invoice implements Arrayable, Jsonable, JsonSerializable
      * @param  \DateTimeZone|string  $timezone
      * @return \Carbon\Carbon|null
      */
-    public function dueDate($timezone = null): Carbon|null
+    public function dueDate($timezone = null): ?Carbon
     {
         if ($this->invoice->due_date) {
             $carbon = Carbon::createFromTimestampUTC($this->invoice->due_date);
@@ -177,7 +177,7 @@ class Invoice implements Arrayable, Jsonable, JsonSerializable
      * @param  \Chargebee\Cashier\Discount  $discount
      * @return string|null
      */
-    public function discountFor(Discount $discount): string|null
+    public function discountFor(Discount $discount): ?string
     {
         if (! is_null($discountAmount = $this->rawDiscountFor($discount))) {
             return $this->formatAmount($discountAmount);

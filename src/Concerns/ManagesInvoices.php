@@ -68,7 +68,7 @@ trait ManagesInvoices
      * @param  array  $options
      * @return \Chargebee\Cashier\Estimate|null
      */
-    public function upcomingInvoice(array $options = []): Estimate|null
+    public function upcomingInvoice(array $options = []): ?Estimate
     {
         if (! $this->hasChargebeeId()) {
             return null;
@@ -162,7 +162,7 @@ trait ManagesInvoices
     public function invoices($includePending = false, $parameters = [])
     {
         if (! $this->hasChargebeeId()) {
-            return new Collection();
+            return new Collection;
         }
 
         $invoices = [];

@@ -10,7 +10,6 @@ use Chargebee\Cashier\Tests\Fixtures\User;
 use Chargebee\Cashier\Tests\TestCase;
 use Chargebee\Resources\Invoice\Discount as ChargeBeeDiscount;
 use Chargebee\Resources\Invoice\Invoice as ChargeBeeInvoice;
-use Chargebee\Resources\Invoice\LineItemTax;
 use Mockery as m;
 
 class InvoiceTest extends TestCase
@@ -35,14 +34,13 @@ class InvoiceTest extends TestCase
             'is_gifted' => false,
             'deleted' => false,
             'date' => 1560541724,
-            'price_type' => "tax_inclusive",
-            'channel' => "web",
-            'status' => "paid",
+            'price_type' => 'tax_inclusive',
+            'channel' => 'web',
+            'status' => 'paid',
         ];
         $chargebeeInvoice = ChargeBeeInvoice::from($dummyInvoiceData);
-        
 
-        $user = new User();
+        $user = new User;
         $user->chargebee_id = 'foo';
 
         $invoice = new Invoice($user, $chargebeeInvoice);
@@ -66,14 +64,13 @@ class InvoiceTest extends TestCase
             'is_gifted' => false,
             'deleted' => false,
             'date' => 1560541724,
-            'price_type' => "tax_inclusive",
-            'channel' => "web",
-            'status' => "paid",
+            'price_type' => 'tax_inclusive',
+            'channel' => 'web',
+            'status' => 'paid',
         ];
         $chargebeeInvoice = ChargeBeeInvoice::from($dummyInvoiceData);
-        
 
-        $user = new User();
+        $user = new User;
         $user->chargebee_id = 'foo';
 
         $invoice = new Invoice($user, $chargebeeInvoice);
@@ -98,12 +95,12 @@ class InvoiceTest extends TestCase
             'is_gifted' => false,
             'deleted' => false,
             'date' => 1560541724,
-            'price_type' => "tax_inclusive",
-            'channel' => "web",
-            'status' => "paid",
+            'price_type' => 'tax_inclusive',
+            'channel' => 'web',
+            'status' => 'paid',
         ];
         $chargebeeInvoice = ChargeBeeInvoice::from($dummyInvoiceData);
-        $user = new User();
+        $user = new User;
         $user->chargebee_id = 'foo';
 
         $invoice = new Invoice($user, $chargebeeInvoice);
@@ -116,20 +113,20 @@ class InvoiceTest extends TestCase
     public function test_it_can_determine_if_it_has_a_discount_applied()
     {
         $dummyDiscountData = [
-            "amount" => 50, 
-            "entity_type" => "ent_id",
-            "entity_id" => "foo",
-            "description" => "foo"
-         ];  
-         $discountAmount = ChargebeeDiscount::from($dummyDiscountData);
-         $otherDummyDiscountData = [
-            "amount" => 100, 
-            "entity_type" => "ent_id",
-            "entity_id" => "foo",
-            "description" => "foo"
-         ];  
-         $otherDiscountAmount = ChargebeeDiscount::from($otherDummyDiscountData);
-         $dummyInvoiceData = [
+            'amount' => 50,
+            'entity_type' => 'ent_id',
+            'entity_id' => 'foo',
+            'description' => 'foo',
+        ];
+        $discountAmount = ChargebeeDiscount::from($dummyDiscountData);
+        $otherDummyDiscountData = [
+            'amount' => 100,
+            'entity_type' => 'ent_id',
+            'entity_id' => 'foo',
+            'description' => 'foo',
+        ];
+        $otherDiscountAmount = ChargebeeDiscount::from($otherDummyDiscountData);
+        $dummyInvoiceData = [
             'id' => 'inv_12345',
             'customer_id' => 'foo',
             'recurring' => true,
@@ -140,15 +137,15 @@ class InvoiceTest extends TestCase
             'is_gifted' => false,
             'deleted' => false,
             'date' => 1560541724,
-            'price_type' => "tax_exclusive",
-            'channel' => "web",
-            'status' => "paid",
+            'price_type' => 'tax_exclusive',
+            'channel' => 'web',
+            'status' => 'paid',
             'discounts' => [$dummyDiscountData, $otherDummyDiscountData],
             'total' => 1000,
         ];
         $chargebeeInvoice = ChargeBeeInvoice::from($dummyInvoiceData);
 
-        $user = new User();
+        $user = new User;
         $user->chargebee_id = 'foo';
 
         $invoice = new Invoice($user, $chargebeeInvoice);
@@ -159,11 +156,11 @@ class InvoiceTest extends TestCase
         $this->assertSame('$0.50', $invoice->discountFor(new Discount($discountAmount)));
 
         $this->assertNull($invoice->rawDiscountFor(
-            new Discount( ChargeBeeDiscount::from([
+            new Discount(ChargeBeeDiscount::from([
                 'entity_id' => 'baz',
                 'description' => 'baz',
                 'amount' => 100,
-                'entity_type' => 'baz'
+                'entity_type' => 'baz',
             ]))
         ));
     }
@@ -181,29 +178,29 @@ class InvoiceTest extends TestCase
             'is_gifted' => false,
             'deleted' => false,
             'date' => 1560541724,
-            'price_type' => "tax_exclusive",
-            'channel' => "web",
-            'status' => "paid",
+            'price_type' => 'tax_exclusive',
+            'channel' => 'web',
+            'status' => 'paid',
             'total' => 1000,
-            'line_item_taxes' => [ 
+            'line_item_taxes' => [
                 [
-                'tax_name' => 'GST',
-                'tax_amount' => 50,
-                'tax_rate' => '0.5',
-                'taxable_amount' => 1000,
-                'line_item_id' => 'foo'
-                ]
-            ]
+                    'tax_name' => 'GST',
+                    'tax_amount' => 50,
+                    'tax_rate' => '0.5',
+                    'taxable_amount' => 1000,
+                    'line_item_id' => 'foo',
+                ],
+            ],
         ];
         $chargebeeInvoice = ChargeBeeInvoice::from($dummyInvoiceData);
 
-        $user = new User();
+        $user = new User;
         $user->chargebee_id = 'foo';
 
         $invoice = new Invoice($user, $chargebeeInvoice);
 
         $tax = $invoice->tax();
-        
+
         $this->assertEquals('$0.50', $invoice->taxes()[0]->amount());
         $this->assertEquals('$0.50', $tax);
 
@@ -218,13 +215,13 @@ class InvoiceTest extends TestCase
             'is_gifted' => false,
             'deleted' => false,
             'date' => 1560541724,
-            'price_type' => "tax_exclusive",
-            'channel' => "web",
-            'status' => "paid",
-            'total' => 1000
+            'price_type' => 'tax_exclusive',
+            'channel' => 'web',
+            'status' => 'paid',
+            'total' => 1000,
         ];
         $chargebeeInvoice = ChargeBeeInvoice::from($secondDummyInvoiceData);
-        $user = new User();
+        $user = new User;
         $user->chargebee_id = 'foo';
 
         $invoice = new Invoice($user, $chargebeeInvoice);

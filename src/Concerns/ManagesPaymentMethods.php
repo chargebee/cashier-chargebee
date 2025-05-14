@@ -61,7 +61,7 @@ trait ManagesPaymentMethods
     public function paymentMethods(?string $type = null, array $parameters = []): ?Collection
     {
         if (! $this->hasChargebeeId()) {
-            return new Collection();
+            return new Collection;
         }
 
         $parameters = array_merge(['limit' => 24], $parameters);
@@ -248,6 +248,7 @@ trait ManagesPaymentMethods
             return $paymentSource;
         }
         $chargebee = Cashier::chargebee();
+
         return $chargebee->paymentSource()->retrieve($paymentSource)?->payment_source;
     }
 }

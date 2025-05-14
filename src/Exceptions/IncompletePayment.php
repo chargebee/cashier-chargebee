@@ -27,7 +27,7 @@ final class IncompletePayment extends Exception
      */
     public static function requiresAction(Payment $payment): static
     {
-        return new static(
+        return new self(
             $payment,
             'Additional action is required before payment attempt can be completed.'
         );

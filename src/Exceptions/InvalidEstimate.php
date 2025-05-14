@@ -16,6 +16,6 @@ final class InvalidEstimate extends Exception
      */
     public static function invalidOwner(ChargeBeeEstimate $estimate, $owner)
     {
-        return new static("The estimate `{$estimate->customer_id}` does not belong to this customer `$owner->chargebee_id`.");
+        return new self("The estimate `{$estimate->customer_id}` does not belong to this customer `$owner->chargebee_id`.");
     }
 }

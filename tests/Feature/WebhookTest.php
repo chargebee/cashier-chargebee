@@ -22,27 +22,27 @@ class WebhookTest extends FeatureTestCase
 {
     protected string $webhookUrl = 'chargebee/webhook';
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
         config(['cashier.webhook.username' => 'webhook_username']);
         config(['cashier.webhook.password' => 'webhook_password']);
 
-        $mockItemPriceActions = \Mockery::mock('overload:' . ItemPriceActions::class);
+        $mockItemPriceActions = \Mockery::mock('overload:'.ItemPriceActions::class);
         $mockItemPriceActions->shouldReceive('retrieve')
             ->with(\Mockery::type('string'))
             ->andReturn(RetrieveItemPriceResponse::from([
                 'item_price' => [
-                    "id" =>  'abc',
+                    'id' => 'abc',
                     'item_id' => 'product_abc',
                     'name' => 'Basic Plan',
                     'currency_code' => 'USD',
                     'free_quantity' => 0,
                     'created_at' => time(),
                     'deleted' => false,
-                    'pricing_model' => 'flat_fee'
-                ]
+                    'pricing_model' => 'flat_fee',
+                ],
             ]));
 
         $mockChargebeeClient = \Mockery::mock(ChargebeeClient::class)->makePartial();
@@ -511,6 +511,7 @@ class WebhookTest extends FeatureTestCase
     private function createCard(Model $user): ?PaymentSource
     {
         $chargebee = Cashier::chargebee();
+
         return $chargebee->paymentSource()->createCard([
             'customer_id' => $user->chargebeeId(),
             'card' => [

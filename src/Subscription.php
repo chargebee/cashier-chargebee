@@ -837,7 +837,7 @@ class Subscription extends Model
      *
      * @return \Chargebee\Cashier\Invoice|null
      */
-    public function latestInvoice(): Invoice|null
+    public function latestInvoice(): ?Invoice
     {
         $invoices = $this->user->invoices(true, [
             'limit' => 1,
@@ -858,7 +858,7 @@ class Subscription extends Model
      * @param  array  $options
      * @return \Chargebee\Cashier\Estimate|null
      */
-    public function upcomingInvoice(array $options = []): Estimate|null
+    public function upcomingInvoice(array $options = []): ?Estimate
     {
         if ($this->canceled()) {
             return null;
@@ -922,7 +922,7 @@ class Subscription extends Model
      *
      * @return \Chargebee\Cashier\Transaction|null
      */
-    public function latestPayment(): Transaction|null
+    public function latestPayment(): ?Transaction
     {
         $chargebee = Cashier::chargebee();
         $items = $chargebee->transaction()->all([

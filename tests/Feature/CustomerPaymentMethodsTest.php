@@ -12,7 +12,6 @@ use Chargebee\Resources\PaymentSource\PaymentSource;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
-use LogicException;
 
 class CustomerPaymentMethodsTest extends FeatureTestCase
 {
@@ -145,6 +144,7 @@ class CustomerPaymentMethodsTest extends FeatureTestCase
         $this->expectException(InvalidPaymentMethod::class);
         $user2->addPaymentMethod($paymentMethod);
     }
+
     public function test_chargebee_customer_can_delete_payment_method(): void
     {
         $user = $this->createCustomer();
@@ -275,6 +275,7 @@ class CustomerPaymentMethodsTest extends FeatureTestCase
     private function createCard(Model $user): ?PaymentSource
     {
         $chargebee = Cashier::chargebee();
+
         return $chargebee->paymentSource()->createCard([
             'customer_id' => $user->chargebeeId(),
             'card' => [

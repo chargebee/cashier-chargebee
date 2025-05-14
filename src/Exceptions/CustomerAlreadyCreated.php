@@ -12,6 +12,6 @@ final class CustomerAlreadyCreated extends Exception
      */
     public static function exists(Model $owner): static
     {
-        return new static(class_basename($owner)." is already a Chargebee customer with ID {$owner->chargebee_id}.");
+        return new self(class_basename($owner)." is already a Chargebee customer with ID {$owner->chargebee_id}.");
     }
 }

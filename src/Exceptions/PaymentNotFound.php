@@ -11,6 +11,6 @@ final class PaymentNotFound extends Exception
      */
     public static function notFound(string $paymentId): static
     {
-        return new static("Payment with ID {$paymentId} was not found.");
+        return new self("Payment with ID {$paymentId} was not found.");
     }
 }

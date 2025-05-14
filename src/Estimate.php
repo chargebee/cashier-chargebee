@@ -29,7 +29,7 @@ class Estimate implements Arrayable, Jsonable, JsonSerializable
      * Create a new estimate instance.
      *
      * @param  \Illuminate\Database\Eloquent\Model  $owner
-     * @param  \Chargebee\Resources\InvoiceEstimate\InvoiceEstimate $estimate
+     * @param  \Chargebee\Resources\InvoiceEstimate\InvoiceEstimate  $estimate
      * @return void
      *
      * @throws \Chargebee\Cashier\Exceptions\InvalidInvoice

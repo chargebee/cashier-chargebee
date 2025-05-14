@@ -51,6 +51,7 @@ trait PerformsCharges
         try {
             $chargebee = Cashier::chargebee();
             $result = $chargebee->paymentIntent()->retrieve($id);
+
             return new Payment(
                 $result->payment_intent
             );
@@ -72,6 +73,7 @@ trait PerformsCharges
     public function refund($invoiceId, array $options = [])
     {
         $chargeee = Cashier::chargebee();
+
         return $chargeee->invoice()->refund($invoiceId, $options);
     }
 

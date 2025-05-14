@@ -4,7 +4,6 @@ namespace Chargebee\Cashier;
 
 use Chargebee\Cashier\Concerns\Prorates;
 use Chargebee\Cashier\Database\Factories\SubscriptionItemFactory;
-use Chargebee\Resources\ItemPrice\ItemPrice;
 use Chargebee\Resources\Subscription\SubscriptionItem as ChargebeeSubscriptionItem;
 use Chargebee\Resources\Usage\Usage;
 use DateTimeInterface;

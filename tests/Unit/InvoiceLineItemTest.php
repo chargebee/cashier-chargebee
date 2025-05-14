@@ -26,25 +26,25 @@ class InvoiceLineItemTest extends TestCase
             'is_gifted' => false,
             'deleted' => false,
             'date' => 1560541724,
-            'price_type' => "tax_inclusive",
-            'channel' => "web",
-            'status' => "paid",
+            'price_type' => 'tax_inclusive',
+            'channel' => 'web',
+            'status' => 'paid',
         ];
-        
+
         $chargebeeInvoice = ChargebeeInvoice::from($dummyInvoiceData);
-        $user = new User();
+        $user = new User;
         $user->chargebee_id = 'foo';
 
         $invoice = new Invoice($user, $chargebeeInvoice);
 
         $dummyLineItemData = [
-            "date_from" => time(),
-            "date_to" => time() + 86400,
-            "unit_amount" => 1000,
-            "is_taxed" => false,
-            "description" => "Sample Line Item",
-            "entity_type" => "plan",
-            "tax_rate" => 20.0
+            'date_from' => time(),
+            'date_to' => time() + 86400,
+            'unit_amount' => 1000,
+            'is_taxed' => false,
+            'description' => 'Sample Line Item',
+            'entity_type' => 'plan',
+            'tax_rate' => 20.0,
         ];
         $chargebeeInvoiceLineItem = ChargeBeeInvoiceLineItem::from($dummyLineItemData);
 
@@ -66,24 +66,24 @@ class InvoiceLineItemTest extends TestCase
             'is_gifted' => false,
             'deleted' => false,
             'date' => 1560541724,
-            'price_type' => "tax_exclusive",
-            'channel' => "web",
-            'status' => "paid",
+            'price_type' => 'tax_exclusive',
+            'channel' => 'web',
+            'status' => 'paid',
         ];
         $chargebeeInvoice = ChargeBeeInvoice::from($dummyInvoiceData);
 
-        $user = new User();
+        $user = new User;
         $user->chargebee_id = 'foo';
 
         $invoice = new Invoice($user, $chargebeeInvoice);
         $dummyLineItemData = [
-            "date_from" => time(),
-            "date_to" => time() + 86400,
-            "unit_amount" => 1000,
-            "is_taxed" => false,
-            "description" => "Sample Line Item",
-            "entity_type" => "plan",
-            "tax_rate" => 20.0
+            'date_from' => time(),
+            'date_to' => time() + 86400,
+            'unit_amount' => 1000,
+            'is_taxed' => false,
+            'description' => 'Sample Line Item',
+            'entity_type' => 'plan',
+            'tax_rate' => 20.0,
         ];
 
         $chargebeeInvoiceLineItem = ChargeBeeInvoiceLineItem::from($dummyLineItemData);
@@ -106,24 +106,24 @@ class InvoiceLineItemTest extends TestCase
             'is_gifted' => false,
             'deleted' => false,
             'date' => now()->getTimestamp(),
-            'price_type' => "tax_exclusive",
-            'channel' => "web",
-            'status' => "paid"
+            'price_type' => 'tax_exclusive',
+            'channel' => 'web',
+            'status' => 'paid',
         ];
         $chargebeeInvoice = ChargeBeeInvoice::from($dummyInvoiceData);
 
-        $user = new User();
+        $user = new User;
         $user->chargebee_id = 'foo';
 
         $invoice = new Invoice($user, $chargebeeInvoice);
         $dummyLineItemData = [
-            "date_from" => now()->addDay()->getTimestamp(),
-            "date_to" => now()->addDays(30)->getTimestamp(),
-            "unit_amount" => 1000,
-            "is_taxed" => false,
-            "description" => "Sample Line Item",
-            "entity_type" => "plan",
-            "tax_rate" => 20.0
+            'date_from' => now()->addDay()->getTimestamp(),
+            'date_to' => now()->addDays(30)->getTimestamp(),
+            'unit_amount' => 1000,
+            'is_taxed' => false,
+            'description' => 'Sample Line Item',
+            'entity_type' => 'plan',
+            'tax_rate' => 20.0,
         ];
 
         $chargebeeInvoiceLineItem = ChargeBeeInvoiceLineItem::from($dummyLineItemData);
@@ -147,25 +147,25 @@ class InvoiceLineItemTest extends TestCase
             'is_gifted' => false,
             'deleted' => false,
             'date' => now()->getTimestamp(),
-            'price_type' => "tax_exclusive",
-            'channel' => "web",
-            'status' => "paid",
+            'price_type' => 'tax_exclusive',
+            'channel' => 'web',
+            'status' => 'paid',
         ];
         $chargebeeInvoice = ChargeBeeInvoice::from($dummyInvoiceData);
 
-        $user = new User();
+        $user = new User;
         $user->chargebee_id = 'foo';
 
         $invoice = new Invoice($user, $chargebeeInvoice);
         $dummyLineItemData = [
-            "date_from" => now()->addDay()->getTimestamp(),
-            "date_to" => now()->addDays(30)->getTimestamp(),
-            "unit_amount" => 1000,
-            "is_taxed" => false,
-            "description" => "Sample Line Item",
-            "entity_type" => "plan",
-            "tax_rate" => 20.0,
-            "subscription_id" => 'foo'
+            'date_from' => now()->addDay()->getTimestamp(),
+            'date_to' => now()->addDays(30)->getTimestamp(),
+            'unit_amount' => 1000,
+            'is_taxed' => false,
+            'description' => 'Sample Line Item',
+            'entity_type' => 'plan',
+            'tax_rate' => 20.0,
+            'subscription_id' => 'foo',
         ];
 
         $chargebeeInvoiceLineItem = ChargeBeeInvoiceLineItem::from($dummyLineItemData);
