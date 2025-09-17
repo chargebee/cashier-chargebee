@@ -2,6 +2,7 @@
 
 namespace Chargebee\Cashier;
 
+use Chargebee\Cashier\Console\FeatureEnumCommand;
 use Chargebee\Cashier\Console\WebhookCommand;
 use Chargebee\Cashier\Contracts\InvoiceRenderer;
 use Chargebee\Cashier\Events\WebhookReceived;
@@ -121,6 +122,7 @@ class CashierServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->commands([
                 WebhookCommand::class,
+                FeatureEnumCommand::class
             ]);
         }
     }
