@@ -83,10 +83,17 @@ class FeatureEnumCommand extends Command
     protected function renderEnum(string $namespace, string $class, array $cases): string
     {
         $casesBlock = collect($cases)
-            ->map(fn ($val, $name) => "    case {$name} = '" . addslashes($val) . "';")
+            ->map(fn($val, $name) => "    case {$name} = '" . addslashes($val) . "';")
             ->implode("\n");
 
-        $arrayExport = var_export(array_values($cases), true);
+        // Format the array values with proper indentation
+        $arrayValues = [];
+        $index = 0;
+        foreach ($cases as $value) {
+            $arrayValues[] = "            {$index} => '" . addslashes($value) . "',";
+            $index++;
+        }
+        $arrayValuesBlock = implode("\n", $arrayValues);
 
         return <<<PHP
 <?php
@@ -101,10 +108,11 @@ enum {$class}: string
 
     public static function values(): array
     {
-        return {$arrayExport};
+        return array(
+{$arrayValuesBlock}
+        );
     }
 }
-
 PHP;
     }
 }
