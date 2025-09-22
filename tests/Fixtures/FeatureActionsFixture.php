@@ -130,8 +130,7 @@ class FeatureActionsFixture implements FeatureActionsInterface
                         'type' => 'boolean',
                     ],
                 ],
-            ],
-            'next_offset' => 'off_456',
+            ]
         ]);
         return $features;
     }

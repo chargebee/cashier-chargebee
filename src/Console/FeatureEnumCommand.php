@@ -27,25 +27,30 @@ class FeatureEnumCommand extends Command
 
         try {
             $this->components->info("Fetching features from Chargebee…");
-            $result = Cashier::chargebee()->feature()->all();
-
+            $nextPage = null;
             $cases = [];
-            foreach ($result->list as $featureList) {
-                $feature = $featureList->feature;
+            do {
+                $result = Cashier::chargebee()->feature()->all([
+                    "offset" => $nextPage
+                ]);
+                $nextPage = $result->next_offset;
+                foreach ($result->list as $featureList) {
+                    $feature = $featureList->feature;
 
-                $caseName = $this->toEnumCase($feature->name);
-                if ($caseName === '') {
-                    $this->warn("Skipping feature with name that cannot be mapped to php enum feature name: '{$feature->name}' \n");
-                    continue;
-                }
-                $caseValue = $feature->id ?? $feature->name;
+                    $caseName = $this->toEnumCase($feature->name);
+                    if ($caseName === '') {
+                        $this->warn("Skipping feature with name that cannot be mapped to php enum feature name: '{$feature->name}' \n");
+                        continue;
+                    }
+                    $caseValue = $feature->id ?? $feature->name;
 
-                if (isset($cases[$caseName])) {
-                    // Avoid duplicate keys
-                    $caseName .= '_' . substr(md5($caseValue), 0, 6);
+                    if (isset($cases[$caseName])) {
+                        // Avoid duplicate keys
+                        $caseName .= '_' . substr(md5($caseValue), 0, 6);
+                    }
+                    $cases[$caseName] = $caseValue;
                 }
-                $cases[$caseName] = $caseValue;
-            }
+            } while ( $nextPage );
 
             if (empty($cases)) {
                 $this->error('No features found.');
