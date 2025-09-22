@@ -42,7 +42,7 @@ class FeatureEnumCommand extends Command
                         $this->warn("Skipping feature with name that cannot be mapped to php enum feature name: '{$feature->name}' \n");
                         continue;
                     }
-                    $caseValue = $feature->id ?? $feature->name;
+                    $caseValue = $feature->id;
 
                     if (isset($cases[$caseName])) {
                         // Avoid duplicate keys
