@@ -12,20 +12,25 @@ class FeatureEnumCommandTest extends FeatureTestCase
     {
         parent::setUp();
         // Mock the Chargebee client
-        $client = Cashier::$chargebeeClient;
-        $spy = \Mockery::mock($client)->makePartial();
-        $spy->shouldReceive('feature')->andReturn(new FeatureActionsFixture());
-        Cashier::$chargebeeClient = $spy;
 
         File::shouldReceive('exists')->andReturn(false);
         File::shouldReceive('isDirectory')->andReturn(true);
         File::shouldReceive('makeDirectory')->never();
     }
 
+    private function createChargebeeFeatureMock(FeatureActionsFixture $fixture)
+    {
+        $client = Cashier::$chargebeeClient;
+        $spy = \Mockery::mock($client)->makePartial();
+        $spy->shouldReceive('feature')->andReturn($fixture);
+        Cashier::$chargebeeClient = $spy;
+    }
+
     public function test_generate_feature_enum_should_create_enum_file_with_cases_and_values(): void
     {
         $capturedPath = null;
         $capturedPhp = null;
+        $this->createChargebeeFeatureMock(new FeatureActionsFixture());
         File::shouldReceive('put')
             ->once()
             ->andReturnUsing(function ($path, $php) use (&$capturedPath, &$capturedPhp) {
@@ -44,19 +49,37 @@ class FeatureEnumCommandTest extends FeatureTestCase
         $this->assertNotNull($capturedPath);
         $this->assertNotNull($capturedPhp);
 
+        $expectedPhp = "<?php
+
+declare(strict_types=1);
+
+namespace App\Models;
+
+enum FeaturesMap: string
+{
+    case FREE_TRIAL = 'feature_free_trial';
+    case PRIORITY_SUPPORT = 'feature_priority_support';
+
+    public static function values(): array
+    {
+        return array(
+            0 => 'feature_free_trial',
+            1 => 'feature_priority_support',
+        );
+    }
+}";
+
         // Verify the file path
         $expectedPath = base_path('app/Models/FeaturesMap.php');
         $this->assertEquals($expectedPath, $capturedPath);
 
         // Verify the generated PHP contains expected elements
-        $this->assertStringContainsString('namespace App\\Models;', $capturedPhp);
-        $this->assertStringContainsString('enum FeaturesMap: string', $capturedPhp);
-        $this->assertStringContainsString('public static function values(): array', $capturedPhp);
-        $this->assertStringContainsString("case FREE_TRIAL = 'feature_free_trial';", $capturedPhp);
-        $this->assertStringContainsString("case PRIORITY_SUPPORT = 'feature_priority_support';", $capturedPhp);
+        $this->assertEquals($expectedPhp, $capturedPhp);
     }
+
     public function test_should_overwrite_existing_file_when_force_option_is_used(): void
     {
+        $this->createChargebeeFeatureMock(new FeatureActionsFixture());
         File::shouldReceive('exists')->andReturn(true);
         File::shouldReceive('put')->once()->andReturn(true);
 
@@ -70,6 +93,7 @@ class FeatureEnumCommandTest extends FeatureTestCase
 
     public function test_should_create_directory_when_it_does_not_exist(): void
     {
+        $this->createChargebeeFeatureMock(new FeatureActionsFixture());
         File::shouldReceive('isDirectory')->andReturn(false);
         File::shouldReceive('makeDirectory')
             ->with(base_path('app/Models'), 0755, true)
@@ -86,6 +110,7 @@ class FeatureEnumCommandTest extends FeatureTestCase
 
     public function test_should_use_default_options_when_none_provided(): void
     {
+        $this->createChargebeeFeatureMock(new FeatureActionsFixture());
         $capturedPath = null;
         File::shouldReceive('put')
             ->once()
@@ -103,6 +128,7 @@ class FeatureEnumCommandTest extends FeatureTestCase
 
     public function test_should_handle_custom_class_and_namespace(): void
     {
+        $this->createChargebeeFeatureMock(new FeatureActionsFixture());
         $capturedPath = null;
         $capturedPhp = null;
         File::shouldReceive('put')
@@ -121,13 +147,32 @@ class FeatureEnumCommandTest extends FeatureTestCase
         ])->assertExitCode(0);
 
         $expectedPath = base_path('app/Enums/CustomFeatures.php');
+        $expectedPhp = "<?php
+
+declare(strict_types=1);
+
+namespace App\Enums;
+
+enum CustomFeatures: string
+{
+    case FREE_TRIAL = 'feature_free_trial';
+    case PRIORITY_SUPPORT = 'feature_priority_support';
+
+    public static function values(): array
+    {
+        return array(
+            0 => 'feature_free_trial',
+            1 => 'feature_priority_support',
+        );
+    }
+}";
         $this->assertEquals($expectedPath, $capturedPath);
-        $this->assertStringContainsString('namespace App\\Enums;', $capturedPhp);
-        $this->assertStringContainsString('enum CustomFeatures: string', $capturedPhp);
+        $this->assertEquals($expectedPhp, $capturedPhp);
     }
 
     public function test_should_handle_namespace_with_trailing_backslash(): void
     {
+        $this->createChargebeeFeatureMock(new FeatureActionsFixture());
         $capturedPhp = null;
         File::shouldReceive('put')
             ->once()
@@ -146,6 +191,7 @@ class FeatureEnumCommandTest extends FeatureTestCase
 
     public function test_should_handle_path_with_trailing_slash(): void
     {
+        $this->createChargebeeFeatureMock(new FeatureActionsFixture());
         $capturedPath = null;
         File::shouldReceive('put')
             ->once()
@@ -166,6 +212,7 @@ class FeatureEnumCommandTest extends FeatureTestCase
 
     public function test_should_skip_features_with_invalid_names(): void
     {
+        $this->createChargebeeFeatureMock(new FeatureActionsFixture(FeatureActionsFixture::$featureListWithInvalidEnumName));
         $capturedPhp = null;
         File::shouldReceive('put')
             ->once()
@@ -176,33 +223,30 @@ class FeatureEnumCommandTest extends FeatureTestCase
 
         $this->artisan('cashier:generate-feature-enum', ['--force' => true])
             ->assertExitCode(0);
+        $expectedPhp = "<?php
 
-        // Should only contain the valid feature
-        $this->assertStringContainsString("case FREE_TRIAL = 'feature_free_trial';", $capturedPhp);
-        $this->assertStringNotContainsString('12121212', $capturedPhp);
-    }
+declare(strict_types=1);
 
+namespace App\Models;
 
-    // even though this method is here chargebee itself doesn't allow duplicate feature name as of now.
-    public function test_should_handle_duplicate_case_names(): void
+enum FeaturesMap: string
+{
+    case FREE_TRIAL = 'feature_free_trial';
+
+    public static function values(): array
     {
-        File::shouldReceive('put')
-            ->once()
-            ->andReturnUsing(function ($path, $php) use (&$capturedPhp) {
-                $capturedPhp = $php;
-                return true;
-            });
-
-        $this->artisan('cashier:generate-feature-enum', ['--force' => true])
-            ->assertExitCode(0);
-
-        // Should contain both features with different case names
-        $this->assertStringContainsString("case PRIORITY_SUPPORT = 'feature_priority_support';", $capturedPhp);
-        // The second one should have a hash suffix to avoid duplication
-        $this->assertMatchesRegularExpression("/case PRIORITY_SUPPORT_[a-f0-9]{6} = 'check_check';/", $capturedPhp);
+        return array(
+            0 => 'feature_free_trial',
+        );
     }
+}";
+        // Should only contain the valid feature
+        $this->assertStringContainsString($expectedPhp, $capturedPhp);
+    }
+
     public function test_should_escape_special_characters_in_values(): void
     {
+        $this->createChargebeeFeatureMock(new FeatureActionsFixture(FeatureActionsFixture::$featureListWithSpecialCharacterInName));
         $capturedPhp = null;
         File::shouldReceive('put')
             ->once()
@@ -210,11 +254,27 @@ class FeatureEnumCommandTest extends FeatureTestCase
                 $capturedPhp = $php;
                 return true;
             });
-
         $this->artisan('cashier:generate-feature-enum', ['--force' => true])
             ->assertExitCode(0);
+        $expectedPhp = "<?php
 
-        // Should properly escape special characters
-        $this->assertStringContainsString("case MYNAME_ISCASHIER = 'some-uuid';", $capturedPhp);
+declare(strict_types=1);
+
+namespace App\Models;
+
+enum FeaturesMap: string
+{
+    case FREE_TRIAL = 'feature_free_trial';
+    case PRIORITY_SUPPORT = 'feature_priority_support';
+
+    public static function values(): array
+    {
+        return array(
+            0 => 'feature_free_trial',
+            1 => 'feature_priority_support',
+        );
+    }
+}";
+        $this->assertEquals($capturedPhp, $expectedPhp);
     }
 }

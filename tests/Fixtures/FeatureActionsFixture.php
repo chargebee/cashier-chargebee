@@ -14,7 +14,7 @@ use Chargebee\Responses\FeatureResponse\ArchiveFeatureResponse;
 
 class FeatureActionsFixture implements FeatureActionsInterface
 {
-    public array $feature = [
+    public static array $normalFeature = [
         'feature' => [
             'id' => "Dummy-Feature-id",
             'name' => 'Free Trial',
@@ -33,6 +33,113 @@ class FeatureActionsFixture implements FeatureActionsInterface
             'type' => 'limit',
         ],
     ];
+    public array $featureList = [];
+    public array $feature = [];
+    public static array $featureListWithNormalFields = [
+        'list' => [
+            [
+                'feature' => [
+                    'id' => 'feature_free_trial',
+                    'name' => 'Free Trial',
+                    'description' => 'Gives 14 days of free trial access',
+                    'unit' => 'days',
+                    'resource_version' => 1,
+                    'updated_at' => 1690999999,
+                    'created_at' => 1690000000,
+                    'levels' => [],
+                    'status' => 'active',
+                    'type' => 'limit',
+                ],
+            ],
+            [
+                'feature' => [
+                    'id' => 'feature_priority_support',
+                    'name' => 'Priority Support',
+                    'description' => '24/7 support',
+                    'unit' => null,
+                    'resource_version' => 2,
+                    'updated_at' => 1691999999,
+                    'created_at' => 1691000000,
+                    'levels' => [],
+                    'status' => 'archived',
+                    'type' => 'boolean',
+                ],
+            ]
+        ]
+    ];
+
+    public static array $featureListWithInvalidEnumName = [
+        'list' => [
+            [
+                'feature' => [
+                    'id' => 'feature_free_trial',
+                    'name' => 'Free Trial',
+                    'description' => 'Gives 14 days of free trial access',
+                    'unit' => 'days',
+                    'resource_version' => 1,
+                    'updated_at' => 1690999999,
+                    'created_at' => 1690000000,
+                    'levels' => [],
+                    'status' => 'active',
+                    'type' => 'limit',
+                ],
+            ],
+            [
+                'feature' => [
+                    'id' => 'feature_priority_support',
+                    'name' => '999999999',
+                    'description' => '24/7 support',
+                    'unit' => null,
+                    'resource_version' => 2,
+                    'updated_at' => 1691999999,
+                    'created_at' => 1691000000,
+                    'levels' => [],
+                    'status' => 'archived',
+                    'type' => 'boolean',
+                ],
+            ]
+        ]
+    ];
+
+    public static array $featureListWithSpecialCharacterInName = [
+        'list' => [
+            [
+                'feature' => [
+                    'id' => 'feature_free_trial',
+                    'name' => 'Free$$$ Trial',
+                    'description' => 'Gives 14 days of free trial access',
+                    'unit' => 'days',
+                    'resource_version' => 1,
+                    'updated_at' => 1690999999,
+                    'created_at' => 1690000000,
+                    'levels' => [],
+                    'status' => 'active',
+                    'type' => 'limit',
+                ],
+            ],
+            [
+                'feature' => [
+                    'id' => 'feature_priority_support',
+                    'name' => 'Priority$$$ Support',
+                    'description' => '24/7 support',
+                    'unit' => null,
+                    'resource_version' => 2,
+                    'updated_at' => 1691999999,
+                    'created_at' => 1691000000,
+                    'levels' => [],
+                    'status' => 'archived',
+                    'type' => 'boolean',
+                ],
+            ]
+        ]
+    ];
+
+    public function __construct($featureList = [], $feature = [])
+    {
+        $this->feature = empty($feature) ? $this::$normalFeature : $feature;
+        $this->featureList = empty($featureList) ? $this::$featureListWithNormalFields : $featureList;
+    }
+
     public function retrieve(string $id, array $headers = []): RetrieveFeatureResponse
     {
         return RetrieveFeatureResponse::from([
@@ -58,80 +165,7 @@ class FeatureActionsFixture implements FeatureActionsInterface
 
     public function all(array $params = [], array $headers = []): ListFeatureResponse
     {
-        $features = ListFeatureResponse::from([
-            'list' => [
-                [
-                    'feature' => [
-                        'id' => 'feature_free_trial',
-                        'name' => 'Free Trial',
-                        'description' => 'Gives 14 days of free trial access',
-                        'unit' => 'days',
-                        'resource_version' => 1,
-                        'updated_at' => 1690999999,
-                        'created_at' => 1690000000,
-                        'levels' => [],
-                        'status' => 'active',
-                        'type' => 'limit',
-                    ],
-                ],
-                [
-                    'feature' => [
-                        'id' => 'feature_priority_support',
-                        'name' => 'Priority Support',
-                        'description' => '24/7 support',
-                        'unit' => null,
-                        'resource_version' => 2,
-                        'updated_at' => 1691999999,
-                        'created_at' => 1691000000,
-                        'levels' => [],
-                        'status' => 'archived',
-                        'type' => 'boolean',
-                    ],
-                ],
-                [
-                    'feature' => [
-                        'id' => 'check_check',
-                        'name' => 'Priority Support',
-                        'description' => '24/7 support',
-                        'unit' => null,
-                        'resource_version' => 2,
-                        'updated_at' => 1691999999,
-                        'created_at' => 1691000000,
-                        'levels' => [],
-                        'status' => 'archived',
-                        'type' => 'boolean',
-                    ],
-                ],
-                [
-                    'feature' => [
-                        'id' => '11111111',
-                        'name' => '12121212',
-                        'description' => '24/7 support',
-                        'unit' => null,
-                        'resource_version' => 2,
-                        'updated_at' => 1691999999,
-                        'created_at' => 1691000000,
-                        'levels' => [],
-                        'status' => 'archived',
-                        'type' => 'boolean',
-                    ],
-                ],
-                [
-                    'feature' => [
-                        'id' => 'some-uuid',
-                        'name' => 'myname$$$iscashier###',
-                        'description' => '24/7 support',
-                        'unit' => null,
-                        'resource_version' => 2,
-                        'updated_at' => 1691999999,
-                        'created_at' => 1691000000,
-                        'levels' => [],
-                        'status' => 'archived',
-                        'type' => 'boolean',
-                    ],
-                ],
-            ]
-        ]);
+        $features = ListFeatureResponse::from($this->featureList);
         return $features;
     }
 
@@ -157,7 +191,7 @@ class FeatureActionsFixture implements FeatureActionsInterface
 
     public function activate(string $id, array $headers = []): ActivateFeatureResponse
     {
-        return  ActivateFeatureResponse::from($this->feature);
+        return ActivateFeatureResponse::from($this->feature);
     }
 
     public function reactivate(string $id, array $headers = []): ReactivateFeatureResponse
