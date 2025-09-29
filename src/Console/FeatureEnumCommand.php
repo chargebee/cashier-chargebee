@@ -2,6 +2,7 @@
 
 namespace Chargebee\Cashier\Console;
 
+use Chargebee\Cashier\Feature;
 use Illuminate\Console\Command;
 use Chargebee\Cashier\Cashier;
 use Illuminate\Support\Facades\File;
@@ -43,14 +44,17 @@ class FeatureEnumCommand extends Command
                         continue;
                     }
                     $caseValue = $feature->id;
-
                     if (isset($cases[$caseName])) {
                         // Avoid duplicate keys
                         $caseName .= '_' . substr(md5($caseValue), 0, 6);
                     }
+                    Feature::updateOrCreate(
+                        ['chargebee_id' => $feature->id],
+                        ['json_data' => $feature->toArray()]
+                    );
                     $cases[$caseName] = $caseValue;
                 }
-            } while ( $nextPage );
+            } while ($nextPage);
 
             if (empty($cases)) {
                 $this->error('No features found.');

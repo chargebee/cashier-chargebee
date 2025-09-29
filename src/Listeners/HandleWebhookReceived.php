@@ -5,6 +5,7 @@ namespace Chargebee\Cashier\Listeners;
 use Carbon\Carbon;
 use Chargebee\Cashier\Cashier;
 use Chargebee\Cashier\Events\WebhookReceived;
+use Chargebee\Cashier\Feature;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
@@ -17,7 +18,7 @@ class HandleWebhookReceived
     {
         $eventType = $event->payload['event_type'] ?? null;
 
-        if (! $eventType) {
+        if (!$eventType) {
             Log::warning('WebhookReceived: Missing event_type in payload.', $event->payload);
 
             return;
@@ -37,7 +38,7 @@ class HandleWebhookReceived
      */
     protected function getHandlerMethod(string $eventType): string
     {
-        return 'handle'.Str::studly(str_replace('_', '', $eventType));
+        return 'handle' . Str::studly(str_replace('_', '', $eventType));
     }
 
     /**
@@ -90,7 +91,7 @@ class HandleWebhookReceived
     protected function handleSubscriptionCreated(array $payload): void
     {
         if ($user = Cashier::findBillable($payload['content']['subscription']['customer_id'])) {
-            if (! $user->subscriptions->contains('chargebee_id', $payload['content']['subscription']['id'])) {
+            if (!$user->subscriptions->contains('chargebee_id', $payload['content']['subscription']['id'])) {
                 $subscription = $this->updateOrCreateSubscriptionFromPayload($user, $payload['content']['subscription']);
 
                 Log::info('Subscription created successfully.', [
@@ -106,7 +107,7 @@ class HandleWebhookReceived
                 ]);
             }
 
-            if (! is_null($user->trial_ends_at)) {
+            if (!is_null($user->trial_ends_at)) {
                 $user->trial_ends_at = null;
                 $user->save();
             }
@@ -204,4 +205,99 @@ class HandleWebhookReceived
     {
         return 'default';
     }
+
+    /**
+     * Handle the handle feature created event.
+     */
+    protected function handleFeatureCreated(array $payload)
+    {
+        $feature = $payload['content']['feature'];
+        Feature::updateOrCreate(
+            ['chargebee_id' => $feature['id']],
+            ['json_data' => $feature]
+        );
+        Log::info('Feature created successfully.', [
+            'chargebee_feature_id' => $payload['content']['feature']['id'],
+        ]);
+    }
+
+    /**
+     * Handle the feature deleted event.
+     */
+    protected function handleFeatureDeleted(array $payload)
+    {
+        $featureId = $payload['content']['feature']['id'];
+
+        if ($feature = Feature::find($featureId)) {
+            $feature->delete();
+
+            Log::info('Feature deleted successfully.', [
+                'chargebee_feature_id' => $featureId,
+            ]);
+        } else {
+            Log::info('Feature deletion attempted, but no matching feature found.', [
+                'chargebee_feature_id' => $featureId,
+            ]);
+        }
+    }
+
+    /**
+     * Handle the feature updated event.
+     */
+    protected function handleFeatureUpdated(array $payload)
+    {
+        $featureData = $payload['content']['feature'];
+        $featureId = $featureData['id'];
+
+        if ($feature = Feature::find($featureId)) {
+            $feature->update([
+                'json_data' => $featureData,
+            ]);
+
+            Log::info('Feature updated successfully.', [
+                'chargebee_feature_id' => $featureId,
+            ]);
+        } else {
+            Log::info('Feature update attempted, but no matching feature found.', [
+                'chargebee_feature_id' => $featureId,
+            ]);
+        }
+    }
+
+    /**
+     * Handle the feature activated event.
+     */
+    protected function handleFeatureActivated(array $payload)
+    {
+        $this->handleFeatureUpdated($payload);
+
+        Log::info('Feature activated event processed.', [
+            'chargebee_feature_id' => $payload['content']['feature']['id'],
+        ]);
+    }
+
+    /**
+     * Handle the feature archived event.
+     */
+    protected function handleFeatureArchived(array $payload)
+    {
+        $this->handleFeatureUpdated($payload);
+
+        Log::info('Feature archived event processed.', [
+            'chargebee_feature_id' => $payload['content']['feature']['id'],
+        ]);
+    }
+
+    /**
+     * Handle the feature reactivated event.
+     */
+    protected function handleFeatureReactivated(array $payload)
+    {
+        $this->handleFeatureUpdated($payload);
+
+        Log::info('Feature reactivated event processed.', [
+            'chargebee_feature_id' => $payload['content']['feature']['id'],
+        ]);
+    }
+
 }
