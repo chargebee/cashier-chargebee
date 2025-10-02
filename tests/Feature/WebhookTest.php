@@ -5,6 +5,7 @@ namespace Chargebee\Cashier\Tests\Feature;
 use Chargebee\Cashier\Cashier;
 use Chargebee\Cashier\Events\WebhookReceived;
 use Chargebee\Cashier\Subscription;
+use Chargebee\Cashier\Tests\Fixtures\FeatureActionsFixture;
 use Chargebee\Cashier\Tests\Fixtures\ItemPriceActionsFixture;
 use Chargebee\Cashier\Tests\Fixtures\User;
 use Chargebee\Resources\PaymentSource\PaymentSource;
@@ -505,4 +506,142 @@ class WebhookTest extends FeatureTestCase
         ]
         )->payment_source;
     }
+
+    public function test_handle_feature_created(): void
+    {
+        $this->withValidCredentials();
+        $chargebeeFeature = FeatureActionsFixture::$normalFeature['feature'];
+
+        $payload = [
+            'event_type' => 'feature_created',
+            'content' => [
+                'feature' => $chargebeeFeature,
+            ],
+        ];
+        $this->postJson($this->webhookUrl, $payload)
+            ->assertStatus(200);
+
+        $this->assertDatabaseHas('features', [
+            'chargebee_id' => $chargebeeFeature['id'],
+            'json_data' => json_encode($chargebeeFeature),
+        ]);
+    }
+
+    public function test_handle_feature_deleted(): void
+    {
+        $this->withValidCredentials();
+        $chargebeeFeature = FeatureActionsFixture::$normalFeature['feature'];
+
+        \DB::table('features')->insert([
+            'chargebee_id' => $chargebeeFeature['id'],
+            'json_data' => json_encode($chargebeeFeature),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $payload = [
+            'event_type' => 'feature_deleted',
+            'content' => [
+                'feature' => $chargebeeFeature,
+            ],
+        ];
+
+        $this->postJson($this->webhookUrl, $payload)
+            ->assertStatus(200);
+
+        $this->assertDatabaseMissing('features', [
+            'chargebee_id' => $chargebeeFeature['id'],
+        ]);
+    }
+
+
+    public function test_handle_feature_updated(): void
+    {
+        $this->withValidCredentials();
+        $chargebeeFeature = FeatureActionsFixture::$normalFeature['feature'];
+        $chargebeeArchivedFeature = FeatureActionsFixture::$normalFeature['feature'];
+
+        $chargebeeArchivedFeature['status'] = 'archived';
+
+        \DB::table('features')->insert([
+            'chargebee_id' => $chargebeeFeature['id'],
+            'json_data' => json_encode($chargebeeFeature),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $payload = [
+            'event_type' => 'feature_updated',
+            'content' => [
+                'feature' => $chargebeeArchivedFeature
+            ],
+        ];
+
+        $this->postJson($this->webhookUrl, $payload)
+            ->assertStatus(200);
+
+
+        $this->assertDatabaseHas('features', [
+            'chargebee_id' => $chargebeeFeature['id'],
+            'json_data' => json_encode($chargebeeArchivedFeature),
+        ]);
+    }
+
+    public function test_feature_deletion_logs_when_feature_not_found(): void
+    {
+        $this->withValidCredentials();
+        $chargebeeFeature = FeatureActionsFixture::$normalFeature['feature'];
+
+        Log::swap(\Mockery::mock(\Illuminate\Log\LogManager::class)->shouldIgnoreMissing());
+
+        Log::shouldReceive('info')
+            ->once()
+            ->with('Feature deletion attempted, but no matching feature found.', [
+                'chargebee_feature_id' => $chargebeeFeature['id'],
+            ]);
+
+        $payload = [
+            'event_type' => 'feature_deleted',
+            'content' => [
+                'feature' => $chargebeeFeature,
+            ],
+        ];
+
+        $this->postJson($this->webhookUrl, $payload)
+            ->assertStatus(200);
+
+        $this->assertDatabaseMissing('features', [
+            'chargebee_id' => $chargebeeFeature['id'],
+        ]);
+    }
+
+    public function test_feature_update_logs_when_feature_not_found(): void
+    {
+        $this->withValidCredentials();
+        $chargebeeFeature = FeatureActionsFixture::$normalFeature['feature'];
+
+        Log::swap(\Mockery::mock(\Illuminate\Log\LogManager::class)->shouldIgnoreMissing());
+
+        Log::shouldReceive('info')
+            ->once()
+            ->with('Feature update attempted, but no matching feature found.', [
+                'chargebee_feature_id' => $chargebeeFeature['id'],
+            ]);
+
+        $payload = [
+            'event_type' => 'feature_updated',
+            'content' => [
+                'feature' => $chargebeeFeature,
+            ],
+        ];
+
+        $this->postJson($this->webhookUrl, $payload)
+            ->assertStatus(200);
+
+        // Verify the feature was never in the database
+        $this->assertDatabaseMissing('features', [
+            'chargebee_id' => $chargebeeFeature['id'],
+        ]);
+    }
+
 }
