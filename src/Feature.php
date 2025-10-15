@@ -21,5 +21,4 @@ class Feature extends Model
         $payload = $this->jsonData ?? [];
         return ChargebeeFeature::from($payload);
     }
-
 }

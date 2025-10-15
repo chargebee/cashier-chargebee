@@ -2,12 +2,19 @@
 
 namespace Chargebee\Cashier;
 
+use BackedEnum;
+
 use Chargebee\Cashier\Console\FeatureEnumCommand;
 use Chargebee\Cashier\Console\WebhookCommand;
 use Chargebee\Cashier\Contracts\InvoiceRenderer;
 use Chargebee\Cashier\Events\WebhookReceived;
 use Chargebee\Cashier\Invoices\DompdfInvoiceRenderer;
 use Chargebee\Cashier\Listeners\HandleWebhookReceived;
+use Chargebee\Cashier\Listeners\UserLoginEventSubscriber;
+use Chargebee\Cashier\Contracts\FeatureEnumContract;
+use Chargebee\Cashier\Http\Middleware\UserEntitlementCheck;
+use Chargebee\Cashier\Contracts\EntitlementAccessVerifier;
+
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
@@ -27,11 +34,12 @@ class CashierServiceProvider extends ServiceProvider
             Cashier::configureEnvironment();
         }
 
-        Event::listen(
-            WebhookReceived::class,
-            config('cashier.webhook_listener', HandleWebhookReceived::class)
-        );
-    }
+        $this->registerEventListeners();
+        
+        if (config('cashier.entitlements.enabled', false)) {
+            $this->enableEntitlements();
+        }
+    }   
 
     /**
      * Register any application services.
@@ -125,5 +133,39 @@ class CashierServiceProvider extends ServiceProvider
                 FeatureEnumCommand::class
             ]);
         }
+    }
+
+    /**
+     * Register event listeners.
+     */
+    protected function registerEventListeners(): void
+    {
+        Event::listen(
+            WebhookReceived::class,
+            config('cashier.webhook_listener', HandleWebhookReceived::class)
+        );
+    }
+
+    protected function enableEntitlements(): void
+    {
+        // Enable event listener for user authentication
+        Event::subscribe(UserLoginEventSubscriber::class);
+
+        // Initialise the route macro
+        \Illuminate\Routing\Route::macro('requiresEntitlements', function (FeatureEnumContract&BackedEnum ...$features) {
+            /** @var \Illuminate\Routing\Route $this */
+            $this->middleware(UserEntitlementCheck::class);
+            
+            $action = $this->getAction();
+            $action[Constants::REQUIRED_FEATURES_KEY] = $features;
+            $this->setAction($action);
+
+            return $this;
+        });
+
+        // Create the access verifier
+        $this->app->bind(EntitlementAccessVerifier::class, function ($app) {
+            return $app->make(config('cashier.entitlements.access_verifier', Entitlement::class));
+        });
     }
 }

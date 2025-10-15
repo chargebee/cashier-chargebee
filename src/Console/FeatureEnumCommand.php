@@ -111,6 +111,8 @@ declare(strict_types=1);
 
 namespace {$namespace};
 
+use Chargebee\Cashier\Contracts\FeatureEnumContract;
+
 enum {$class}: string
 {
 {$casesBlock}
@@ -120,6 +122,20 @@ enum {$class}: string
         return array(
 {$arrayValuesBlock}
         );
+    }
+
+    public function id(): string
+    {
+        return \$this->value;
+    }
+
+    /**
+     * @param array<string> \$featureIds
+     * @return array<FeatureEnumContract>
+     */
+    public static function fromArray(array \$featureIds): array
+    {
+        return array_map(fn (string \$featureId) => self::from(\$featureId), \$featureIds);
     }
 }
 PHP;
