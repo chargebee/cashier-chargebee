@@ -26,8 +26,8 @@ final class DefaultEntitlementAccessVerifier implements EntitlementAccessVerifie
         $featureDefaults = config('cashier.entitlements.feature_defaults', []);
 
         // Every feature must be provided by at least one entitlement (AND logic)
-        return $features->every(function (Feature $feature) use ($entitlements, $featureDefaults) {
-            return $entitlements->contains(function (Entitlement $entitlement) use ($feature, $featureDefaults) {
+        return $features->every(function ($feature) use ($entitlements, $featureDefaults) {
+            return $entitlements->contains(function ($entitlement) use ($feature, $featureDefaults) {
                 // For the default implementation, we can only check SWITCH feature types.
                 // For the others, check if there is a fallback value configured.
                 if ($entitlement->feature_id !== $feature->chargebee_id) {

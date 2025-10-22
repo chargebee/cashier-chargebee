@@ -12,7 +12,7 @@ use Symfony\Component\Console\Attribute\AsCommand;
 class FeatureEnumCommand extends Command
 {
     protected $signature = 'cashier:generate-feature-enum
-        {--class=FeaturesMap : The enum class name}
+        {--class=Feature : The enum class name}
         {--namespace=App\\Models : The namespace for the enum}
         {--path=app/Models : Directory to save the enum file}
         {--force : Overwrite if the file already exists}';
@@ -107,13 +107,19 @@ class FeatureEnumCommand extends Command
         return <<<PHP
 <?php
 
+/**
+ * THIS IS A GENERATED FILE. DO NOT EDIT THIS MANUALLY!
+ * Run `php artisan cashier:generate-feature-enum` to regenerate this file.
+ * ANY CHANGES MADE TO THIS FILE MAY BE OVERWRITTEN.
+ */
+
 declare(strict_types=1);
 
 namespace {$namespace};
 
 use Chargebee\Cashier\Contracts\FeatureEnumContract;
 
-enum {$class}: string
+enum {$class}: string implements FeatureEnumContract
 {
 {$casesBlock}
 

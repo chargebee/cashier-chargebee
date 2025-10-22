@@ -22,7 +22,7 @@ final class UserEntitlementCheck
     {
         $route = $request->route();
         if (!$route) {
-            throw new HttpException(500, 'No route bound to request.');
+            throw new HttpException(500, 'No route bound to request');
         }
 
         /** @var Authenticatable&HasEntitlements $user */

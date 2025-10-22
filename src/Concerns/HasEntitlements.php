@@ -13,6 +13,7 @@ use Chargebee\Cashier\Contracts\EntitlementAccessVerifier;
 use Illuminate\Support\Facades\Cache;   
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Collection;
+use Illuminate\Contracts\Cache\Repository as CacheRepository;
 
 trait HasEntitlements
 {
@@ -67,13 +68,21 @@ trait HasEntitlements
         $this->entitlements = $entitlements;
     }
 
+
+    protected function entitlementsCacheStore(): CacheRepository
+    {
+        return Cache::store();
+    }
+
     /**
      * Ensure the entitlements are loaded from the cache or the API
      */
     public function ensureEntitlements(): void
     {
+        $cacheStore = $this->entitlementsCacheStore();
         $cacheKey = $this->entitlementsCacheKeyPrefix . '_' . $this->id;
-        $cachedEntitlements = Cache::get($cacheKey);
+
+        $cachedEntitlements = $cacheStore->get($cacheKey);
         if ($cachedEntitlements) {
             Log::debug('Got entitlements from cache: ' , ['cachedEntitlements' => $cachedEntitlements]);
             // Convert the cached entitlements to an array of Entitlement objects
@@ -82,7 +91,7 @@ trait HasEntitlements
             $entitlements = $this->getEntitlements();   
             Log::debug('Got entitlements from API: ' , ['entitlements' => $entitlements]);
             $cacheExpirySeconds = config('session.lifetime', 120) * 60;
-            Cache::put($cacheKey, $entitlements, $cacheExpirySeconds);
+            $cacheStore->put($cacheKey, $entitlements, $cacheExpirySeconds);
         }
     }
 
@@ -97,7 +106,9 @@ trait HasEntitlements
         $featureModels = Feature::whereIn('chargebee_id', $features)->get();
         $feats = collect($features);
         if ($featureModels->count() != $feats->count()) {
-            Log::warning('Some features were not found in the database. Please run `php artisan cashier:generate-feature-enum` to sync.' . $feats->diff($featureModels)->implode(', '));
+            Log::warning(<<<EOF
+            Some features were not found in the database. Please run `php artisan cashier:generate-feature-enum` to sync.
+            EOF, ['missingFeatures' => $feats->diff($featureModels)->implode(', ')]);
         }
         return app(EntitlementAccessVerifier::class)::hasAccessToFeatures($this, $featureModels);
     }

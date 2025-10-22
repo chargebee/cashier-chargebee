@@ -19,7 +19,7 @@ class UserLoginEventSubscriber
         $user = $event->user;
         
         // Ensure the entitlements are loaded from the cache or the API
-        Log::debug('Ensuring entitlements are loaded for user: ' , ['user' => $user->id]);
+        Log::debug('Ensuring entitlements are loaded for user' , ['user' => $user->id]);
         $user->ensureEntitlements();
     }
 

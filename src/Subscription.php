@@ -1032,7 +1032,7 @@ class Subscription extends Model
      */
     public function getEntitlements(): array
     {
-        Log::debug('Getting entitlements for subscription: ' . $this->chargebee_id);
+        Log::debug('Getting entitlements for subscription ' . $this->chargebee_id);
         $chargebee = Cashier::chargebee();
         $entitlements = [];
         $options = [];
@@ -1048,7 +1048,6 @@ class Subscription extends Model
             }
         } while ($response->next_offset);
 
-        Log::debug('Entitlements: ' , ['entitlements' => count($entitlements)]);
         return $entitlements;
     }
 

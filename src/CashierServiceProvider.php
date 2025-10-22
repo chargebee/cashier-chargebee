@@ -154,7 +154,7 @@ class CashierServiceProvider extends ServiceProvider
 
         // Initialise the route macro, which binds the middleware to the route
         // and reads the required features from the route action.
-        \Illuminate\Routing\Route::macro('requiresEntitlements', function (FeatureEnumContract&BackedEnum ...$features) {
+        \Illuminate\Routing\Route::macro('requiresEntitlement', function (FeatureEnumContract&BackedEnum ...$features) {
             /** @var \Illuminate\Routing\Route $this */
             $this->middleware(UserEntitlementCheck::class);
             
