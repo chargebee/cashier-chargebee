@@ -1,23 +1,22 @@
 <?php
+
 namespace Chargebee\Cashier\Support;
 
+use Chargebee\Cashier\Concerns\HasEntitlements;
+use Chargebee\Cashier\Contracts\EntitlementAccessVerifier;
+use Chargebee\Cashier\Entitlement;
+use Chargebee\Cashier\Feature;
+use Chargebee\Resources\Feature\Enums\Type as FeatureType;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Collection;
 
-use Chargebee\Cashier\Contracts\EntitlementAccessVerifier;
-use Chargebee\Cashier\Concerns\HasEntitlements;
-use Chargebee\Cashier\Feature;
-use Chargebee\Cashier\Entitlement;
-use Chargebee\Resources\Feature\Enums\Type as FeatureType;
-
 final class DefaultEntitlementAccessVerifier implements EntitlementAccessVerifier
 {
-
     /**
      * Return true if the entitlements collectively provide all requested features.
      *
-     * @param Authenticatable&HasEntitlements $user The user to check access for
-     * @param Collection<Feature> $features
+     * @param  Authenticatable&HasEntitlements  $user  The user to check access for
+     * @param  Collection<Feature>  $features
      * @return bool
      */
     public static function hasAccessToFeatures($user, Collection $features): bool
@@ -34,7 +33,7 @@ final class DefaultEntitlementAccessVerifier implements EntitlementAccessVerifie
                     return false;
                 }
 
-                $hasAccess = match(FeatureType::tryFromValue(strtolower($entitlement->feature_type))) {
+                $hasAccess = match (FeatureType::tryFromValue(strtolower($entitlement->feature_type))) {
                     FeatureType::SWITCH => $entitlement->value,
                     default => $featureDefaults[$feature->chargebee_id] ?? false,
                 };

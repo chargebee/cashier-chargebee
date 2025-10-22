@@ -2,14 +2,17 @@
 
 namespace Chargebee\Cashier;
 
-use Illuminate\Database\Eloquent\Model;
 use Chargebee\Resources\Feature\Feature as ChargebeeFeature;
+use Illuminate\Database\Eloquent\Model;
 
 class Feature extends Model
 {
     protected $primaryKey = 'chargebee_id';
+
     public $incrementing = false;
+
     protected $keyType = 'string';
+
     protected $fillable = ['chargebee_id', 'json_data'];
 
     protected $casts = [
@@ -19,6 +22,7 @@ class Feature extends Model
     public function toChargebeeFeature(): ChargebeeFeature
     {
         $payload = $this->jsonData ?? [];
+
         return ChargebeeFeature::from($payload);
     }
 }

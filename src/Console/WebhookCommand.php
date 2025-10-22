@@ -2,8 +2,8 @@
 
 namespace Chargebee\Cashier\Console;
 
-use Illuminate\Console\Command;
 use Chargebee\Cashier\Cashier;
+use Illuminate\Console\Command;
 use Symfony\Component\Console\Attribute\AsCommand;
 
 #[AsCommand(name: 'cashier:create-webhook')]
@@ -14,9 +14,10 @@ class WebhookCommand extends Command
         'customer_changed',
         'subscription_created',
         'subscription_changed',
-        'subscription_renewed'
+        'subscription_renewed',
     ];
-    public const DEFAULT_NAME = "cashier-webhook-endpoint";
+
+    public const DEFAULT_NAME = 'cashier-webhook-endpoint';
 
     /**
      * The name and signature of the console command.
@@ -43,8 +44,9 @@ class WebhookCommand extends Command
      */
     public function handle()
     {
-        if(!config('cashier.webhook.password') || !config('cashier.webhook.username')) {
+        if (! config('cashier.webhook.password') || ! config('cashier.webhook.username')) {
             $this->error('Webhook authentication credentials are missing. Please set the CASHIER_WEBHOOK_USERNAME and CASHIER_WEBHOOK_PASSWORD environment variables.');
+
             return;
         }
         try {
@@ -54,8 +56,8 @@ class WebhookCommand extends Command
             $endpoint = $webhookEndpoints->create([
                 'enabled_events' => config('cashier.webhook.events') ?: self::DEFAULT_EVENTS,
                 'url' => $this->option('url') ?: route('chargebee.webhook'),
-                'api_version' => $this->option('api-version') ?: "v2",
-                'name' =>  config('cashier.webhook.name') ?: self::DEFAULT_NAME . $this->generateShortTimestampSuffix(),
+                'api_version' => $this->option('api-version') ?: 'v2',
+                'name' => config('cashier.webhook.name') ?: self::DEFAULT_NAME.$this->generateShortTimestampSuffix(),
                 'basic_auth_password' => config('cashier.webhook.password'),
                 'basic_auth_username' => config('cashier.webhook.username'),
                 'disabled' => $disabled,
@@ -68,7 +70,8 @@ class WebhookCommand extends Command
                 $this->components->info('The Chargebee webhook was disabled as requested. You may enable the webhook via the Chargebee dashboard when needed.');
             }
         } catch (\Exception $e) {
-            $this->error('Failed to create the Chargebee webhook: ' . $e->getMessage());
+            $this->error('Failed to create the Chargebee webhook: '.$e->getMessage());
+
             return;
         }
     }

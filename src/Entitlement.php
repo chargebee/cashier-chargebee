@@ -3,15 +3,11 @@
 namespace Chargebee\Cashier;
 
 use BackedEnum;
-use JsonSerializable;
-
-use Illuminate\Contracts\Support\Arrayable;
-use Illuminate\Contracts\Support\Jsonable;
-
-use Chargebee\Cashier\Feature;
 use Chargebee\Cashier\Contracts\FeatureEnumContract;
 use Chargebee\Resources\SubscriptionEntitlement\SubscriptionEntitlement as ChargebeeSubscriptionEntitlement;
-
+use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Contracts\Support\Jsonable;
+use JsonSerializable;
 
 class Entitlement implements Arrayable, Jsonable, JsonSerializable
 {
@@ -27,7 +23,7 @@ class Entitlement implements Arrayable, Jsonable, JsonSerializable
     /**
      * Create a new Entitlement instance.
      *
-     * @param \Chargebee\Resources\SubscriptionEntitlement\SubscriptionEntitlement $entitlement
+     * @param  \Chargebee\Resources\SubscriptionEntitlement\SubscriptionEntitlement  $entitlement
      * @return void
      */
     public function __construct(ChargebeeSubscriptionEntitlement $entitlement)
@@ -43,6 +39,7 @@ class Entitlement implements Arrayable, Jsonable, JsonSerializable
     public function feature(): Feature
     {
         $this->feature = Feature::find($this->feature_id);
+
         return $this->feature;
     }
 
@@ -65,11 +62,11 @@ class Entitlement implements Arrayable, Jsonable, JsonSerializable
     {
         return $this->entitlement->toArray();
     }
-    
+
     /**
      * Get the JSON representation of the Entitlement.
      *
-     * @param int $options
+     * @param  int  $options
      * @return string
      */
     public function toJson($options = 0): string
@@ -91,7 +88,7 @@ class Entitlement implements Arrayable, Jsonable, JsonSerializable
     /**
      * Get the value of the given key.
      *
-     * @param string $key
+     * @param  string  $key
      * @return mixed
      */
     public function __get($key): mixed
@@ -102,7 +99,7 @@ class Entitlement implements Arrayable, Jsonable, JsonSerializable
     /**
      * Returns the Entitlement instance from an array
      *
-     * @param array $array
+     * @param  array  $array
      * @return \Chargebee\Cashier\Entitlement
      */
     public static function fromArray(array $array): self

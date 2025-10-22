@@ -3,19 +3,17 @@
 namespace Chargebee\Cashier;
 
 use BackedEnum;
-
 use Chargebee\Cashier\Console\FeatureEnumCommand;
 use Chargebee\Cashier\Console\WebhookCommand;
+use Chargebee\Cashier\Contracts\EntitlementAccessVerifier;
+use Chargebee\Cashier\Contracts\FeatureEnumContract;
 use Chargebee\Cashier\Contracts\InvoiceRenderer;
 use Chargebee\Cashier\Events\WebhookReceived;
+use Chargebee\Cashier\Http\Middleware\UserEntitlementCheck;
 use Chargebee\Cashier\Invoices\DompdfInvoiceRenderer;
 use Chargebee\Cashier\Listeners\HandleWebhookReceived;
 use Chargebee\Cashier\Listeners\UserLoginEventSubscriber;
-use Chargebee\Cashier\Contracts\FeatureEnumContract;
-use Chargebee\Cashier\Http\Middleware\UserEntitlementCheck;
-use Chargebee\Cashier\Contracts\EntitlementAccessVerifier;
 use Chargebee\Cashier\Support\DefaultEntitlementAccessVerifier;
-
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
@@ -36,11 +34,11 @@ class CashierServiceProvider extends ServiceProvider
         }
 
         $this->registerEventListeners();
-        
+
         if (config('cashier.entitlements.enabled', false)) {
             $this->enableEntitlements();
         }
-    }   
+    }
 
     /**
      * Register any application services.
@@ -121,6 +119,7 @@ class CashierServiceProvider extends ServiceProvider
             ], 'cashier-views');
         }
     }
+
     /**
      * Register the package's commands.
      *
@@ -131,7 +130,7 @@ class CashierServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->commands([
                 WebhookCommand::class,
-                FeatureEnumCommand::class
+                FeatureEnumCommand::class,
             ]);
         }
     }
@@ -157,7 +156,7 @@ class CashierServiceProvider extends ServiceProvider
         \Illuminate\Routing\Route::macro('requiresEntitlement', function (FeatureEnumContract&BackedEnum ...$features) {
             /** @var \Illuminate\Routing\Route $this */
             $this->middleware(UserEntitlementCheck::class);
-            
+
             $action = $this->getAction();
             $action[Constants::REQUIRED_FEATURES_KEY] = $features;
             $this->setAction($action);

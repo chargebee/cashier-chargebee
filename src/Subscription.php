@@ -6,12 +6,9 @@ use Carbon\Carbon;
 use Carbon\CarbonInterface;
 use Chargebee\Cashier\Concerns\AllowsCoupons;
 use Chargebee\Cashier\Concerns\Prorates;
-use Chargebee\Cashier\Entitlement;
 use Chargebee\Cashier\Database\Factories\SubscriptionFactory;
 use Chargebee\Cashier\Exceptions\SubscriptionUpdateFailure;
 use Chargebee\Resources\Subscription\Subscription as ChargebeeSubscription;
-use Chargebee\Resources\SubscriptionEntitlement\SubscriptionEntitlement as ChargebeeSubscriptionEntitlement;
-
 use Chargebee\Resources\Usage\Usage;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Builder;
@@ -1032,7 +1029,7 @@ class Subscription extends Model
      */
     public function getEntitlements(): array
     {
-        Log::debug('Getting entitlements for subscription ' . $this->chargebee_id);
+        Log::debug('Getting entitlements for subscription '.$this->chargebee_id);
         $chargebee = Cashier::chargebee();
         $entitlements = [];
         $options = [];
@@ -1040,7 +1037,7 @@ class Subscription extends Model
         do {
             $response = $chargebee->subscriptionEntitlement()->subscriptionEntitlementsForSubscription($this->chargebee_id, $options);
             $entitlementsResponse = collect($response->list)->map(function ($entitlement) {
-                return new Entitlement($entitlement->subscription_entitlement); 
+                return new Entitlement($entitlement->subscription_entitlement);
             });
             array_push($entitlements, ...$entitlementsResponse->toArray());
             if ($response->next_offset) {

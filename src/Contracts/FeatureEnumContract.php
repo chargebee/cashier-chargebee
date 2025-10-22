@@ -11,8 +11,8 @@ interface FeatureEnumContract
 
     /**
      * Returns array of FeatureEnum
-     * 
-     * @param array<string> $featureIds
+     *
+     * @param  array<string>  $featureIds
      * @return array<FeatureEnumContract>
      */
     public static function fromArray(array $featureIds): array;

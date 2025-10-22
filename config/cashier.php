@@ -95,7 +95,7 @@ return [
     | and Feaures. If fallback options are not enabled, this feature will be disabled.
     |
     */
-    
+
     'entitlements' => [
         // Enable Chargebee Entitlements for Cashier
         'enabled' => true,
@@ -105,9 +105,9 @@ return [
         // to be provided.
         'access_verifier' => \Chargebee\Cashier\Support\DefaultEntitlementAccessVerifier::class,
 
-        // Map of FeatureID => boolean which is used as a fallback to determine if 
+        // Map of FeatureID => boolean which is used as a fallback to determine if
         // the user has access to the feature. This is used only if a access_check
         // class is not provided.
-        'feature_defaults' => []
+        'feature_defaults' => [],
     ],
 ];
