@@ -7,9 +7,12 @@ use BackedEnum;
 use Chargebee\Cashier\Contracts\FeatureEnumContract;
 use Chargebee\Cashier\Entitlement;
 use Chargebee\Cashier\Subscription;
+use Chargebee\Cashier\Feature;
+use Chargebee\Cashier\Contracts\EntitlementAccessVerifier;
 
 use Illuminate\Support\Facades\Cache;   
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Collection;
 
 trait HasEntitlements
 {
@@ -17,9 +20,9 @@ trait HasEntitlements
      * The entitlements for the user, which is cached for use in controllers
      * via the $request->user()->getEntitlements() method
      * 
-     * @var array<Entitlement>
+     * @var Collection<Entitlement>|null
      */
-    private ?array $entitlements = null;
+    private ?Collection $entitlements = null;
 
 
     /**
@@ -32,21 +35,21 @@ trait HasEntitlements
     /**
      * Get the entitlements for the user
      * 
-     * @return array<Entitlement> | null
+     * @return Collection<Entitlement>
      */
-    private function fetchEntitlements(): ?array
+    private function fetchEntitlements(): Collection
     {
         $entitlements = collect($this->subscriptions)->flatMap(fn(Subscription $sub) => $sub->getEntitlements());
-        return $entitlements->toArray();
+        return $entitlements;
     }
 
 
     /**
      * Get the entitlements for the user
      * 
-     * @return array<Entitlement> | null
+     * @return Collection<Entitlement>
      */
-    public function getEntitlements(): ?array
+    public function getEntitlements(): Collection
     {
         if (!$this->entitlements) {
             $this->entitlements = $this->fetchEntitlements();
@@ -57,9 +60,9 @@ trait HasEntitlements
     /**
      * Set the entitlements for the user
      *
-     * @param array<Entitlement> $entitlements
+     * @param Collection<Entitlement> $entitlements
      */
-    public function setEntitlements(array $entitlements): void
+    public function setEntitlements(Collection $entitlements): void
     {
         $this->entitlements = $entitlements;
     }
@@ -69,16 +72,17 @@ trait HasEntitlements
      */
     public function ensureEntitlements(): void
     {
-        $cachedEntitlements = Cache::get($this->entitlementsCacheKeyPrefix);
+        $cacheKey = $this->entitlementsCacheKeyPrefix . '_' . $this->id;
+        $cachedEntitlements = Cache::get($cacheKey);
         if ($cachedEntitlements) {
             Log::debug('Got entitlements from cache: ' , ['cachedEntitlements' => $cachedEntitlements]);
             // Convert the cached entitlements to an array of Entitlement objects
-            $this->entitlements = collect($cachedEntitlements)->map(fn($entitlement) => Entitlement::fromArray($entitlement))->toArray();
+            $this->entitlements = collect($cachedEntitlements)->map(fn($entitlement) => Entitlement::fromArray($entitlement));
         } else {
             $entitlements = $this->getEntitlements();   
             Log::debug('Got entitlements from API: ' , ['entitlements' => $entitlements]);
             $cacheExpirySeconds = config('session.lifetime', 120) * 60;
-            Cache::put($this->entitlementsCacheKeyPrefix, $entitlements, $cacheExpirySeconds);
+            Cache::put($cacheKey, $entitlements, $cacheExpirySeconds);
         }
     }
 
@@ -86,13 +90,15 @@ trait HasEntitlements
      * Check if the user has the given entitlement
      *
      * @param FeatureEnumContract&BackedEnum ...$features
-     * @return Entitlement[]
+     * @return bool
      */
-    public function hasAccess(FeatureEnumContract&BackedEnum ...$features): array
+    public function hasAccess(FeatureEnumContract&BackedEnum ...$features): bool
     {
-        $entitlements = collect($this->getEntitlements())->intersectUsing($features, function (Entitlement $entitlement, FeatureEnumContract&BackedEnum $feature) {
-            return $entitlement->providesFeature($feature);
-        });
-        return $entitlements->toArray();
+        $featureModels = Feature::whereIn('chargebee_id', $features)->get();
+        $feats = collect($features);
+        if ($featureModels->count() != $feats->count()) {
+            Log::warning('Some features were not found in the database. Please run `php artisan cashier:generate-feature-enum` to sync.' . $feats->diff($featureModels)->implode(', '));
+        }
+        return app(EntitlementAccessVerifier::class)::hasAccessToFeatures($this, $featureModels);
     }
 }

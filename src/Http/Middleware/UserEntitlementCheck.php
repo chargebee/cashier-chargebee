@@ -8,13 +8,12 @@ use ReflectionClass;
 
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Support\Facades\Log;
 
 use Chargebee\Cashier\Support\RequiresEntitlement;
 use Chargebee\Cashier\Contracts\FeatureEnumContract;
 use Chargebee\Cashier\Constants;
-use Chargebee\Cashier\Entitlement;
 use Chargebee\Cashier\Concerns\HasEntitlements;
 
 final class UserEntitlementCheck
@@ -25,7 +24,7 @@ final class UserEntitlementCheck
         if (!$route) {
             throw new HttpException(500, 'No route bound to request.');
         }
-    
+
         /** @var Authenticatable&HasEntitlements $user */
         $user = $request->user();
 
@@ -40,13 +39,14 @@ final class UserEntitlementCheck
                 $features = $fromAction;
             }
         }
+        if ($features) {
+            $hasAccess = $user->hasAccess(...$features);
+            if (!$hasAccess) {
+                throw new HttpException(403, 'You are not authorized to access this resource.');
+            }
 
-        // $features = FeatureEnumContract::fromArray($features);
-        // $userEntitlements = $user->hasAccess(...$features);
-
-        // Log::info('Entitlements that provides the features: ' , ['userEntitlements' => $userEntitlements]);
-
-        // $request->attributes->set(Constants::REQUIRED_FEATURES_KEY, $features);
+            $request->attributes->set(Constants::REQUIRED_FEATURES_KEY, $features);
+        }
 
         return $next($request);
     }

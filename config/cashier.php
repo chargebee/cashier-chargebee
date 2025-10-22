@@ -2,7 +2,6 @@
 
 use Chargebee\Cashier\Console\WebhookCommand;
 use Chargebee\Cashier\Invoices\DompdfInvoiceRenderer;
-use Chargebee\Cashier\Entitlement;
 
 return [
 
@@ -104,11 +103,11 @@ return [
         // The class that will be used to check if the user has access to the feature.
         // If this is not provided, the default implementation expects fallback_access
         // to be provided.
-        'access_verifier' => Entitlement::class,
+        'access_verifier' => \Chargebee\Cashier\Support\DefaultEntitlementAccessVerifier::class,
 
         // Map of FeatureID => boolean which is used as a fallback to determine if 
         // the user has access to the feature. This is used only if a access_check
         // class is not provided.
-        'fallback_access' => []
+        'feature_defaults' => []
     ],
 ];

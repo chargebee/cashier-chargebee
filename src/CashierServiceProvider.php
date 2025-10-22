@@ -14,6 +14,7 @@ use Chargebee\Cashier\Listeners\UserLoginEventSubscriber;
 use Chargebee\Cashier\Contracts\FeatureEnumContract;
 use Chargebee\Cashier\Http\Middleware\UserEntitlementCheck;
 use Chargebee\Cashier\Contracts\EntitlementAccessVerifier;
+use Chargebee\Cashier\Support\DefaultEntitlementAccessVerifier;
 
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Route;
@@ -151,7 +152,8 @@ class CashierServiceProvider extends ServiceProvider
         // Enable event listener for user authentication
         Event::subscribe(UserLoginEventSubscriber::class);
 
-        // Initialise the route macro
+        // Initialise the route macro, which binds the middleware to the route
+        // and reads the required features from the route action.
         \Illuminate\Routing\Route::macro('requiresEntitlements', function (FeatureEnumContract&BackedEnum ...$features) {
             /** @var \Illuminate\Routing\Route $this */
             $this->middleware(UserEntitlementCheck::class);
@@ -163,9 +165,10 @@ class CashierServiceProvider extends ServiceProvider
             return $this;
         });
 
-        // Create the access verifier
-        $this->app->bind(EntitlementAccessVerifier::class, function ($app) {
-            return $app->make(config('cashier.entitlements.access_verifier', Entitlement::class));
+        // Initialize access verifier instance, which defaults to our default implementation
+        $this->app->singleton(EntitlementAccessVerifier::class, function ($app) {
+            /** @var \Illuminate\Contracts\Foundation\Application $app */
+            return $app->make(config('cashier.entitlements.access_verifier', DefaultEntitlementAccessVerifier::class));
         });
     }
 }

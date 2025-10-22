@@ -7,16 +7,13 @@ use JsonSerializable;
 
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
-use Illuminate\Contracts\Auth\Authenticatable;
 
-use Chargebee\Cashier\Concerns\HasEntitlements;
 use Chargebee\Cashier\Feature;
 use Chargebee\Cashier\Contracts\FeatureEnumContract;
-use Chargebee\Cashier\Contracts\EntitlementAccessVerifier;
 use Chargebee\Resources\SubscriptionEntitlement\SubscriptionEntitlement as ChargebeeSubscriptionEntitlement;
-use Chargebee\Resources\Feature\Enums\Type as FeatureType;
 
-class Entitlement implements Arrayable, Jsonable, JsonSerializable, EntitlementAccessVerifier
+
+class Entitlement implements Arrayable, Jsonable, JsonSerializable
 {
     /**
      * The Chargebee Subscription Entitlement instance.
@@ -111,24 +108,5 @@ class Entitlement implements Arrayable, Jsonable, JsonSerializable, EntitlementA
     public static function fromArray(array $array): self
     {
         return new self(ChargebeeSubscriptionEntitlement::from($array));
-    }
-
-    /**
-     * Verify if the user has access to the feature.
-     *
-     * @param array<\Chargebee\Cashier\Entitlement> $entitlements
-     * @param \Chargebee\Cashier\Feature $feature
-     * @return bool
-     */
-    public static function hasAccessToFeature(array $entitlements, Feature $feature): bool
-    {
-        // $hasAccess = match($feature->feature_type) {
-        //     FeatureType::SWITCH => $entitlement->value === $feature->value,
-        //     FeatureType::QUANTITY => $entitlement->value === $feature->value,
-        //     FeatureType::RANGE => $entitlement->value === $feature->value,
-        //     FeatureType::CUSTOM => in_array($feature->value, $entitlement->value),
-        //     default => throw new \InvalidArgumentException('Invalid feature type: ' . $feature->feature_type),
-        // };
-        return false;
     }
 }

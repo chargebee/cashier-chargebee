@@ -299,5 +299,4 @@ class HandleWebhookReceived
             'chargebee_feature_id' => $payload['content']['feature']['id'],
         ]);
     }
-
 }
