@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 use InvalidArgumentException;
 use LogicException;
 
@@ -1019,6 +1020,32 @@ class Subscription extends Model
         $response = $chargebee->subscription()->retrieve($this->chargebee_id);
 
         return $response->subscription;
+    }
+
+    /**
+     * Get entitlements
+     *
+     * @return \Chargebee\Cashier\Entitlement[]
+     */
+    public function getEntitlements(): array
+    {
+        Log::debug('Getting entitlements for subscription '.$this->chargebee_id);
+        $chargebee = Cashier::chargebee();
+        $entitlements = [];
+        $options = [];
+
+        do {
+            $response = $chargebee->subscriptionEntitlement()->subscriptionEntitlementsForSubscription($this->chargebee_id, $options);
+            $entitlementsResponse = collect($response->list)->map(function ($entitlement) {
+                return new Entitlement($entitlement->subscription_entitlement);
+            });
+            array_push($entitlements, ...$entitlementsResponse->toArray());
+            if ($response->next_offset) {
+                $options['offset'] = $response->next_offset;
+            }
+        } while ($response->next_offset);
+
+        return $entitlements;
     }
 
     /**

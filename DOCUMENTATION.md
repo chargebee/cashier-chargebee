@@ -66,6 +66,10 @@
   - [Upcoming Invoices](#upcoming-invoices)
   - [Previewing Subscription Invoices](#previewing-subscription-invoices)
   - [Generating Invoice PDFs](#generating-invoice-pdfs)
+- [Entitlements](#entitlements)
+  - [Configuring entitlements](#configuring-entitlements)
+  - [Performing entitlement checks](#performing-entitlement-checks)
+  - [Advanced entitlements usage](#advanced-entitlements-usage)
 
 <a name="installation"></a>
 
@@ -144,7 +148,7 @@ public function boot(): void
 }
 ```
 
-> [!WARNING]  
+> [!WARNING]
 > If you're using a model other than Laravel's supplied `App\Models\User` model,
 > you'll need to publish and alter the [Cashier migrations](#installation)
 > provided to match your alternative model's table name.
@@ -198,7 +202,7 @@ to set the currency locale:
 CASHIER_CURRENCY_LOCALE=nl_BE
 ```
 
-> [!WARNING]  
+> [!WARNING]
 > In order to use locales other than `en`, ensure the `ext-intl` PHP extension
 > is installed and configured on your server.
 
@@ -553,7 +557,7 @@ Run the following command to create a webhook in Chargebee:
 php artisan cashier:create-webhook
 ```
 
-By default, the webhook URL will point to your application’s webhook endpoint, using the output of `route('chargebee.webhook')`, for example: 
+By default, the webhook URL will point to your application’s webhook endpoint, using the output of `route('chargebee.webhook')`, for example:
 ```
 https://{{your-domain}}/chargebee/webhook
 ```
@@ -572,8 +576,8 @@ php artisan cashier:create-webhook --url="https://{different-url}.com"
 **Note:** The webhook name, enabled events, and basic authentication credentials (username and password) are configured through the Cashier configuration file generally present in `/config/cashier.php`. You can define them in your Cashier config as shown in the example below.
 ```php
  'webhook' => [
-        'username' => env('CASHIER_WEBHOOK_USERNAME'), 
-        'password' => env('CASHIER_WEBHOOK_PASSWORD'), 
+        'username' => env('CASHIER_WEBHOOK_USERNAME'),
+        'password' => env('CASHIER_WEBHOOK_PASSWORD'),
         'events' => array_merge(
         WebhookCommand::DEFAULT_EVENTS,
         [
@@ -581,7 +585,7 @@ php artisan cashier:create-webhook --url="https://{different-url}.com"
             'payment_succeeded',
         ]
     ),
-    'name' => "your-webhook-name", 
+    'name' => "your-webhook-name",
     ],
 ```
 
@@ -802,7 +806,7 @@ Checkout page:
 
 ### Subscription Checkouts
 
-> [!WARNING]  
+> [!WARNING]
 > Using Chargebee Checkout for subscriptions requires you to enable the
 > `subscription_created` webhook in your Chargebee dashboard. This webhook will
 > create the subscription record in your database and store all of the relevant
@@ -1564,7 +1568,7 @@ $subscription = $user->newSubscription('default', 'price_monthly')
     ]);
 ```
 
-> [!WARNING]  
+> [!WARNING]
 > Passing a payment source identifier directly to the `create` subscription
 > method will also automatically add it to the user's stored payment methods.
 
@@ -1769,7 +1773,7 @@ method accepts a subscription type and returns a `Subscription` model instance:
 $subscription = $user->subscription('default');
 ```
 
-> [!WARNING]  
+> [!WARNING]
 > If a user has two subscriptions with the same type, the most recent
 > subscription will always be returned by the `subscription` method. For
 > example, a user might have two subscription records with the type of
@@ -2094,7 +2098,7 @@ To remove a specific price from a subscription, use the `removePrice` method:
 $subscription->removePrice('price_id_to_remove');
 ```
 
-> [!WARNING]  
+> [!WARNING]
 > You cannot remove the last price on a subscription. Instead, cancel the
 > subscription entirely.
 
@@ -2844,3 +2848,282 @@ Once you have implemented the invoice renderer contract, you should update the
 `cashier.invoices.renderer` configuration value in your application's
 `config/cashier.php` configuration file. This configuration value should be set
 to the class name of your custom renderer implementation.
+
+## Entitlements
+
+Cashier for Chargebee has recently added support for controlling access to your application's features
+using [Entitlements](https://www.chargebee.com/docs/billing/2.0/entitlements/entitlements). Please read
+the Chargebee docs to understand more about entitlements and how they can be used in various scenarios.
+The rest of this section will deal with configuring and using entitlements in your Laravel app.
+
+*Note 1*: The current implementaion of entitlements only fetches the subscription level entitlements for
+the user. Once the [Customer Entitlements](https://apidocs.chargebee.com/docs/api/customer_entitlements?lang=php)
+are generally available to all Chargebee sites, this package will be updated to use that instead.
+
+*Note 2*: The default implementation of `EntitlementAccessVerifier` only handles features of type switch.
+This is because for other types of entitlements, usage tracking is yet to be implemented. Other
+feature types fallback to the configured `feature_defaults` value. This behaviour can be [customized](#custom-implementation-of-entitlementsaccessverifier) as shown in the advanced usage section.
+
+
+### Configuring entitlements
+
+The following steps will have to be run in your Laravel app which uses the Chargebee Cashier package.
+
+1. Sync the required configuration and DB migrations from the `chargebee/cashier` package,and migrate
+your database to create the `features` table:
+
+```shell
+php artisan vendor:publish --tag="cashier-config"
+php artisan vendor:publish --tag="cashier-migrations"
+php artisan migrate
+```
+
+2. Generate the `Feature` enum by fetching the list of features configured in your Chargebee site
+and sync them with your DB:
+
+```shell
+php artisan cashier:generate-feature-enum
+```
+
+This will create a `app/Models/Feature.php` file with the required enum values populated. All other entitlement methods
+expect a strongly typed `Feature` to be passed (e.g. `Feature::MAX_PLAN`). This ensures developers keep the features
+synced between the various environments, and catch any potential issues with feature gating when testing
+in the lower environments.
+
+For the purposes of this documentation, the `Feature.php` will contain the following features:
+
+```php
+enum Feature: string implements FeatureEnumContract
+{
+    case PREMIUM_TOOLS = 'cbdemo_premium_tools';
+    case HELPDESK_CENTERS = 'cbdemo_helpdesk_centers';
+    case INSIGHTS_DASHBOARD = 'cbdemo_insights_dashboard';
+
+    # ...
+}
+```
+
+3. Enable entitlements and provide the default values in `config/cashier.php`:
+
+```php
+use App\Models\Feature;
+
+return [
+    #...
+    'entitlements' => [
+        'enabled' => true,
+        'feature_defaults' => [
+            Feature::PREMIUM_TOOLS->value => false,
+            Feature::HELPDESK_CENTERS->value => true,
+        ]
+    ],
+];
+```
+
+Additionally, since the entitlements are fetched and cached locally, configure
+a [Laravel Cache](https://laravel.com/docs/12.x/cache#configuration) store. The
+framework uses the default cache store, but this can be customized. See
+[Advanced Entitlements usage](#advanced-entitlements-usage) for more details.
+
+
+4. Add the `HasEntitlements` trait to your `User` model:
+
+```php
+use Chargebee\Cashier\Concerns\HasEntitlements;
+
+class User extends Authenticatable
+{
+    use HasEntitlements;
+    # ....
+}
+```
+
+This adds a `$user->getEntitlements()` and `$user->hasAccess()` methods to your user class.
+
+### Performing entitlement checks
+
+There are three high-level methods to control access to resources:
+
+1. Using the `requiresEntitlement` route macro when defining a Laravel route using a closure:
+
+```php
+use App\Models\Feature;
+
+Route::get('/dashboard', function (Request $request) {
+    Log::info('in protected route');
+    return 'dashboard page';
+})
+->requiresEntitlement(Feature::INSIGHTS_DASHBOARD);
+```
+
+2. Using the `RequiresEntitlement` attribute when using controller class methods:
+
+```php
+use Chargebee\Cashier\Support\RequiresEntitlement;
+use Chargebee\Cashier\Http\Middleware\UserEntitlementCheck;
+
+use App\Models\Feature;
+
+class HelpdeskController
+{
+    #[RequiresEntitlement(Feature::HELPDESK_CENTERS)]
+    public function show(Request $request)
+    {
+        return 'Helpdesk page';
+    }
+}
+
+Route::get('/helpdesk', [HelpdeskController::class, 'show'])
+    ->middleware(UserEntitlementCheck::class);
+```
+
+3. Using the `$user->hasAccess()` method inside a controller:
+
+```php
+use App\Models\Feature;
+
+Route::get('/premium', function (Request $request) {
+    if (!$user->hasAccess(Feature::PREMIUM_TOOLS)) {
+        throw new HttpException(403, 'You are not authorized to access this page!');
+    }
+    return 'You have access to premium tools!';
+});
+```
+
+### Advanced Entitlements usage
+
+#### Custom implementation of EntitlementsAccessVerifier
+
+The default implementation to determine if a user has access to a feature is quite
+limited as mentioned in the intro to the Entitlements section. This is currently
+a technical limitation as a thorough implementation will also need to track usage
+of those features. For e.g., let's assume a feature `API_REQUESTS` of type numeric
+is set to a value of `100`. To determine if a user is allowed to make an API request,
+we would also need to track his API usage for the given time period, and check if
+the aggregated usage is < 100.
+
+This logic to track usage and determine if it falls within the threshold of the
+entitlement is beyond the scope of this library. However, to facilitate a custom
+implementation, the following interface and configuration can be overridden:
+
+```php
+# app/support/DenyAllAccess.php
+namespace App\Support;
+
+# Implement the EntitlementAccessVerifier interface
+use Chargebee\Cashier\Contracts\EntitlementAccessVerifier;
+
+class DenyAllAccess implements EntitlementAccessVerifier {
+    # Deny everyone access to a feature
+    public static function hasAccessToFeatures($user, Collection $features): bool {
+        return false;
+    }
+}
+
+# config/cashier.php
+[
+    #...
+    'entitlements' => [
+        'enabled' => true,
+        'access_verifier' => DenyAllAccess::class,
+    ],
+];
+```
+
+The `hasAccessToFeatures` static method gets the user and the features that the user
+must have entitlements to. The implementation can then do the necessary operations like query
+a database/make an API request to check if the user should be allowed to continue
+with the request.
+
+#### Overriding the cache store
+
+To use something other than the default cache store for Entitlements,
+override the `entitlementsCacheStore` method as shown below:
+
+```php
+# config/cache.php
+return [
+    'default' => 'database',
+
+    'stores' => [
+        'entitlement' => [
+            'driver' => 'redis',
+            # ...
+        ]
+    ]
+]
+
+# app/models/User.php
+class User
+{
+    use HasEntitlements;
+
+    protected function entitlementsCacheStore(): CacheRepository
+    {
+        return Cache::store('entitlement');
+    }
+}
+```
+
+#### Custom implementation of Feature enum
+
+The provided console command `php artisan cashier:generate-feature-enum` is an easy
+way to generate the list of Features from the API and save them to the DB. However, this
+may not be suitable for certain cases. For example, if the list of features isn't consistent
+across the test and prod Chargebee sites. In such scenarios, it is possible to provide a
+custom implementation of the `Feature` enum by implementing the required methods in the
+`FeatureEnumContract` interface.
+
+```php
+use Chargebee\Cashier\Contracts\FeatureEnumContract;
+
+enum CustomFeature: string implements FeatureEnumContract {
+    // These may be used only in the test site
+    case DEV_USER = "dev-user";
+    case FREE_USER = "free-user";
+    // And these in the prod site
+    case PRO_USER = "pro-user";
+    case MAX_USER = "max-user";
+
+    public function id(): string
+    {
+        return $this->value;
+    }
+
+    /**
+     * @param array<string> $featureIds
+     * @return array<FeatureEnumContract>
+     */
+    public static function fromArray(array $featureIds): array
+    {
+        return array_map(fn (string $featureId) => self::from($featureId), $featureIds);
+    }
+}
+```
+
+As long as your enum implementation satisfies the `FeatureEnumContract&BackedEnum` type, you will
+be able to pass the feature to the main API methods like `$user->hasAccess()`;
+
+Additionally, these features and the required metadata will need to be populated in the DB.
+This can be done by running a [DB seeder](https://laravel.com/docs/12.x/seeding), and inserting
+the required rows using the `Feature` [model factory](https://laravel.com/docs/12.x/eloquent-factories):
+
+```php
+use Chargebee\Cashier\Feature;
+
+/**
+ * Run the database seeders.
+ */
+public function run(): void
+{
+    Feature::factory()
+        ->count(4)
+        ->sequence(
+            ['chargebee_id' => 'dev-user', 'json_data' => ['type' => 'switch']],
+            ['chargebee_id' => 'free-user', 'json_data' => ['type' => 'switch']],
+            ['chargebee_id' => 'pro-user', 'json_data' => ['type' => 'numeric']],
+            ['chargebee_id' => 'max-user', 'json_data' => ['type' => 'numeric']],
+        )
+        ->create();
+}
+```

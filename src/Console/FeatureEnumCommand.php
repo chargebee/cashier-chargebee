@@ -2,9 +2,9 @@
 
 namespace Chargebee\Cashier\Console;
 
+use Chargebee\Cashier\Cashier;
 use Chargebee\Cashier\Feature;
 use Illuminate\Console\Command;
-use Chargebee\Cashier\Cashier;
 use Illuminate\Support\Facades\File;
 use Symfony\Component\Console\Attribute\AsCommand;
 
@@ -12,7 +12,7 @@ use Symfony\Component\Console\Attribute\AsCommand;
 class FeatureEnumCommand extends Command
 {
     protected $signature = 'cashier:generate-feature-enum
-        {--class=FeaturesMap : The enum class name}
+        {--class=Feature : The enum class name}
         {--namespace=App\\Models : The namespace for the enum}
         {--path=app/Models : Directory to save the enum file}
         {--force : Overwrite if the file already exists}';
@@ -27,12 +27,12 @@ class FeatureEnumCommand extends Command
         $filePath = base_path("{$path}/{$class}.php");
 
         try {
-            $this->components->info("Fetching features from Chargebee…");
+            $this->components->info('Fetching features from Chargebee…');
             $nextPage = null;
             $cases = [];
             do {
                 $result = Cashier::chargebee()->feature()->all([
-                    "offset" => $nextPage
+                    'offset' => $nextPage,
                 ]);
                 $nextPage = $result->next_offset;
                 foreach ($result->list as $featureList) {
@@ -41,12 +41,13 @@ class FeatureEnumCommand extends Command
                     $caseName = $this->toEnumCase($feature->name);
                     if ($caseName === '') {
                         $this->warn("Skipping feature with name that cannot be mapped to php enum feature name: '{$feature->name}' \n");
+
                         continue;
                     }
                     $caseValue = $feature->id;
                     if (isset($cases[$caseName])) {
                         // Avoid duplicate keys
-                        $caseName .= '_' . substr(md5($caseValue), 0, 6);
+                        $caseName .= '_'.substr(md5($caseValue), 0, 6);
                     }
                     Feature::updateOrCreate(
                         ['chargebee_id' => $feature->id],
@@ -58,17 +59,19 @@ class FeatureEnumCommand extends Command
 
             if (empty($cases)) {
                 $this->error('No features found.');
+
                 return self::FAILURE;
             }
 
             $php = $this->renderEnum($namespace, $class, $cases);
 
-            if (File::exists($filePath) && !$this->option('force')) {
+            if (File::exists($filePath) && ! $this->option('force')) {
                 $this->error("File already exists at {$filePath}. Use --force to overwrite.");
+
                 return self::FAILURE;
             }
 
-            if (!File::isDirectory(base_path($path))) {
+            if (! File::isDirectory(base_path($path))) {
                 File::makeDirectory(base_path($path), 0755, true);
             }
 
@@ -77,7 +80,8 @@ class FeatureEnumCommand extends Command
 
             return self::SUCCESS;
         } catch (\Throwable $e) {
-            $this->error("Failed: " . $e->getMessage());
+            $this->error('Failed: '.$e->getMessage());
+
             return self::FAILURE;
         }
     }
@@ -86,20 +90,21 @@ class FeatureEnumCommand extends Command
     {
         $underscored = preg_replace('/[^a-zA-Z0-9]+/', '_', $name);
         $underscored = preg_replace('/^[0-9]+/', '', $underscored);
+
         return strtoupper(trim($underscored, '_'));
     }
 
     protected function renderEnum(string $namespace, string $class, array $cases): string
     {
         $casesBlock = collect($cases)
-            ->map(fn($val, $name) => "    case {$name} = '" . addslashes($val) . "';")
+            ->map(fn ($val, $name) => "    case {$name} = '".addslashes($val)."';")
             ->implode("\n");
 
         // Format the array values with proper indentation
         $arrayValues = [];
         $index = 0;
         foreach ($cases as $value) {
-            $arrayValues[] = "            {$index} => '" . addslashes($value) . "',";
+            $arrayValues[] = "            {$index} => '".addslashes($value)."',";
             $index++;
         }
         $arrayValuesBlock = implode("\n", $arrayValues);
@@ -107,11 +112,19 @@ class FeatureEnumCommand extends Command
         return <<<PHP
 <?php
 
+/**
+ * THIS IS A GENERATED FILE. DO NOT EDIT THIS MANUALLY!
+ * Run `php artisan cashier:generate-feature-enum` to regenerate this file.
+ * ANY CHANGES MADE TO THIS FILE MAY BE OVERWRITTEN.
+ */
+
 declare(strict_types=1);
 
 namespace {$namespace};
 
-enum {$class}: string
+use Chargebee\Cashier\Contracts\FeatureEnumContract;
+
+enum {$class}: string implements FeatureEnumContract
 {
 {$casesBlock}
 
@@ -120,6 +133,20 @@ enum {$class}: string
         return array(
 {$arrayValuesBlock}
         );
+    }
+
+    public function id(): string
+    {
+        return \$this->value;
+    }
+
+    /**
+     * @param array<string> \$featureIds
+     * @return array<FeatureEnumContract>
+     */
+    public static function fromArray(array \$featureIds): array
+    {
+        return array_map(fn (string \$featureId) => self::from(\$featureId), \$featureIds);
     }
 }
 PHP;

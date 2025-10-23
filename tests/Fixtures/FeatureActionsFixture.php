@@ -3,20 +3,20 @@
 namespace Chargebee\Cashier\Tests\Fixtures;
 
 use Chargebee\Actions\Contracts\FeatureActionsInterface;
-use Chargebee\Responses\FeatureResponse\ListFeatureResponse;
-use Chargebee\Responses\FeatureResponse\RetrieveFeatureResponse;
-use Chargebee\Responses\FeatureResponse\ReactivateFeatureResponse;
 use Chargebee\Responses\FeatureResponse\ActivateFeatureResponse;
+use Chargebee\Responses\FeatureResponse\ArchiveFeatureResponse;
 use Chargebee\Responses\FeatureResponse\CreateFeatureResponse;
 use Chargebee\Responses\FeatureResponse\DeleteFeatureResponse;
+use Chargebee\Responses\FeatureResponse\ListFeatureResponse;
+use Chargebee\Responses\FeatureResponse\ReactivateFeatureResponse;
+use Chargebee\Responses\FeatureResponse\RetrieveFeatureResponse;
 use Chargebee\Responses\FeatureResponse\UpdateFeatureResponse;
-use Chargebee\Responses\FeatureResponse\ArchiveFeatureResponse;
 
 class FeatureActionsFixture implements FeatureActionsInterface
 {
     public static array $normalFeature = [
         'feature' => [
-            'id' => "Dummy-Feature-id",
+            'id' => 'Dummy-Feature-id',
             'name' => 'Free Trial',
             'description' => 'Gives 14 days of free trial access',
             'unit' => 'days',
@@ -33,8 +33,11 @@ class FeatureActionsFixture implements FeatureActionsInterface
             'type' => 'limit',
         ],
     ];
+
     public array $featureList = [];
+
     public array $feature = [];
+
     public static array $featureListWithNormalFields = [
         'list' => [
             [
@@ -64,8 +67,8 @@ class FeatureActionsFixture implements FeatureActionsInterface
                     'status' => 'archived',
                     'type' => 'boolean',
                 ],
-            ]
-        ]
+            ],
+        ],
     ];
 
     public static array $featureListWithInvalidEnumName = [
@@ -97,8 +100,8 @@ class FeatureActionsFixture implements FeatureActionsInterface
                     'status' => 'archived',
                     'type' => 'boolean',
                 ],
-            ]
-        ]
+            ],
+        ],
     ];
 
     public static array $featureListWithSpecialCharacterInName = [
@@ -130,8 +133,8 @@ class FeatureActionsFixture implements FeatureActionsInterface
                     'status' => 'archived',
                     'type' => 'boolean',
                 ],
-            ]
-        ]
+            ],
+        ],
     ];
 
     public function __construct($featureList = [], $feature = [])
@@ -166,6 +169,7 @@ class FeatureActionsFixture implements FeatureActionsInterface
     public function all(array $params = [], array $headers = []): ListFeatureResponse
     {
         $features = ListFeatureResponse::from($this->featureList);
+
         return $features;
     }
 

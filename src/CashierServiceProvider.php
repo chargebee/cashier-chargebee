@@ -2,12 +2,18 @@
 
 namespace Chargebee\Cashier;
 
+use BackedEnum;
 use Chargebee\Cashier\Console\FeatureEnumCommand;
 use Chargebee\Cashier\Console\WebhookCommand;
+use Chargebee\Cashier\Contracts\EntitlementAccessVerifier;
+use Chargebee\Cashier\Contracts\FeatureEnumContract;
 use Chargebee\Cashier\Contracts\InvoiceRenderer;
 use Chargebee\Cashier\Events\WebhookReceived;
+use Chargebee\Cashier\Http\Middleware\UserEntitlementCheck;
 use Chargebee\Cashier\Invoices\DompdfInvoiceRenderer;
 use Chargebee\Cashier\Listeners\HandleWebhookReceived;
+use Chargebee\Cashier\Listeners\UserLoginEventSubscriber;
+use Chargebee\Cashier\Support\DefaultEntitlementAccessVerifier;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
@@ -27,10 +33,11 @@ class CashierServiceProvider extends ServiceProvider
             Cashier::configureEnvironment();
         }
 
-        Event::listen(
-            WebhookReceived::class,
-            config('cashier.webhook_listener', HandleWebhookReceived::class)
-        );
+        $this->registerEventListeners();
+
+        if (config('cashier.entitlements.enabled', false)) {
+            $this->enableEntitlements();
+        }
     }
 
     /**
@@ -112,6 +119,7 @@ class CashierServiceProvider extends ServiceProvider
             ], 'cashier-views');
         }
     }
+
     /**
      * Register the package's commands.
      *
@@ -122,8 +130,44 @@ class CashierServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->commands([
                 WebhookCommand::class,
-                FeatureEnumCommand::class
+                FeatureEnumCommand::class,
             ]);
         }
+    }
+
+    /**
+     * Register event listeners.
+     */
+    protected function registerEventListeners(): void
+    {
+        Event::listen(
+            WebhookReceived::class,
+            config('cashier.webhook_listener', HandleWebhookReceived::class)
+        );
+    }
+
+    protected function enableEntitlements(): void
+    {
+        // Enable event listener for user authentication
+        Event::subscribe(UserLoginEventSubscriber::class);
+
+        // Initialise the route macro, which binds the middleware to the route
+        // and reads the required features from the route action.
+        \Illuminate\Routing\Route::macro('requiresEntitlement', function (FeatureEnumContract&BackedEnum ...$features) {
+            /** @var \Illuminate\Routing\Route $this */
+            $this->middleware(UserEntitlementCheck::class);
+
+            $action = $this->getAction();
+            $action[Constants::REQUIRED_FEATURES_KEY] = $features;
+            $this->setAction($action);
+
+            return $this;
+        });
+
+        // Initialize access verifier instance, which defaults to our default implementation
+        $this->app->singleton(EntitlementAccessVerifier::class, function ($app) {
+            /** @var \Illuminate\Contracts\Foundation\Application $app */
+            return $app->make(config('cashier.entitlements.access_verifier', DefaultEntitlementAccessVerifier::class));
+        });
     }
 }

@@ -554,7 +554,6 @@ class WebhookTest extends FeatureTestCase
         ]);
     }
 
-
     public function test_handle_feature_updated(): void
     {
         $this->withValidCredentials();
@@ -573,13 +572,12 @@ class WebhookTest extends FeatureTestCase
         $payload = [
             'event_type' => 'feature_updated',
             'content' => [
-                'feature' => $chargebeeArchivedFeature
+                'feature' => $chargebeeArchivedFeature,
             ],
         ];
 
         $this->postJson($this->webhookUrl, $payload)
             ->assertStatus(200);
-
 
         $this->assertDatabaseHas('features', [
             'chargebee_id' => $chargebeeFeature['id'],
@@ -643,5 +641,4 @@ class WebhookTest extends FeatureTestCase
             'chargebee_id' => $chargebeeFeature['id'],
         ]);
     }
-
 }

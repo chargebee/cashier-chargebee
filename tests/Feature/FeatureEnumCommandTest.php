@@ -30,12 +30,13 @@ class FeatureEnumCommandTest extends FeatureTestCase
     {
         $capturedPath = null;
         $capturedPhp = null;
-        $this->createChargebeeFeatureMock(new FeatureActionsFixture());
+        $this->createChargebeeFeatureMock(new FeatureActionsFixture);
         File::shouldReceive('put')
             ->once()
             ->andReturnUsing(function ($path, $php) use (&$capturedPath, &$capturedPhp) {
                 $capturedPath = $path;
                 $capturedPhp = $php;
+
                 return true;
             });
         $this->artisan('cashier:generate-feature-enum', [
@@ -79,7 +80,7 @@ enum FeaturesMap: string
 
     public function test_should_overwrite_existing_file_when_force_option_is_used(): void
     {
-        $this->createChargebeeFeatureMock(new FeatureActionsFixture());
+        $this->createChargebeeFeatureMock(new FeatureActionsFixture);
         File::shouldReceive('exists')->andReturn(true);
         File::shouldReceive('put')->once()->andReturn(true);
 
@@ -93,7 +94,7 @@ enum FeaturesMap: string
 
     public function test_should_create_directory_when_it_does_not_exist(): void
     {
-        $this->createChargebeeFeatureMock(new FeatureActionsFixture());
+        $this->createChargebeeFeatureMock(new FeatureActionsFixture);
         File::shouldReceive('isDirectory')->andReturn(false);
         File::shouldReceive('makeDirectory')
             ->with(base_path('app/Models'), 0755, true)
@@ -110,12 +111,13 @@ enum FeaturesMap: string
 
     public function test_should_use_default_options_when_none_provided(): void
     {
-        $this->createChargebeeFeatureMock(new FeatureActionsFixture());
+        $this->createChargebeeFeatureMock(new FeatureActionsFixture);
         $capturedPath = null;
         File::shouldReceive('put')
             ->once()
             ->andReturnUsing(function ($path, $php) use (&$capturedPath) {
                 $capturedPath = $path;
+
                 return true;
             });
 
@@ -128,7 +130,7 @@ enum FeaturesMap: string
 
     public function test_should_handle_custom_class_and_namespace(): void
     {
-        $this->createChargebeeFeatureMock(new FeatureActionsFixture());
+        $this->createChargebeeFeatureMock(new FeatureActionsFixture);
         $capturedPath = null;
         $capturedPhp = null;
         File::shouldReceive('put')
@@ -136,6 +138,7 @@ enum FeaturesMap: string
             ->andReturnUsing(function ($path, $php) use (&$capturedPath, &$capturedPhp) {
                 $capturedPath = $path;
                 $capturedPhp = $php;
+
                 return true;
             });
 
@@ -172,12 +175,13 @@ enum CustomFeatures: string
 
     public function test_should_handle_namespace_with_trailing_backslash(): void
     {
-        $this->createChargebeeFeatureMock(new FeatureActionsFixture());
+        $this->createChargebeeFeatureMock(new FeatureActionsFixture);
         $capturedPhp = null;
         File::shouldReceive('put')
             ->once()
             ->andReturnUsing(function ($path, $php) use (&$capturedPhp) {
                 $capturedPhp = $php;
+
                 return true;
             });
 
@@ -191,12 +195,13 @@ enum CustomFeatures: string
 
     public function test_should_handle_path_with_trailing_slash(): void
     {
-        $this->createChargebeeFeatureMock(new FeatureActionsFixture());
+        $this->createChargebeeFeatureMock(new FeatureActionsFixture);
         $capturedPath = null;
         File::shouldReceive('put')
             ->once()
             ->andReturnUsing(function ($path, $php) use (&$capturedPath) {
                 $capturedPath = $path;
+
                 return true;
             });
 
@@ -209,7 +214,6 @@ enum CustomFeatures: string
         $this->assertEquals($expectedPath, $capturedPath);
     }
 
-
     public function test_should_skip_features_with_invalid_names(): void
     {
         $this->createChargebeeFeatureMock(new FeatureActionsFixture(FeatureActionsFixture::$featureListWithInvalidEnumName));
@@ -218,6 +222,7 @@ enum CustomFeatures: string
             ->once()
             ->andReturnUsing(function ($path, $php) use (&$capturedPhp) {
                 $capturedPhp = $php;
+
                 return true;
             });
 
@@ -252,6 +257,7 @@ enum FeaturesMap: string
             ->once()
             ->andReturnUsing(function ($path, $php) use (&$capturedPhp) {
                 $capturedPhp = $php;
+
                 return true;
             });
         $this->artisan('cashier:generate-feature-enum', ['--force' => true])

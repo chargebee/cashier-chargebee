@@ -85,4 +85,29 @@ return [
             'paper' => env('CASHIER_PAPER', 'letter'),
         ],
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Entitlements
+    |--------------------------------------------------------------------------
+    |
+    | Enable entitlement checks for your application using Chargebee's Entitlements
+    | and Feaures. If fallback options are not enabled, this feature will be disabled.
+    |
+    */
+
+    'entitlements' => [
+        // Enable Chargebee Entitlements for Cashier
+        'enabled' => true,
+
+        // The class that will be used to check if the user has access to the feature.
+        // If this is not provided, the default implementation expects fallback_access
+        // to be provided.
+        'access_verifier' => \Chargebee\Cashier\Support\DefaultEntitlementAccessVerifier::class,
+
+        // Map of FeatureID => boolean which is used as a fallback to determine if
+        // the user has access to the feature. This is used only if a access_check
+        // class is not provided.
+        'feature_defaults' => [],
+    ],
 ];

@@ -18,7 +18,7 @@ class HandleWebhookReceived
     {
         $eventType = $event->payload['event_type'] ?? null;
 
-        if (!$eventType) {
+        if (! $eventType) {
             Log::warning('WebhookReceived: Missing event_type in payload.', $event->payload);
 
             return;
@@ -38,7 +38,7 @@ class HandleWebhookReceived
      */
     protected function getHandlerMethod(string $eventType): string
     {
-        return 'handle' . Str::studly(str_replace('_', '', $eventType));
+        return 'handle'.Str::studly(str_replace('_', '', $eventType));
     }
 
     /**
@@ -91,7 +91,7 @@ class HandleWebhookReceived
     protected function handleSubscriptionCreated(array $payload): void
     {
         if ($user = Cashier::findBillable($payload['content']['subscription']['customer_id'])) {
-            if (!$user->subscriptions->contains('chargebee_id', $payload['content']['subscription']['id'])) {
+            if (! $user->subscriptions->contains('chargebee_id', $payload['content']['subscription']['id'])) {
                 $subscription = $this->updateOrCreateSubscriptionFromPayload($user, $payload['content']['subscription']);
 
                 Log::info('Subscription created successfully.', [
@@ -107,7 +107,7 @@ class HandleWebhookReceived
                 ]);
             }
 
-            if (!is_null($user->trial_ends_at)) {
+            if (! is_null($user->trial_ends_at)) {
                 $user->trial_ends_at = null;
                 $user->save();
             }
@@ -299,5 +299,4 @@ class HandleWebhookReceived
             'chargebee_feature_id' => $payload['content']['feature']['id'],
         ]);
     }
-
 }
