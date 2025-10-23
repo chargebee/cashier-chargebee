@@ -3071,7 +3071,7 @@ The provided console command `php artisan cashier:generate-feature-enum` is an e
 way to generate the list of Features from the API and save them to the DB. However, this
 may not be suitable for certain cases. For example, if the list of features isn't consistent
 across the test and prod Chargebee sites. In such scenarios, it is possible to provide a
-custom implementatio of the `Feature` enum by implementing the required methods in the
+custom implementation of the `Feature` enum by implementing the required methods in the
 `FeatureEnumContract` interface.
 
 ```php
