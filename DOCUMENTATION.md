@@ -3120,7 +3120,7 @@ public function run(): void
         ->count(4)
         ->sequence(
             ['chargebee_id' => 'dev-user', 'json_data' => ['type' => 'switch']],
-            ['chargebee_id' => 'free-user', 'jso``n_data' => ['type' => 'switch']],
+            ['chargebee_id' => 'free-user', 'json_data' => ['type' => 'switch']],
             ['chargebee_id' => 'pro-user', 'json_data' => ['type' => 'numeric']],
             ['chargebee_id' => 'max-user', 'json_data' => ['type' => 'numeric']],
         )
