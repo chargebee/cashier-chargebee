@@ -3003,7 +3003,7 @@ we would also need to track his API usage for the given time period, and check i
 the aggregated usage is < 100.
 
 This logic to track usage and determine if it falls within the threshold of the
-entitlement is beyond the scope of this library. However, to facilitate a custom 
+entitlement is beyond the scope of this library. However, to facilitate a custom
 implementation, the following interface and configuration can be overridden:
 
 ```php
@@ -3062,5 +3062,68 @@ class User
     {
         return Cache::store('entitlement');
     }
+}
+```
+
+#### Custom implementation of Feature enum
+
+The provided console command `php artisan cashier:generate-feature-enum` is an easy
+way to generate the list of Features from the API and save them to the DB. However, this
+may not be suitable for certain cases. For example, if the list of features isn't consistent
+across the test and prod Chargebee sites. In such scenarios, it is possible to provide a
+custom implementatio of the `Feature` enum by implementing the required methods in the
+`FeatureEnumContract` interface.
+
+```php
+use Chargebee\Cashier\Contracts\FeatureEnumContract;
+
+enum CustomFeature: string implements FeatureEnumContract {
+    // These may be used only in the test site
+    case DEV_USER = "dev-user";
+    case FREE_USER = "free-user";
+    // And these in the prod site
+    case PRO_USER = "pro-user";
+    case MAX_USER = "max-user";
+
+    public function id(): string
+    {
+        return $this->value;
+    }
+
+    /**
+     * @param array<string> $featureIds
+     * @return array<FeatureEnumContract>
+     */
+    public static function fromArray(array $featureIds): array
+    {
+        return array_map(fn (string $featureId) => self::from($featureId), $featureIds);
+    }
+}
+```
+
+As long as your enum implementation satisfies the `FeatureEnumContract&BackedEnum` type, you will
+be able to pass the feature to the main API methods like `$user->hasAccess()`;
+
+Additionally, these features and the required metadata will need to be populated in the DB.
+This can be done by running a [DB seeder](https://laravel.com/docs/12.x/seeding), and inserting
+the required rows using the `Feature` [model factory](https://laravel.com/docs/12.x/eloquent-factories):
+
+```php
+use Chargebee\Cashier\Feature;
+
+/**
+ * Run the database seeders.
+ */
+public function run(): void
+{
+    Feature::factory()
+        ->count(4)
+        ->sequence(
+            ['chargebee_id' => 'dev-user', 'json_data' => ['type' => 'switch']],
+            ['chargebee_id' => 'free-user', 'jso``n_data' => ['type' => 'switch']],
+            ['chargebee_id' => 'pro-user', 'json_data' => ['type' => 'numeric']],
+            ['chargebee_id' => 'max-user', 'json_data' => ['type' => 'numeric']],
+        )
+        ->create();
 }
 ```
