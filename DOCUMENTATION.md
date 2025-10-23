@@ -2857,7 +2857,7 @@ the Chargebee docs to understand more about entitlements and how they can be use
 The rest of this section will deal with configuring and using entitlements in your Laravel app.
 
 *Note 1*: The current implementaion of entitlements only fetches the subscription level entitlements for
-the user. Only (customer entitlements)[https://apidocs.chargebee.com/docs/api/customer_entitlements?lang=php]
+the user. Once the [Customer Entitlements](https://apidocs.chargebee.com/docs/api/customer_entitlements?lang=php)
 are generally available to all Chargebee sites, this package will be updated to use that instead.
 
 *Note 2*: The default implementation of `EntitlementAccessVerifier` only handles features of type switch.
@@ -2923,7 +2923,7 @@ return [
 Additionally, since the entitlements are fetched and cached locally, configure
 a [Laravel Cache](https://laravel.com/docs/12.x/cache#configuration) store. The
 framework uses the default cache store, but this can be customized. See
-(advanced entitlements usage)[#advanced-entitlements-usage] for more details.
+[Advanced Entitlements usage](#advanced-entitlements-usage) for more details.
 
 
 4. Add the `HasEntitlements` trait to your `User` model:
@@ -2990,12 +2990,12 @@ Route::get('/premium', function (Request $request) {
 });
 ```
 
-### Advanced entitlements usage
+### Advanced Entitlements usage
 
 #### Custom implementation of EntitlementsAccessVerifier
 
 The default implementation to determine if a user has access to a feature is quite
-limited as mentioned in the intro to the entitlements section. This is currently
+limited as mentioned in the intro to the Entitlements section. This is currently
 a technical limitation as a thorough implementation will also need to track usage
 of those features. For e.g., let's assume a feature `API_REQUESTS` of type numeric
 is set to a value of `100`. To determine if a user is allowed to make an API request,
@@ -3037,7 +3037,7 @@ with the request.
 
 #### Overriding the cache store
 
-To use something other than the default cache store for entitlements,
+To use something other than the default cache store for Entitlements,
 override the `entitlementsCacheStore` method as shown below:
 
 ```php
