@@ -1,3 +1,8 @@
+### v1.3.0-beta.1 (2025-10-27)
+* * *
+
+- Added `Entitlement` and related `Feature` support.
+
 ### v1.2.0
 * * * 
 - Added atrisan command to automatically add the webhook in Chargebee dashboard. 
