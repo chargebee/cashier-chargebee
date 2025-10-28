@@ -3101,7 +3101,7 @@ enum CustomFeature: string implements FeatureEnumContract {
 }
 ```
 
-As long as your enum implementation satisfies the `FeatureEnumContract&BackedEnum` type, you will
+As long as your enum implementation satisfies the `FeatureEnumContract` type, you will
 be able to pass the feature to the main API methods like `$user->hasAccess()`;
 
 Additionally, these features and the required metadata will need to be populated in the DB.

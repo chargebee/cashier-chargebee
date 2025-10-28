@@ -2,7 +2,6 @@
 
 namespace Chargebee\Cashier\Http\Middleware;
 
-use BackedEnum;
 use Chargebee\Cashier\Concerns\HasEntitlements;
 use Chargebee\Cashier\Constants;
 use Chargebee\Cashier\Contracts\FeatureEnumContract;
@@ -30,7 +29,7 @@ final class UserEntitlementCheck
 
         // 2) Or from route macro (closure routes)
         if (! $features) {
-            /** @var null|array<FeatureEnumContract&BackedEnum> $fromAction */
+            /** @var null|array<FeatureEnumContract> $fromAction */
             $fromAction = $route->getAction(Constants::REQUIRED_FEATURES_KEY) ?? null;
             if ($fromAction) {
                 $features = $fromAction;
@@ -49,7 +48,7 @@ final class UserEntitlementCheck
     }
 
     /**
-     * @return array<FeatureEnumContract&BackedEnum>
+     * @return array<FeatureEnumContract>
      */
     private function featuresFromAttributes($route): array
     {

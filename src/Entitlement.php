@@ -2,7 +2,6 @@
 
 namespace Chargebee\Cashier;
 
-use BackedEnum;
 use Chargebee\Cashier\Contracts\FeatureEnumContract;
 use Chargebee\Resources\SubscriptionEntitlement\SubscriptionEntitlement as ChargebeeSubscriptionEntitlement;
 use Illuminate\Contracts\Support\Arrayable;
@@ -48,7 +47,7 @@ class Entitlement implements Arrayable, Jsonable, JsonSerializable
      *
      * @return bool
      */
-    public function providesFeature(FeatureEnumContract&BackedEnum $feature): bool
+    public function providesFeature(FeatureEnumContract $feature): bool
     {
         return $this->entitlement->feature_id === $feature->id();
     }

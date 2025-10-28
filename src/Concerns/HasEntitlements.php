@@ -2,7 +2,6 @@
 
 namespace Chargebee\Cashier\Concerns;
 
-use BackedEnum;
 use Chargebee\Cashier\Contracts\EntitlementAccessVerifier;
 use Chargebee\Cashier\Contracts\FeatureEnumContract;
 use Chargebee\Cashier\Entitlement;
@@ -95,10 +94,10 @@ trait HasEntitlements
     /**
      * Check if the user has the given entitlement
      *
-     * @param  FeatureEnumContract&BackedEnum  ...$features
+     * @param  FeatureEnumContract  ...$features
      * @return bool
      */
-    public function hasAccess(FeatureEnumContract&BackedEnum ...$features): bool
+    public function hasAccess(FeatureEnumContract ...$features): bool
     {
         $featureModels = Feature::whereIn('chargebee_id', $features)->get();
         $feats = collect($features);

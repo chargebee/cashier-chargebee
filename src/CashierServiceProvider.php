@@ -2,7 +2,6 @@
 
 namespace Chargebee\Cashier;
 
-use BackedEnum;
 use Chargebee\Cashier\Console\FeatureEnumCommand;
 use Chargebee\Cashier\Console\WebhookCommand;
 use Chargebee\Cashier\Contracts\EntitlementAccessVerifier;
@@ -153,7 +152,7 @@ class CashierServiceProvider extends ServiceProvider
 
         // Initialise the route macro, which binds the middleware to the route
         // and reads the required features from the route action.
-        \Illuminate\Routing\Route::macro('requiresEntitlement', function (FeatureEnumContract&BackedEnum ...$features) {
+        \Illuminate\Routing\Route::macro('requiresEntitlement', function (FeatureEnumContract ...$features) {
             /** @var \Illuminate\Routing\Route $this */
             $this->middleware(UserEntitlementCheck::class);
 
