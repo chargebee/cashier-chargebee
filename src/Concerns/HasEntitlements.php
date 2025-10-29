@@ -11,6 +11,7 @@ use Illuminate\Contracts\Cache\Repository as CacheRepository;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 trait HasEntitlements
 {
@@ -81,8 +82,7 @@ trait HasEntitlements
         $cachedEntitlements = $cacheStore->get($cacheKey);
         if ($cachedEntitlements) {
             Log::debug('Got entitlements from cache: ', ['cachedEntitlements' => $cachedEntitlements]);
-            // Convert the cached entitlements to an array of Entitlement objects
-            $this->entitlements = collect($cachedEntitlements)->map(fn ($entitlement) => Entitlement::fromArray($entitlement));
+            $this->entitlements = $cachedEntitlements;
         } else {
             $entitlements = $this->getEntitlements();
             Log::debug('Got entitlements from API: ', ['entitlements' => $entitlements]);
@@ -101,10 +101,20 @@ trait HasEntitlements
     {
         $featureModels = Feature::whereIn('chargebee_id', $features)->get();
         $feats = collect($features);
+
+        // Since we need to read the feature attributes from the DB,
+        // we need to ensure that all the features have been synced. If not, throw a 500 error.
         if ($featureModels->count() != $feats->count()) {
-            Log::warning(<<<'EOF'
-            Some features were not found in the database. Please run `php artisan cashier:generate-feature-enum` to sync.
-            EOF, ['missingFeatures' => $feats->diff($featureModels)->implode(', ')]);
+            $missingFeatureIds = $feats->reject(function ($enum) use ($featureModels) {
+                return $featureModels->contains(function ($model) use ($enum) {
+                    return $enum->id() === $model->chargebee_id;
+                });
+            });
+
+            Log::error(<<<'EOF'
+            Feature(s) missing in database. Run `php artisan cashier:generate-feature-enum` to sync.
+            EOF, ['missingFeatures' => $missingFeatureIds->implode(', ')]);
+            throw new HttpException(500, 'Error verifying your access to this resource.');
         }
 
         return app(EntitlementAccessVerifier::class)::hasAccessToFeatures($this, $featureModels);

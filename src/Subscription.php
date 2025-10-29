@@ -1025,13 +1025,13 @@ class Subscription extends Model
     /**
      * Get entitlements
      *
-     * @return \Chargebee\Cashier\Entitlement[]
+     * @return \Illuminate\Support\Collection<Entitlement>
      */
-    public function getEntitlements(): array
+    public function getEntitlements(): Collection
     {
         Log::debug('Getting entitlements for subscription '.$this->chargebee_id);
         $chargebee = Cashier::chargebee();
-        $entitlements = [];
+        $entitlements = Collection::make();
         $options = [];
 
         do {
@@ -1039,7 +1039,7 @@ class Subscription extends Model
             $entitlementsResponse = collect($response->list)->map(function ($entitlement) {
                 return new Entitlement($entitlement->subscription_entitlement);
             });
-            array_push($entitlements, ...$entitlementsResponse->toArray());
+            $entitlements->push(...$entitlementsResponse);
             if ($response->next_offset) {
                 $options['offset'] = $response->next_offset;
             }
