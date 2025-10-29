@@ -82,12 +82,12 @@ trait HasEntitlements
         $cachedEntitlements = $cacheStore->get($cacheKey);
         if ($cachedEntitlements) {
             Log::debug('Got entitlements from cache: ', ['cachedEntitlements' => $cachedEntitlements]);
-            $this->entitlements = $cachedEntitlements;
+            $this->entitlements = collect($cachedEntitlements)->map(fn($entitlement) => Entitlement::fromArray($entitlement));
         } else {
             $entitlements = $this->getEntitlements();
             Log::debug('Got entitlements from API: ', ['entitlements' => $entitlements]);
             $cacheExpirySeconds = config('session.lifetime', 120) * 60;
-            $cacheStore->put($cacheKey, $entitlements, $cacheExpirySeconds);
+            $cacheStore->put($cacheKey, $entitlements->toArray(), $cacheExpirySeconds);
         }
     }
 
