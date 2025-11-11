@@ -4,7 +4,9 @@ namespace Chargebee\Cashier\Http\Middleware;
 
 use Chargebee\Cashier\Concerns\HasEntitlements;
 use Chargebee\Cashier\Constants;
+use Chargebee\Cashier\Contracts\EntitlementAccessVerifier;
 use Chargebee\Cashier\Contracts\FeatureEnumContract;
+use Chargebee\Cashier\EntitlementErrorCode;
 use Chargebee\Cashier\Support\RequiresEntitlement;
 use Closure;
 use Illuminate\Contracts\Auth\Authenticatable;
@@ -36,12 +38,14 @@ final class UserEntitlementCheck
             }
         }
         if ($features) {
-            $hasAccess = $user->hasAccess(...$features);
-            if (! $hasAccess) {
-                throw new HttpException(403, 'You are not authorized to access this resource.');
-            }
-
             $request->attributes->set(Constants::REQUIRED_FEATURES_KEY, $features);
+            $hasAccess = $user->hasAccess($features, $request);
+
+            if (! $hasAccess) {
+                $entitlementAccessVerifier = app(EntitlementAccessVerifier::class);
+
+                return $entitlementAccessVerifier::handleError($request, EntitlementErrorCode::ACCESS_DENIED);
+            }
         }
 
         return $next($request);

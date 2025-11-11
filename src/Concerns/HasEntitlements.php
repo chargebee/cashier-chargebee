@@ -5,13 +5,14 @@ namespace Chargebee\Cashier\Concerns;
 use Chargebee\Cashier\Contracts\EntitlementAccessVerifier;
 use Chargebee\Cashier\Contracts\FeatureEnumContract;
 use Chargebee\Cashier\Entitlement;
+use Chargebee\Cashier\EntitlementErrorCode;
 use Chargebee\Cashier\Feature;
 use Chargebee\Cashier\Subscription;
 use Illuminate\Contracts\Cache\Repository as CacheRepository;
+use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
-use Symfony\Component\HttpKernel\Exception\HttpException;
 
 trait HasEntitlements
 {
@@ -82,7 +83,7 @@ trait HasEntitlements
         $cachedEntitlements = $cacheStore->get($cacheKey);
         if ($cachedEntitlements) {
             Log::debug('Got entitlements from cache: ', ['cachedEntitlements' => $cachedEntitlements]);
-            $this->entitlements = collect($cachedEntitlements)->map(fn($entitlement) => Entitlement::fromArray($entitlement));
+            $this->entitlements = collect($cachedEntitlements)->map(fn ($entitlement) => Entitlement::fromArray($entitlement));
         } else {
             $entitlements = $this->getEntitlements();
             Log::debug('Got entitlements from API: ', ['entitlements' => $entitlements]);
@@ -92,31 +93,51 @@ trait HasEntitlements
     }
 
     /**
-     * Check if the user has the given entitlement
+     * Check if the given features are missing in the database
      *
-     * @param  FeatureEnumContract  ...$features
-     * @return bool
+     * @param  Collection<FeatureEnumContract>  $features
+     * @param  Collection<Feature>  $featureModels
+     * @return Collection<FeatureEnumContract>|null
      */
-    public function hasAccess(FeatureEnumContract ...$features): bool
+    protected function checkMissingFeatures(Collection $features, Collection $featureModels): ?Collection
     {
-        $featureModels = Feature::whereIn('chargebee_id', $features)->get();
-        $feats = collect($features);
-
-        // Since we need to read the feature attributes from the DB,
-        // we need to ensure that all the features have been synced. If not, throw a 500 error.
-        if ($featureModels->count() != $feats->count()) {
-            $missingFeatureIds = $feats->reject(function ($enum) use ($featureModels) {
-                return $featureModels->contains(function ($model) use ($enum) {
-                    return $enum->id() === $model->chargebee_id;
-                });
+        $missingFeatureIds = $features->reject(function ($enum) use ($featureModels) {
+            return $featureModels->contains(function ($model) use ($enum) {
+                return $enum->id() === $model->chargebee_id;
             });
-
-            Log::error(<<<'EOF'
-            Feature(s) missing in database. Run `php artisan cashier:generate-feature-enum` to sync.
-            EOF, ['missingFeatures' => $missingFeatureIds->implode(', ')]);
-            throw new HttpException(500, 'Error verifying your access to this resource.');
+        });
+        if ($missingFeatureIds->count() > 0) {
+            return $missingFeatureIds;
         }
 
-        return app(EntitlementAccessVerifier::class)::hasAccessToFeatures($this, $featureModels);
+        return null;
+    }
+
+    /**
+     * Check if the user has the given entitlement
+     *
+     * @param  FeatureEnumContract|array<FeatureEnumContract>  $features
+     * @param  ?Request  $request
+     * @return bool
+     */
+    public function hasAccess($features, ?Request $request = null): bool
+    {
+        $feats = collect($features);
+        $featureModels = Feature::whereIn('chargebee_id', $features)->get();
+        $request = $request ?? request();
+        $entitlementAccessVerifier = app(EntitlementAccessVerifier::class);
+
+        $missingFeatures = $this->checkMissingFeatures($feats, $featureModels);
+        if ($missingFeatures && $missingFeatures->count() > 0) {
+            Log::error(<<<'EOF'
+            Feature(s) missing in database. Run `php artisan cashier:generate-feature-enum` to sync.
+            EOF, ['missingFeatures' => $missingFeatures]);
+
+            $entitlementAccessVerifier::handleError($request, EntitlementErrorCode::MISSING_FEATURE_IN_DB, $missingFeatures);
+
+            return false;
+        }
+
+        return $entitlementAccessVerifier::hasAccessToFeatures($request, $featureModels);
     }
 }
