@@ -52,8 +52,10 @@ final class DefaultEntitlementAccessVerifier implements EntitlementAccessVerifie
      *
      * @param  Request  $request
      * @param  EntitlementErrorCode  $error
+     * @param  mixed  $data
+     * @return void
      */
-    public static function handleError(Request $request, EntitlementErrorCode $error): void
+    public static function handleError(Request $request, EntitlementErrorCode $error, mixed $data = null): void
     {
         switch ($error) {
             case EntitlementErrorCode::MISSING_FEATURE_IN_DB:

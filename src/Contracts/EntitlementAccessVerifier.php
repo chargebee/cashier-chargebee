@@ -32,6 +32,8 @@ interface EntitlementAccessVerifier
      *
      * @param  Request  $request
      * @param  EntitlementErrorCode  $error
+     * @param  mixed  $data
+     * @return void
      */
-    public static function handleError(Request $request, EntitlementErrorCode $error): void;
+    public static function handleError(Request $request, EntitlementErrorCode $error, mixed $data = null): void;
 }
