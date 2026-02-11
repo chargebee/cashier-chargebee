@@ -1,3 +1,11 @@
+### v1.3.0 (2026-02-11)
+
+---
+
+* 🎉 Added **Entitlements** support to Cashier.
+* For more details, refer to the [documentation](https://github.com/chargebee/cashier-chargebee/blob/main/DOCUMENTATION.md#entitlements).
+
+
 ### v1.3.0-beta.2 (2025-10-30)
 
 ---
