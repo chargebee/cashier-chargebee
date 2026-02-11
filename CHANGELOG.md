@@ -1,3 +1,15 @@
+### v1.3.0-beta.2 (2025-10-30)
+
+---
+
+* Refactored entitlements to use `FeatureEnumContract` (now extends `BackedEnum`) and simplified method signatures across routes, middleware, and attributes.
+* Switched entitlements config to env-driven options (`CASHIER_ENTITLEMENTS_*`).
+* Fixed entitlement cache serialization (store as array, restore via `Entitlement::fromArray`).
+* Added hard failure (`HttpException(500)`) when required features are missing in DB.
+* Updated `Subscription::getEntitlements()` to return `Collection<Entitlement>`.
+* Updated documentation to reflect enum contract and configuration changes.
+
+
 ### v1.3.0-beta.1 (2025-10-27)
 * * *
 
