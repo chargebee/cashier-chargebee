@@ -2,7 +2,9 @@
 
 namespace Chargebee\Cashier\Contracts;
 
-interface FeatureEnumContract
+use BackedEnum;
+
+interface FeatureEnumContract extends BackedEnum
 {
     /**
      * Returns the chargebee id of the feature.

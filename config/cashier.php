@@ -98,16 +98,16 @@ return [
 
     'entitlements' => [
         // Enable Chargebee Entitlements for Cashier
-        'enabled' => true,
+        'enabled' => env('CASHIER_ENTITLEMENTS_ENABLED', false),
 
         // The class that will be used to check if the user has access to the feature.
         // If this is not provided, the default implementation expects fallback_access
         // to be provided.
-        'access_verifier' => \Chargebee\Cashier\Support\DefaultEntitlementAccessVerifier::class,
+        'access_verifier' => env('CASHIER_ENTITLEMENTS_ACCESS_VERIFIER'),
 
-        // Map of FeatureID => boolean which is used as a fallback to determine if
+        // array of FeatureID => boolean which is used as a fallback to determine if
         // the user has access to the feature. This is used only if a access_check
         // class is not provided.
-        'feature_defaults' => [],
+        'feature_defaults' => env('CASHIER_ENTITLEMENTS_FEATURE_DEFAULTS'),
     ],
 ];

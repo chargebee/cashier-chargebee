@@ -2,16 +2,16 @@
 
 namespace Chargebee\Cashier\Contracts;
 
-use Chargebee\Cashier\Concerns\HasEntitlements;
+use Chargebee\Cashier\EntitlementErrorCode;
 use Chargebee\Cashier\Feature;
-use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 
 interface EntitlementAccessVerifier
 {
     /**
      * For the given user, decide if feature is accessible to them. The entitlements
-     * for the user are accessible via $user->getEntitlements(). The implementation in the
+     * for the user are accessible via $request->user()->getEntitlements(). The implementation in the
      * app will need to consider variour factors like feature type, value, levels, etc.
      *
      * If multiple features are defined on the route, those are passed as an array to this method.
@@ -20,9 +20,20 @@ interface EntitlementAccessVerifier
      * If you also track usage of these features in your app, apply the required logic to verify
      * if the usage is within the entitled limits.
      *
-     * @param  Authenticatable&HasEntitlements  $user  The user to check access for
+     * @param  Request  $request
      * @param  Collection<Feature>  $features
      * @return bool
      */
-    public static function hasAccessToFeatures($user, Collection $features): bool;
+    public static function hasAccessToFeatures(Request $request, Collection $features): bool;
+
+    /**
+     * When hasAccessToFeatures returns false, this method will be called to handle the access denied case.
+     * You can throw an exception, return a response, or redirect to a different page.
+     *
+     * @param  Request  $request
+     * @param  EntitlementErrorCode  $error
+     * @param  mixed  $data
+     * @return void
+     */
+    public static function handleError(Request $request, EntitlementErrorCode $error, mixed $data = null): void;
 }

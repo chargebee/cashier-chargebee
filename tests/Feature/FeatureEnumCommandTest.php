@@ -50,13 +50,22 @@ class FeatureEnumCommandTest extends FeatureTestCase
         $this->assertNotNull($capturedPath);
         $this->assertNotNull($capturedPhp);
 
-        $expectedPhp = "<?php
+        $expectedPhp = <<<'PHP'
+<?php
+
+/**
+ * THIS IS A GENERATED FILE. DO NOT EDIT THIS MANUALLY!
+ * Run `php artisan cashier:generate-feature-enum` to regenerate this file.
+ * ANY CHANGES MADE TO THIS FILE MAY BE OVERWRITTEN.
+ */
 
 declare(strict_types=1);
 
 namespace App\Models;
 
-enum FeaturesMap: string
+use Chargebee\Cashier\Contracts\FeatureEnumContract;
+
+enum FeaturesMap: string implements FeatureEnumContract
 {
     case FREE_TRIAL = 'feature_free_trial';
     case PRIORITY_SUPPORT = 'feature_priority_support';
@@ -68,7 +77,22 @@ enum FeaturesMap: string
             1 => 'feature_priority_support',
         );
     }
-}";
+
+    public function id(): string
+    {
+        return $this->value;
+    }
+
+    /**
+     * @param array<string> $featureIds
+     * @return array<FeatureEnumContract>
+     */
+    public static function fromArray(array $featureIds): array
+    {
+        return array_map(fn (string $featureId) => self::from($featureId), $featureIds);
+    }
+}
+PHP;
 
         // Verify the file path
         $expectedPath = base_path('app/Models/FeaturesMap.php');
@@ -124,7 +148,7 @@ enum FeaturesMap: string
         $this->artisan('cashier:generate-feature-enum', ['--force' => true])
             ->assertExitCode(0);
 
-        $expectedPath = base_path('app/Models/FeaturesMap.php');
+        $expectedPath = base_path('app/Models/Feature.php');
         $this->assertEquals($expectedPath, $capturedPath);
     }
 
@@ -150,13 +174,22 @@ enum FeaturesMap: string
         ])->assertExitCode(0);
 
         $expectedPath = base_path('app/Enums/CustomFeatures.php');
-        $expectedPhp = "<?php
+        $expectedPhp = <<<'PHP'
+<?php
+
+/**
+ * THIS IS A GENERATED FILE. DO NOT EDIT THIS MANUALLY!
+ * Run `php artisan cashier:generate-feature-enum` to regenerate this file.
+ * ANY CHANGES MADE TO THIS FILE MAY BE OVERWRITTEN.
+ */
 
 declare(strict_types=1);
 
 namespace App\Enums;
 
-enum CustomFeatures: string
+use Chargebee\Cashier\Contracts\FeatureEnumContract;
+
+enum CustomFeatures: string implements FeatureEnumContract
 {
     case FREE_TRIAL = 'feature_free_trial';
     case PRIORITY_SUPPORT = 'feature_priority_support';
@@ -168,7 +201,22 @@ enum CustomFeatures: string
             1 => 'feature_priority_support',
         );
     }
-}";
+
+    public function id(): string
+    {
+        return $this->value;
+    }
+
+    /**
+     * @param array<string> $featureIds
+     * @return array<FeatureEnumContract>
+     */
+    public static function fromArray(array $featureIds): array
+    {
+        return array_map(fn (string $featureId) => self::from($featureId), $featureIds);
+    }
+}
+PHP;
         $this->assertEquals($expectedPath, $capturedPath);
         $this->assertEquals($expectedPhp, $capturedPhp);
     }
@@ -210,7 +258,7 @@ enum CustomFeatures: string
             '--force' => true,
         ])->assertExitCode(0);
 
-        $expectedPath = base_path('app/Models/FeaturesMap.php');
+        $expectedPath = base_path('app/Models/Feature.php');
         $this->assertEquals($expectedPath, $capturedPath);
     }
 
@@ -228,13 +276,22 @@ enum CustomFeatures: string
 
         $this->artisan('cashier:generate-feature-enum', ['--force' => true])
             ->assertExitCode(0);
-        $expectedPhp = "<?php
+        $expectedPhp = <<<'PHP'
+<?php
+
+/**
+ * THIS IS A GENERATED FILE. DO NOT EDIT THIS MANUALLY!
+ * Run `php artisan cashier:generate-feature-enum` to regenerate this file.
+ * ANY CHANGES MADE TO THIS FILE MAY BE OVERWRITTEN.
+ */
 
 declare(strict_types=1);
 
 namespace App\Models;
 
-enum FeaturesMap: string
+use Chargebee\Cashier\Contracts\FeatureEnumContract;
+
+enum Feature: string implements FeatureEnumContract
 {
     case FREE_TRIAL = 'feature_free_trial';
 
@@ -244,9 +301,24 @@ enum FeaturesMap: string
             0 => 'feature_free_trial',
         );
     }
-}";
+
+    public function id(): string
+    {
+        return $this->value;
+    }
+
+    /**
+     * @param array<string> $featureIds
+     * @return array<FeatureEnumContract>
+     */
+    public static function fromArray(array $featureIds): array
+    {
+        return array_map(fn (string $featureId) => self::from($featureId), $featureIds);
+    }
+}
+PHP;
         // Should only contain the valid feature
-        $this->assertStringContainsString($expectedPhp, $capturedPhp);
+        $this->assertEquals($expectedPhp, $capturedPhp);
     }
 
     public function test_should_escape_special_characters_in_values(): void
@@ -262,13 +334,22 @@ enum FeaturesMap: string
             });
         $this->artisan('cashier:generate-feature-enum', ['--force' => true])
             ->assertExitCode(0);
-        $expectedPhp = "<?php
+        $expectedPhp = <<<'PHP'
+<?php
+
+/**
+ * THIS IS A GENERATED FILE. DO NOT EDIT THIS MANUALLY!
+ * Run `php artisan cashier:generate-feature-enum` to regenerate this file.
+ * ANY CHANGES MADE TO THIS FILE MAY BE OVERWRITTEN.
+ */
 
 declare(strict_types=1);
 
 namespace App\Models;
 
-enum FeaturesMap: string
+use Chargebee\Cashier\Contracts\FeatureEnumContract;
+
+enum Feature: string implements FeatureEnumContract
 {
     case FREE_TRIAL = 'feature_free_trial';
     case PRIORITY_SUPPORT = 'feature_priority_support';
@@ -280,7 +361,22 @@ enum FeaturesMap: string
             1 => 'feature_priority_support',
         );
     }
-}";
+
+    public function id(): string
+    {
+        return $this->value;
+    }
+
+    /**
+     * @param array<string> $featureIds
+     * @return array<FeatureEnumContract>
+     */
+    public static function fromArray(array $featureIds): array
+    {
+        return array_map(fn (string $featureId) => self::from($featureId), $featureIds);
+    }
+}
+PHP;
         $this->assertEquals($capturedPhp, $expectedPhp);
     }
 }
