@@ -19,19 +19,18 @@
     "require": {
         "php": "^8.1",
         "chargebee/chargebee-php": "^4.8.0",
-        "illuminate/database": "^10.0 || ^11.0 || ^12.0",
-        "illuminate/support": "^10.0 || ^11.0 || ^12.0",
+        "illuminate/database": "^10.0|^11.0|^12.0|^13.0",
+        "illuminate/support": "^10.0|^11.0|^12.0|^13.0",
         "moneyphp/money": "^4.0"
     },
     "require-dev": {
-        "dompdf/dompdf": "^2.0",
+        "dompdf/dompdf": "^2.0|^3.0",
         "laravel/pint": "^1.22",
-        "orchestra/testbench": "^8.18 || ^9.0",
-        "phpstan/phpstan": "^1.10",
-        "phpunit/phpunit": "^10.4"
+        "orchestra/testbench": "^8.36|^9.15|^10.8|^11.0",
+        "phpstan/phpstan": "^1.10"
     },
     "suggest": {
-        "dompdf/dompdf": "Required when generating and downloading invoice PDF's using Dompdf (^1.0.1 || ^2.0)."
+        "dompdf/dompdf": "Required when generating and downloading invoice PDF's using Dompdf (^2.0|^3.0)."
     },
     "prefer-stable": true,
     "autoload": {

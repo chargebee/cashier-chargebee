@@ -1,3 +1,12 @@
+### v1.4.0 (2026-07-13)
+
+---
+
+* 🎉 Added support for **Laravel 13 / Illuminate 13** (`illuminate/*` now allows `^10.0|^11.0|^12.0|^13.0`). No breaking changes — Laravel 10, 11 and 12 remain supported and the minimum PHP version stays `^8.1`.
+* Bumped `orchestra/testbench` to `^8.36|^9.15|^10.8|^11.0` and `dompdf/dompdf` to `^2.0|^3.0`; PHPUnit is now resolved via Testbench.
+* Updated the CI matrix to test PHP 8.1–8.5 against Laravel 10, 11, 12 and 13.
+
+
 ### v1.3.0 (2026-02-11)
 
 ---

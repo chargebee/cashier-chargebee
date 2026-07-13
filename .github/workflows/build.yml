@@ -44,16 +44,11 @@ jobs:
 
     strategy:
       max-parallel: 1
+      fail-fast: true
       matrix:
-        php: [ 8.1, 8.2, 8.3, 8.4 ]
-        laravel: [ 10, 11, 12 ]
-        exclude:
-          - php: 8.1
-            laravel: 11
-          - php: 8.1
-            laravel: 12
+        php: [ 8.1, 8.2, 8.3, 8.4, 8.5 ]
 
-    name: PHP ${{ matrix.php }} - Laravel ${{ matrix.laravel }}
+    name: PHP ${{ matrix.php }}
 
     steps:
       - name: Checkout code
@@ -68,11 +63,46 @@ jobs:
           tools: composer:v2
           coverage: xdebug
 
-      - name: Install dependencies
-        run: composer update --prefer-dist --no-interaction --no-progress --with="illuminate/contracts:^${{ matrix.laravel }}"
+      - name: Install dependencies (Laravel 10)
+        run: composer update --prefer-dist --no-interaction --no-progress --with="illuminate/contracts:^10"
+        if: matrix.php >= 8.1 && matrix.php < 8.4
 
-      - name: Execute tests
+      - name: Execute tests (Laravel 10)
         run: vendor/bin/phpunit --display-deprecations --fail-on-deprecation
+        if: matrix.php >= 8.1 && matrix.php < 8.4
+        env:
+          CHARGEBEE_SITE: ${{ vars.CHARGEBEE_SITE }}
+          CHARGEBEE_API_KEY: ${{ secrets.CHARGEBEE_API_KEY }}
+
+      - name: Install dependencies (Laravel 11)
+        run: composer update --prefer-dist --no-interaction --no-progress --with="illuminate/contracts:^11"
+        if: matrix.php >= 8.2 && matrix.php <= 8.4
+
+      - name: Execute tests (Laravel 11)
+        run: vendor/bin/phpunit --display-deprecations --fail-on-deprecation
+        if: matrix.php >= 8.2 && matrix.php <= 8.4
+        env:
+          CHARGEBEE_SITE: ${{ vars.CHARGEBEE_SITE }}
+          CHARGEBEE_API_KEY: ${{ secrets.CHARGEBEE_API_KEY }}
+
+      - name: Install dependencies (Laravel 12)
+        run: composer update --prefer-dist --no-interaction --no-progress --with="illuminate/contracts:^12"
+        if: matrix.php >= 8.2 && matrix.php <= 8.5
+
+      - name: Execute tests (Laravel 12)
+        run: vendor/bin/phpunit --display-deprecations --fail-on-deprecation
+        if: matrix.php >= 8.2 && matrix.php <= 8.5
+        env:
+          CHARGEBEE_SITE: ${{ vars.CHARGEBEE_SITE }}
+          CHARGEBEE_API_KEY: ${{ secrets.CHARGEBEE_API_KEY }}
+
+      - name: Install dependencies (Laravel 13)
+        run: composer update --prefer-dist --no-interaction --no-progress --with="illuminate/contracts:^13"
+        if: matrix.php >= 8.3 && matrix.php <= 8.5
+
+      - name: Execute tests (Laravel 13)
+        run: vendor/bin/phpunit --display-deprecations --fail-on-deprecation
+        if: matrix.php >= 8.3 && matrix.php <= 8.5
         env:
           CHARGEBEE_SITE: ${{ vars.CHARGEBEE_SITE }}
           CHARGEBEE_API_KEY: ${{ secrets.CHARGEBEE_API_KEY }}
