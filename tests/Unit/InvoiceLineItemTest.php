@@ -50,7 +50,7 @@ class InvoiceLineItemTest extends TestCase
 
         $item = new InvoiceLineItem($invoice, $chargebeeInvoiceLineItem);
         $result = $item->inclusiveTaxPercentage();
-        $this->assertSame(20, $result);
+        $this->assertSame(20.0, $result);
     }
 
     public function test_we_can_calculate_the_exclusive_tax_percentage()
@@ -90,7 +90,7 @@ class InvoiceLineItemTest extends TestCase
 
         $item = new InvoiceLineItem($invoice, $chargebeeInvoiceLineItem);
         $result = $item->exclusiveTaxPercentage();
-        $this->assertSame(20, $result);
+        $this->assertSame(20.0, $result);
     }
 
     public function test_can_get_period()
